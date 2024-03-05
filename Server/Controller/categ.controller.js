@@ -2,7 +2,7 @@ const cateModel = require("../Model/category.js");
 
 const categPost = async (req, res) => {
     try {
-        const cname  = req.body.cname;
+        const cname = req.body.cname;
 
         // var img = [];
 
@@ -15,7 +15,6 @@ const categPost = async (req, res) => {
         // }
         // console.log(img)
         const data = await cateModel.create({
-            
             cname: cname,
             // images: img
         })
@@ -83,5 +82,5 @@ module.exports = {
     categGet,
     categPost,
     categPut,
-    categDelete,oneCategory
+    categDelete, oneCategory
 }

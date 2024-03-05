@@ -54,13 +54,9 @@ function AddCategory() {
             formData.append('cname', cname)
             // formData.append('images', image)
 
-            // console.log(formData)
+            console.log(formData)
 
-            const res = await axios.post("http://localhost:8080/categ", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            })
+            const res = await axios.post("http://localhost:8080/categ", formData)
             if (res.status == 200) {
                 navigate('/categorylist')
             }

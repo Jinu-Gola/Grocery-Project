@@ -69,7 +69,7 @@ app.put("/subcat/:id", subcateModel.subcatUpd)
 app.delete("/subcat/:id", subcateModel.subcatDelete)
 
 // Categories API
-app.post("/categ", cateModel.categPost)
+app.post("/categ", upload.array("image"), cateModel.categPost)
 app.get("/categ", cateModel.categGet)
 app.put("/categ/:id", cateModel.categPut)
 app.delete("/categ/:id", cateModel.categDelete)
