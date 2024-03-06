@@ -131,6 +131,26 @@ function UpdateProduct() {
 
     }
 
+    // For category id display on dropdownlist
+    const [categ, setCateg] = useState([])
+    useEffect(() => {
+        display();
+    }, [])
+
+    const display = async () => {
+        try {
+            await axios.get("http://localhost:8080/categ").then((result) => {
+                // console.log("next")
+                // console.log("api data", result)
+                setCateg(result?.data)
+                // console.log("data", data)
+            })
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <>
@@ -190,7 +210,12 @@ function UpdateProduct() {
                                             </div>
                                             <div class="col">
                                                 <label for="cid">Product Category Id</label>
-                                                <input type="text" class="form-control" name="cid" placeholder="Product Category ID" value={formdata.cid} onChange={handleChange} />
+                                                <select class="form-control" value={formdata.cid} onChange={handleChange}>
+                                                    {categ.map((item, index) => (
+                                                        <option class="dropdown-header" value={item._id} > {item.cname}</option>
+                                                    ))}
+                                                </select>
+                                                {/* <input type="text" class="form-control" name="cid" placeholder="Product Category ID" value={formdata.cid} onChange={handleChange} /> */}
                                             </div>
                                            
                                         </div>

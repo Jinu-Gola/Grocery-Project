@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
-app.use(express.json());
-const cors = require("cors");
+const bodyParser = require('body-parser');
+const cors = require("cors")
+
+
+;
 app.use(cors({ config: '*' }));
 
 const multer = require("multer");
 const path = require("path");
-
 app.use("/images", express.static("./images"));
 
 const storage = multer.diskStorage({
@@ -42,6 +44,8 @@ const pro_detailModel = require('./Controller/proDetail.controller.js')
 const cartModel = require("./Controller/cart.controller.js")
 // const { config } = require("process");
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // User Registration and Login API
@@ -53,6 +57,7 @@ app.post("/login", userModel.loginUser)
 // app.get("/profile/:id", userModel.profile)
 app.get("/auth/:tok", userModel.auth)
 
+// app.post("/insertsubcat", subcateModel.subcatAdd)
 
 //cart api
 app.post("/addcart", cartModel.cartPost)
@@ -63,17 +68,18 @@ app.delete("/deletecart/:id", cartModel.cartDelete)
 
 
 // Sub-category API
-app.post("/subcat", subcateModel.subcatAdd)
+app.post("/subcat", upload.none(), subcateModel.subcatAdd)
 app.get("/subcat", subcateModel.subcatFind)
 app.put("/subcat/:id", subcateModel.subcatUpd)
 app.delete("/subcat/:id", subcateModel.subcatDelete)
 
 // Categories API
-app.post("/categ", upload.array("image"), cateModel.categPost)
+app.post("/categ", upload.none(), cateModel.categPost)
 app.get("/categ", cateModel.categGet)
 app.put("/categ/:id", cateModel.categPut)
 app.delete("/categ/:id", cateModel.categDelete)
 app.get("/one-cat/:id", cateModel.oneCategory)
+
 
 //product-Detail API
 app.post("/addproduct", upload.array("image"), pro_detailModel.product_detailsPost);
@@ -81,6 +87,8 @@ app.get("/getproduct", pro_detailModel.product_detailsGet);
 app.put("/updproduct/:id", upload.array("image"), pro_detailModel.product_detailsPut);
 app.delete("/delproduct/:id", pro_detailModel.product_detailsDelete);
 app.get("/oneproduct/:id", pro_detailModel.oneProduct)
+app.get("/category/:id", pro_detailModel.categoryProduct)
+
 app.get("/search-product", pro_detailModel.searchProduct)
 
 

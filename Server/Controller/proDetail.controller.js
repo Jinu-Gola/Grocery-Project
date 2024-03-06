@@ -2,7 +2,7 @@ const pro_detailModel = require("../Model/product_detail");
 
 const product_detailsPost = async (req, res) => {
     try {
-        const { product_name, price, qty, size, description, brand_name,cid } = req.body;
+        const { product_name, price, qty, size, description, brand_name, cid } = req.body;
 
         var arrImage = [];
 
@@ -18,7 +18,7 @@ const product_detailsPost = async (req, res) => {
             image: arrImage,
             description: description,
             brand_name: brand_name,
-            cid:cid
+            cid: cid
         });
 
         res
@@ -58,7 +58,7 @@ const product_detailsPut = async (req, res) => {
             size: req.body.size,
             description: req.body.description,
             brand_name: req.body.brand_name,
-            cid:req.body.cid,
+            cid: req.body.cid,
         })
         // console.log(data);
         res.send(data)
@@ -79,13 +79,26 @@ const oneProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const oneProduct = await pro_detailModel.findOne({ _id: id })
-        res.send(oneProduct)
+        res.send(oneProduct.cid)
     } catch (error) {
         // res.status(401).send(error)
         console.log("error", error)
     }
 
 }
+
+const categoryProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const oneProduct = await pro_detailModel.findOne({ _id: id })
+        // res.send(oneProduct.cid)
+
+    } catch (error) {
+        // res.status(401).send(error)
+        console.log("error", error)
+    }
+}
+
 const searchProduct = async (req, res) => {
     try {
         var search = req.body.search;
@@ -104,5 +117,6 @@ module.exports = {
     product_detailsPut,
     product_detailsDelete,
     oneProduct,
-    searchProduct
+    searchProduct,
+    categoryProduct
 };

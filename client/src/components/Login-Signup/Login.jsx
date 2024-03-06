@@ -78,7 +78,7 @@ function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
-  const [password, setPass] = useState("");
+  const [password, setPassword] = useState("");
 
   const result = async (e) => {
     e.preventDefault();
@@ -105,8 +105,8 @@ function Login() {
   // register
 
   const [name, setName] = useState("");
-  const [Email, setEmails] = useState("");
-  const [Password, setPasseowrd] = useState("");
+  const [emails, setEmails] = useState("");
+  const [pass, setPass] = useState("");
   const [mobile, setMobile] = useState("");
 
 
@@ -118,19 +118,19 @@ function Login() {
     e.preventDefault();
     axios.post('http://localhost:8080/regis', {
       name: name,
-      email: email,
+      email: emails,
       mobile: mobile,
-      password: password,
+      password: pass,
 
     })
 
     localStorage.setItem("user", JSON.stringify({ name, email, password, mobile }));
-    if (name === '' || email === '' || password === '' || mobile === '') {
+    if (name === '' || emails === '' || pass === '' || mobile === '') {
       alert(setError(true));
     } else {
       setError(false);
       setSubmit(true);
-        navigate('/login');
+      navigate('/login');
     }
 
   }
@@ -153,7 +153,7 @@ function Login() {
                 </div>
                 <div className="group">
                   <label htmlFor="pass" className="label">Password</label>
-                  <input id="pass" type="password" className="input" data-type="password" value={password} onChange={(e) => setPass(e.target.value)} placeholder="Password" />
+                  <input id="pass" type="password" className="input" data-type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
                 </div>
                 <div className="group">
                   <input id="check" type="checkbox" className="check" defaultChecked />
@@ -176,17 +176,17 @@ function Login() {
 
                   <div className="group">
                     <label htmlFor="pass" className="label">Email Address</label>
-                    <input id="pass" type="text" className="input" value={Email} onChange={(e) => setEmails(e.target.value)} />
+                    <input id="pass" type="text" className="input" value={emails} onChange={(e) => setEmails(e.target.value)} />
                   </div>
 
                   <div className="group">
                     <label htmlFor="pass" className="label">Password</label>
-                    <input id="pass" type="password" className="input" data-type="password" value={Password} onChange={(e) => setPasseowrd(e.target.value)} placeholder="Password" />
+                    <input id="pass" type="password" className="input" data-type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Password" />
                   </div>
 
                   <div className="group">
                     <label htmlFor="mobile" className="label">Mobile No.</label>
-                    <input id="pass" type="number" className="input" data-type="password" placeholder="Mobile No" value={mobile} onChange={(e) => setMobile(e.target.value)} />
+                    <input id="mobile" type="number" className="input" data-type="number" placeholder="Mobile No" value={mobile} onChange={(e) => setMobile(e.target.value)} />
                   </div>
 
                   <div className="group">

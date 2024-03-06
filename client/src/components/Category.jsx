@@ -4,7 +4,7 @@ import axios from 'axios'
 import Header from './Header'
 import Footer from './Footer'
 import Search from './Search'
-function Product() {
+function Category() {
     const navigate = useNavigate()
     const [profiles, setProfiles] = useState("")
     const [search, setSearch] = useState();
@@ -12,6 +12,7 @@ function Product() {
 
     var params = useParams();
     console.log(params);
+
 
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
@@ -57,6 +58,30 @@ function Product() {
 
     }
 
+    if(!params){
+    const display = async () => {
+        try {
+            const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
+                setProduct(result?.data)
+                setProductData(result?.data)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    }else{
+        const display = async () => {
+            try {
+                const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
+                    setProduct(result?.data)
+                    setProductData(result?.data)
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        } 
+    }
+
     //========= category display =========
     const [category_name, setCategory_name] = useState([]);
     useEffect(() => {
@@ -74,31 +99,15 @@ function Product() {
         }
     }
 
-    if (!params) {
-        const display = async () => {
-            try {
-                const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
-                    setProduct(result?.data)
-                    setProductData(result?.data)
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
+    // const result = async (req, res) => {
+    //     try {
+    //         const response = await axios.get("http://localhost:8080/oneproduct/" + id);
+    //         console.log("response");
+    //     } catch (error) {
+    //         res.send(error)
+    //     }
 
-    }
-    else{
-        const display = async () => {
-            try {
-                const result = await axios.get(`http://localhost:8080/category/${params}`).then((result) => {
-                    setProduct(result?.data)
-                    setProductData(result?.data)
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    }
+    // }
 
     return (
         <>
@@ -295,4 +304,4 @@ function Product() {
     )
 }
 
-export default Product
+export default Category

@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 
-function ViewCategory() {
+function ViewSubCateg() {
     const navigate = useNavigate();
 
     var token = localStorage.getItem("token");
@@ -29,7 +29,7 @@ function ViewCategory() {
             if (res.data === "Token is expired ") {
                 // console.log(res.data);
                 localStorage.removeItem("token");
-                navigate("/");
+                navigate("/login");
                 alert("Token is expired ");
             }
             else {
@@ -48,11 +48,11 @@ function ViewCategory() {
 
     const display = async () => {
         try {
-            await axios.get("http://localhost:8080/categ").then((result) => {
-                // console.log("next")
-                // console.log("api data", result)
+            const subData = await axios.get("http://localhost:8080/subcat").then((result) => {
+               
                 setData(result?.data)
-                // console.log("data", data)
+                // console.log(setData);
+                console.log("data", subData)
             })
 
 
@@ -61,12 +61,12 @@ function ViewCategory() {
         }
     }
 
-    const delCategory = async (id) => {
+    const delSubcat = async (id) => {
         try {
             console.log("delete id ", id);
 
-            const result = await axios.delete("http://localhost:8080/categ/" + id);
-            console.log("product deleted..")
+            const result = await axios.delete("http://localhost:8080/subcat/" + id);
+            console.log("Sub-category deleted..")
 
             display();
         } catch (error) {
@@ -74,15 +74,7 @@ function ViewCategory() {
         }
     }
 
-    // const editProduct = async (id) => {
-    //     try {
-    //         const result = await axios.put("http://localhost:8080/product" + id);
-    //         console.log("product updated..")
-    //         display();
-    //     } catch (error) {
-    //         console.log("Error : " + error)
-    //     }
-    // }
+  
 
     return (
         <>
@@ -102,16 +94,16 @@ function ViewCategory() {
                                 <div class="col-lg-10 grid-margin stretch-card align-center">
                                     <div class="card">
                                         <div class="card-body">
-                                            <h4 class="card-title">All Categories</h4>
+                                            <h4 class="card-title">All Sub-Categories</h4>
                                             {/* <p class="card-description"> Add class <code>.table-hover</code>
                                                 </p> */}
                                             <div class="table-responsive">
-                                                <table class="table ">
+                                                <table class="table table-hover">
                                                     <thead>
                                                         <tr>
                                                             {/* <th>User</th> */}
-                                                            <th>Categories</th>
-                                                            {/* <th>Sale</th> */}
+                                                            <th>Sub-Categories</th>
+                                                            <th>Category</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -119,10 +111,11 @@ function ViewCategory() {
                                                         {data.map((item, index) => (
                                                             <tr>
                                                                 {/* <td>Jacob</td> */}
-                                                                <td> {item.cname}</td>
-                                                                
-                                                                {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button>*/}
-                                                                <td> <button type="button" className="btn btn-danger" onClick={() => delCategory(item._id)} >Delete</button></td>
+                                                                <td> {item.subcname}</td>
+                                                                <td> {item.c_id}</td>
+
+                                                                {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button> */}
+                                                                <td><button type="button" className="btn btn-danger" onClick={() => delSubcat(item._id)} >Delete</button></td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -132,21 +125,21 @@ function ViewCategory() {
                                     </div>
                                 </div>
 
-                                   
 
 
-                               
+
+
 
                             </div>
                         </div>
                     </div>
                 </div>
             </div >
-           
+
 
         </>
 
     )
 }
 
-export default ViewCategory
+export default ViewSubCateg 

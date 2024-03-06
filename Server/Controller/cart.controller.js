@@ -4,11 +4,7 @@ const cartPost = async (req, res) => {
     try {
         const { u_id, p_id, qty } = req.body;
 
-        // var arrImage = [];
-
-        // for (let i = 0; i < req.files.length; i++) {
-        //     arrImage[i] = req.files[i].filename;
-        // }
+       
 
         const data = await cartModel.create({
             u_id: u_id,

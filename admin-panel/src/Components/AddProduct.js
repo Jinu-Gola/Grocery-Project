@@ -1,5 +1,5 @@
 
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 function AddProduct() {
     var token = localStorage.getItem("token");
-    const [profiles,setProfiles]=useState("")
+    const [profiles, setProfiles] = useState("")
     useEffect(() => {
 
         if (!token) {
@@ -18,7 +18,7 @@ function AddProduct() {
         else {
             profile();
             // data();
-            
+
         }
     }, [])
 
@@ -48,7 +48,7 @@ function AddProduct() {
     const [size, setSize] = useState("");
     const [description, setDescription] = useState("");
     const [brand_name, setbrand_name] = useState("");
-    const[cid,setCid]=useState("")
+    const [cid, setCid] = useState("")
     // const[submit,setSubmit]=useState(false);
     const navigate = useNavigate();
     const data = async (e) => {
@@ -56,7 +56,7 @@ function AddProduct() {
         e.preventDefault();
 
         try {
-            
+
             const formData = new FormData()
             formData.append('product_name', product_name)
             formData.append('price', price)
@@ -65,7 +65,7 @@ function AddProduct() {
             formData.append('size', size)
             formData.append('description', description)
             formData.append('brand_name', brand_name)
-            formData.append('cid',cid)
+            formData.append('cid', cid)
             // console.log(formData)
 
             const res = await axios.post("http://localhost:8080/addproduct", formData, {
@@ -77,12 +77,32 @@ function AddProduct() {
                 navigate('/productlist')
             }
             console.log("axios data:", res.data)
-           
+
         } catch (error) {
             console.error(error);
         }
     }
 
+    // For category id display on dropdownlist
+    const [categ, setCateg] = useState([])
+    useEffect(() => {
+        display();
+    }, [])
+
+    const display = async () => {
+        try {
+            await axios.get("http://localhost:8080/categ").then((result) => {
+                // console.log("next")
+                // console.log("api data", result)
+                setCateg(result?.data)
+                // console.log("data", data)
+            })
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <>
@@ -128,10 +148,15 @@ function AddProduct() {
                                             </div>
                                             <div class="col">
                                                 <label for="cid">Product Category Id</label>
-                                                <input type="text" class="form-control" id="cid" placeholder="Product Category ID" value={cid} onChange={(e) => setCid(e.target.value)} />
+                                                <select class="form-control" value={cid} onChange={(e) => setCid(e.target.value)}>
+                                                    {categ.map((item, index) => (
+                                                        <option class="dropdown-header" value={item._id} > {item.cname}</option>
+                                                    ))}
+                                                </select>
+                                                {/* <input type="text" class="form-control" id="cid" placeholder="Product Category ID" value={cid} onChange={(e) => setCid(e.target.value)} /> */}
                                             </div>
                                         </div>
-                                       
+
                                     </div>
 
                                     <div className="form-group">

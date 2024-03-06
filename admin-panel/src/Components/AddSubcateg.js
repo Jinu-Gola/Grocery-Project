@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
-function AddSubcategory() {
-    const navigate = useNavigate()
+function AddSubcateg() {
+    const navigate = useNavigate();
+
+    // For Verify the token
     var token = localStorage.getItem("token");
     const [profiles, setProfiles] = useState("")
     useEffect(() => {
@@ -29,7 +31,7 @@ function AddSubcategory() {
             if (res.data === "Token is expired ") {
                 // console.log(res.data);
                 localStorage.removeItem("token");
-                navigate("/login");
+                navigate("/");
                 alert("Token is expired ");
             }
             else {
@@ -39,30 +41,22 @@ function AddSubcategory() {
         } catch (error) {
             console.log("profile err", error);
         }
-    }
+    };
 
+
+    // For Add Sub-Category
     const [subcname, setSubCname] = useState("");
-    const [cid, setCid] = useState("");
+    // const [cid, setCid] = useState("");
 
-
-    // const [submit, setSubmit] = useState(false);
-    const data = async (e) => {
-
+    const dataSub = async (e) => {
         e.preventDefault();
-
         try {
-
             const formData = new FormData()
             formData.append('subcname', subcname)
-            formData.append('c_id', cid)
+            // formData.append('c_id', cid)
+            // console.log(subcname,)
 
-            // console.log(formData)
-
-            const res = await axios.post("http://localhost:8080/subcat", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            })
+            const res = await axios.post("http://localhost:8080/subcat", formData )
             if (res.status == 200) {
                 navigate('/sub-categorylist')
             }
@@ -71,11 +65,30 @@ function AddSubcategory() {
         } catch (error) {
             console.error(error);
         }
-
-
-
-
     }
+  
+
+    // For category id display on dropdownlist
+    const [data, setData] = useState([])
+    useEffect(() => {
+        display();
+    }, [])
+
+    const display = async () => {
+        try {
+            await axios.get("http://localhost:8080/categ").then((result) => {
+                // console.log("next")
+                // console.log("api data", result)
+                setData(result?.data)
+                // console.log("data", data)
+            })
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     return (
         <>
@@ -95,26 +108,21 @@ function AddSubcategory() {
                             <div className="card-body">
                                 <h4 className="card-title">Add Sub-Category Form</h4>
                                 <h2 className="card-description">Add Sub-Category </h2><br />
-                                <form className="forms-sample">
+                                <form className="forms-sample" onSubmit={dataSub}>
                                     <div className="form-group">
-                                        <label htmlFor="scname">Sub-Category Name</label>
-                                        <input type="text" className="form-control" id="scname" placeholder="Product Name" />
+                                        <label htmlFor="subcname">Sub-Category Name</label>
+                                        <input type="text" className="form-control" id='subcname' value={subcname} name='subcname' onChange={(e) => setSubCname(e.target.value)} placeholder="Sub-Category Name" />
                                     </div>
-
                                     {/* <div className="form-group">
-                                        <label>File upload</label>
-                                        <input type="file" name="img[]" className="file-upload-default" />
-                                        <div className="input-group col-xs-12">
-                                            <input type="text" className="form-control file-upload-info" disabled placeholder="Upload Image" />
-                                            <span className="input-group-append">
-                                                <button className="file-upload-browse btn btn-primary" type="button">Upload</button>
-                                            </span>
-                                        </div>
-                                    </div> */}
-                                    <div className="form-group">
                                         <label htmlFor="cid">Category Id</label>
-                                        <input type="text" className="form-control" id="cid" placeholder="Category Id" />
-                                    </div>
+                                        <select class="form-control" value={cid} onChange={(e) => setCid(e.target.value)}>
+                                            {data.map((item, index) => (
+                                                <option class="dropdown-header" value={item._id} > {item.cname}</option>
+                                            ))}
+                                        </select>
+                                        <input type="text" className="form-control" id='cid' value={cid} name='cid' onChange={(e) => setCid(e.target.value)}  placeholder="Category Id" />
+                                    </div> */}
+
                                     <button type="submit" className="btn btn-primary mr-2">Submit</button>
                                     <button className="btn btn-dark">Cancel</button>
                                 </form>
@@ -134,4 +142,4 @@ function AddSubcategory() {
     )
 }
 
-export default AddSubcategory
+export default AddSubcateg

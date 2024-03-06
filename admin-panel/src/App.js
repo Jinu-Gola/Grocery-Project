@@ -9,6 +9,7 @@ import AddSubCateg from './Components/AddSubcateg'
 
 import ViewProduct from './Components/ViewProduct';
 import ViewCategory from './Components/ViewCategory';
+import ViewSubCateg from './Components/ViewSubCateg';
 
 import UpdateProduct from './Components/UpdateProduct';
 
@@ -34,6 +35,8 @@ function App() {
           <Route path='/addsubcat' element={<AddSubCateg />} />
           <Route path="/productlist" element={<ViewProduct />} />
           <Route path="/categorylist" element={<ViewCategory />} />
+          <Route path="/sub-categorylist" element={<ViewSubCateg />} />
+
 
           <Route path="/updateproduct/:id" element={<UpdateProduct />} />
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-import { Link,useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 function Fruits() {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
 
@@ -84,25 +84,30 @@ function Fruits() {
                                     <div className="col-lg-12">
                                         <div className="row g-4">
                                             {product.map((item) => (
-                                                <div className="col-md-6 col-lg-4 col-xl-3">
+                                                <div className="col-md-6 col-lg-4 col-xl-3" onClick={() => navigate(`/product-detail/${item._id}`)}>
 
                                                     <div className="rounded position-relative fruite-item">
                                                         <div className="fruite-img">
                                                             <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
                                                         </div>
                                                         {/* <div className="text-white bg-secondary px-3 py-1 rounded position-absolute" style={{ top: 10, left: 10 }}>Fruits</div> */}
-                                                        <div  className="p-4 border border-secondary border-top-0 rounded-bottom" >
-                                                            <h4>{item.product_name}</h4>
+                                                        <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
+                                                            <h5 className='product'>{item.product_name}</h5>
                                                             {/* <p>{item.description}</p> */}
                                                             <div className="d-flex justify-content-between flex-lg-wrap">
                                                                 <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
-                                                                <Link to='/cart/:id' className="btn border border-secondary rounded-pill px-3 text-primary"><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</Link>
+                                                                <button className="btn border border-secondary rounded-pill px-3 text-primary"><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
                                                             </div>
                                                             {/* <div className='d-flex .justify-content-around flex-lg-wrap'> */}
                                                             {/* </div> */}
                                                         </div>
                                                     </div>
+
+                                                    {/* <div className="d-flex .justify-content-around flex-lg-wrap"> */}
+                                                    {/* </div> */}
+                                                    {/* </div> */}
                                                 </div>
+                                                
                                             ))}
 
                                         </div>

@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom';
+import './login-signup.css'
+
 
 function Register() {
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ function Register() {
 
     localStorage.setItem("user", JSON.stringify({ name, email, password, mobile }));
     if (name === '' || email === '' || password === '' || mobile === '') {
-     alert( setError(true));
+      alert(setError(true));
     } else {
       setError(false);
       setSubmit(true);
@@ -42,37 +44,53 @@ function Register() {
   return (
     <>
 
-      <h1>Sign Up</h1>
-      <div id='reg-form'>
-        <form onSubmit={data} className="form-signup">
-          <div className="social-login">
-            <button className="btn facebook-btn social-btn" type="button"><span><i className="fab fa-facebook-f" /> Sign up with Facebook</span> </button>
-          </div>
-          <div className="social-login">
-            <button className="btn google-btn social-btn" type="button"><span><i className="fab fa-google-plus-g" /> Sign up with Google+</span> </button>
-          </div>
-          <p style={{ textAlign: 'center' }}>OR</p>
-          <div>
-            <input type="text" className="form-control" placeholder="Full name" name="name" value={name} onChange={(e) => setName(e.target.value)} />
-          </div><br />
-          <div>
-            <input type="email" className="form-control" name="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div><br />
-          <div>
-            <input type="number" className="form-control" name="mobile" placeholder="Mobile No" value={mobile} onChange={(e) => setMobile(e.target.value)} />
-          </div><br />
-          <div>
-            <input type="password" className="form-control" name="password" placeholder="Password" value={password} onChange={(e) => setPass(e.target.value)} />
-          </div><br />
+      {/* <h1>Sign Up</h1>
+      <div id='reg-form'> */}
+      <div className='root'>
+        <div className="login-wrap">
+          <div className="login-html">
+            <input id="tab-1" type="radio" name="tab" className="sign-in" /><label htmlFor="tab-1" className="tab"><Link to='/login' >Sign In</Link></label>
+            <input id="tab-2" type="radio" name="tab" className="sign-up" /><label htmlFor="tab-2" className="tab"><Link to='/signup'>Sign Up</Link></label>
+            {/* <div className="login-form"> */}
+              <form onSubmit={data}>
+                <div className="sign-up-htm">
+                  <div className="group">
+                    <label htmlFor="user" className="label">Username</label>
+                    <input id="user" type="text" className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
+                  </div>
 
-          <div>
-            <button type="submit" className="btn btn-primary btn-block"><i className="fas fa-user-plus" />Sign Up</button>
-            <Link to='/login' id="cancel_signup"><i className="fas fa-angle-left" /> Back</Link>
+                  <div className="group">
+                    <label htmlFor="pass" className="label">Email Address</label>
+                    <input id="pass" type="text" className="input" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
 
+                  <div className="group">
+                    <label htmlFor="pass" className="label">Password</label>
+                    <input id="pass" type="password" className="input" data-type="password" value={password} onChange={(e) => setPass(e.target.value)} placeholder="Password" />
+                  </div>
+
+                  <div className="group">
+                    <label htmlFor="mobile" className="label">Mobile No.</label>
+                    <input id="pass" type="number" className="input" data-type="password" placeholder="Mobile No" value={mobile} onChange={(e) => setMobile(e.target.value)} />
+                  </div>
+
+                  <div className="group">
+                    <button type="submit" className="btn btn-primary btn-block"><i className="fas fa-user-plus" />Sign Up</button>
+                    <Link to='/login' id="cancel_signup"><i className="fas fa-angle-left" /> Back</Link>
+
+                  </div>
+                  <div className="hr" />
+                  <div className="foot-lnk">
+                    <label htmlFor="tab-1">Already Member?
+                    </label></div>
+                </div>
+              </form>
+            {/* </div> */}
           </div>
-
-        </form>
+        </div>
       </div>
+
+      {/* </div> */}
     </>
   )
 }

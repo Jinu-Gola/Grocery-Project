@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { Link,useNavigate} from 'react-router-dom'
+import axios from 'axios'
 
 function Header(props) {
     const navigate=useNavigate()
@@ -15,7 +16,22 @@ function Header(props) {
 
     },[search])
 
-    
+    //========= category display =========
+    const [category_name, setCategory_name] = useState([]);
+    useEffect(() => {
+        show();
+    }, [])
+
+    const show = async () => {
+        try {
+            const result = await axios.get("http://localhost:8080/categ").then((result) => {
+                setCategory_name(result?.data)
+
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
     return (
@@ -44,8 +60,16 @@ function Header(props) {
                         <div className="collapse navbar-collapse bg-white" id="navbarCollapse">
                             <div className="navbar-nav mx-auto">
                                 <Link to="/" className="nav-item nav-link active">Home</Link>
-                                <Link to="/product" className="nav-item nav-link">Our Products</Link>
+                                {/* <Link to="/product" className="nav-item nav-link">Our Products</Link> */}
                                 {/* <Link to="/product-detail/:id" className="nav-item nav-link">Product Detail</Link> */}
+                                <div className="nav-item dropdown">
+                                    <Link to='' className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Our Products</Link>
+                                    <div className="dropdown-menu m-0 bg-secondary rounded-0">
+                                        {category_name.map((item) => (
+                                            <Link to={`/category/${item._id}`} className="dropdown-item">{item.cname}</Link>
+                                        ))}
+                                    </div>
+                                </div>
                                 <div className="nav-item dropdown">
                                     <Link className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</Link>
                                     <div className="dropdown-menu m-0 bg-secondary rounded-0">

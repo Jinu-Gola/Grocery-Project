@@ -113,7 +113,7 @@ function Sidebar() {
                                     <Link to='/addsubcat' className="nav-link" >Add Sub-Category</Link>
                                 </li>
                                 <li className="nav-item"> <Link to='/categorylist' className="nav-link" >Category List</Link></li>
-                                {/* <li className="nav-item"> <Link to='/signup' className="nav-link" > Register </Link></li> */}
+                                <li className="nav-item"> <Link to='/sub-categorylist' className="nav-link" > Sub-Category List </Link></li>
                             </ul>
                         </div>
                     </li>
