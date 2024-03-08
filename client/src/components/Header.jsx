@@ -33,6 +33,9 @@ function Header(props) {
         }
     }
 
+    const[cart,setCart]=useState(0)
+    const cartlist=JSON.parse(localStorage.getItem('cartlist'));
+    // console.log(cartlist,"ccccccccccccccccc");
 
     return (
         <>
@@ -63,7 +66,7 @@ function Header(props) {
                                 {/* <Link to="/product" className="nav-item nav-link">Our Products</Link> */}
                                 {/* <Link to="/product-detail/:id" className="nav-item nav-link">Product Detail</Link> */}
                                 <div className="nav-item dropdown">
-                                    <Link to='' className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Our Products</Link>
+                                    <Link onClick={()=>navigate('/product')} className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Our Products</Link>
                                     <div className="dropdown-menu m-0 bg-secondary rounded-0">
                                         {category_name.map((item) => (
                                             <Link to={`/category/${item._id}`} className="dropdown-item">{item.cname}</Link>
@@ -85,9 +88,13 @@ function Header(props) {
                                 <input type="search" className="form-control p-3 me-4" onChange={(e)=>setSearch(e.target.value)} id="search-icon-1" placeholder="Search" aria-describedby="search-icon-1"  />
                                 {/* <span id="search-icon-1" className="input-group-text p-3"><i className="fa fa-search" /></span> */}
                                 {/* <button className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i className="fas fa-search text-primary" /></button> */}
-                                <Link to="#" className="position-relative me-4 my-auto">
+                                <Link to="/cart" className="position-relative me-4 my-auto">
                                     <i className="fa fa-shopping-bag fa-2x" />
-                                    <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: '-5px', left: 15, height: 20, minWidth: 20 }}>3</span>
+                                    <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: '-5px', left: 15, height: 20, minWidth: 20 }} onClick={()=>{setCart(1)}} >{localStorage.getItem('cartlist') ? JSON.parse(localStorage.getItem('cartlist')).length : 0}</span>
+                                </Link>
+                                <Link to="" className="position-relative me-4 my-auto">
+                                    <i className="fa fa-heart fa-2x" />
+                                    <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: '-5px', left: 15, height: 20, minWidth: 20 }}  >0</span>
                                 </Link>
                                 <Link to="/login" className="my-auto">
                                     <i className="fas fa-user fa-2x" />

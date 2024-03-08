@@ -15,6 +15,7 @@ import Login from './components/Login-Signup/Login'
 import Signup from './components/Login-Signup/Register'
 import Fruits from './components/Fruits';
 import Vegitables from './components/Vegitables';
+import Category from './components/Category';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ function App() {
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-              <Route path="/category/:id" element={<Product />} />
+              <Route path="/category/:id" element={<Category />} />
 
               <Route path="/fruits" element={<Fruits />} />
               <Route path="/vegitable" element={<Vegitables />} />

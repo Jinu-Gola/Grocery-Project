@@ -12,7 +12,7 @@ function ProductDetail() {
     const [oneproduct, setOneProduct] = useState([])
     const [oneCat, setOneCat] = useState([])
     const { id } = useParams();
-    // console.log(id,">>>>>>>>>>>>>>>>");
+    console.log(id,">>>>>>>>>>>>>>>>");
     useEffect(() => {
         getItem();
     }, []);
@@ -33,8 +33,8 @@ function ProductDetail() {
                 const category_res = await axios.get("http://localhost:8080/one-cat/" + product_res.data.cid);
                 setOneCat(category_res.data)
             }
-            // console.log("data set")
-            console.log(product_res.data.cid);
+            console.log("data set")
+            // console.log(product_res.data.cid);
         } catch (error) {
             console.log("error : " + error);
         }
@@ -87,6 +87,7 @@ function ProductDetail() {
                                 </div>
                                 <div className="col-lg-6">
                                     <h4 className="fw-bold mb-3">{oneproduct.product_name}</h4>
+                                    
                                     {/* <h6 className="mb-3">Category: {oneCat.cname}</h6> */}
                                     <h5 className="fw-bold mb-3">₹{oneproduct.price}</h5>
                                     {/* <div className="d-flex mb-4">

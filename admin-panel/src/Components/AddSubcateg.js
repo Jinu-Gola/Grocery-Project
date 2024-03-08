@@ -46,14 +46,14 @@ function AddSubcateg() {
 
     // For Add Sub-Category
     const [subcname, setSubCname] = useState("");
-    // const [cid, setCid] = useState("");
+    const [cid, setCid] = useState("");
 
     const dataSub = async (e) => {
         e.preventDefault();
         try {
             const formData = new FormData()
             formData.append('subcname', subcname)
-            // formData.append('c_id', cid)
+            formData.append('c_id', cid)
             // console.log(subcname,)
 
             const res = await axios.post("http://localhost:8080/subcat", formData )
@@ -113,15 +113,15 @@ function AddSubcateg() {
                                         <label htmlFor="subcname">Sub-Category Name</label>
                                         <input type="text" className="form-control" id='subcname' value={subcname} name='subcname' onChange={(e) => setSubCname(e.target.value)} placeholder="Sub-Category Name" />
                                     </div>
-                                    {/* <div className="form-group">
+                                    <div className="form-group">
                                         <label htmlFor="cid">Category Id</label>
                                         <select class="form-control" value={cid} onChange={(e) => setCid(e.target.value)}>
                                             {data.map((item, index) => (
                                                 <option class="dropdown-header" value={item._id} > {item.cname}</option>
                                             ))}
                                         </select>
-                                        <input type="text" className="form-control" id='cid' value={cid} name='cid' onChange={(e) => setCid(e.target.value)}  placeholder="Category Id" />
-                                    </div> */}
+                                        {/* <input type="text" className="form-control" id='cid' value={cid} name='cid' onChange={(e) => setCid(e.target.value)}  placeholder="Category Id" /> */}
+                                    </div>
 
                                     <button type="submit" className="btn btn-primary mr-2">Submit</button>
                                     <button className="btn btn-dark">Cancel</button>

@@ -29,7 +29,7 @@ function ViewSubCateg() {
             if (res.data === "Token is expired ") {
                 // console.log(res.data);
                 localStorage.removeItem("token");
-                navigate("/login");
+                navigate("/");
                 alert("Token is expired ");
             }
             else {

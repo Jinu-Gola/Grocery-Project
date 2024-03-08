@@ -4,7 +4,7 @@ const pro_detailsSchema = new mongoose.Schema({
     product_name: {
         type: String,
         require: true,
-        unique:true
+        unique: true
     },
     price: {
         type: String,
@@ -30,10 +30,16 @@ const pro_detailsSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    cid:{
-        type:String,
-        require:true
+    cid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "category",
+        require: true
     }
+    // uid:{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "registration",
+    //     require: true
+    // }
 });
 
 

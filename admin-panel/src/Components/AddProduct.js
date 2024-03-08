@@ -52,9 +52,10 @@ function AddProduct() {
     // const[submit,setSubmit]=useState(false);
     const navigate = useNavigate();
     const data = async (e) => {
-
+        
         e.preventDefault();
-
+        
+        console.log("cid", cid);
         try {
 
             const formData = new FormData()
@@ -148,7 +149,8 @@ function AddProduct() {
                                             </div>
                                             <div class="col">
                                                 <label for="cid">Product Category Id</label>
-                                                <select class="form-control" value={cid} onChange={(e) => setCid(e.target.value)}>
+                                                <select class="form-control" value={cid} onChange={(e) => { setCid(e.target.value)}}>
+                                                    <option class="dropdown-header" value={0} >Select Category</option>
                                                     {categ.map((item, index) => (
                                                         <option class="dropdown-header" value={item._id} > {item.cname}</option>
                                                     ))}

@@ -2,7 +2,9 @@ const pro_detailModel = require("../Model/product_detail");
 
 const product_detailsPost = async (req, res) => {
     try {
+        // console.log(req.body,"KKKKKKKKKKKK");
         const { product_name, price, qty, size, description, brand_name, cid } = req.body;
+        // console.log(cid,"KKKKKKKKKKKKKK");
 
         var arrImage = [];
 
@@ -20,11 +22,12 @@ const product_detailsPost = async (req, res) => {
             brand_name: brand_name,
             cid: cid
         });
-
+        // console.log(data)
         res
             .status(200)
             .send({ message: "Product Add successfully..!! ", data: data });
     } catch (error) {
+        // console.log(error,"DDDDDDDDDDDDDDd");
         res.status(401).send(error);
     }
 };
@@ -49,7 +52,7 @@ const product_detailsPut = async (req, res) => {
         const id = req.params.id;
         // const { product_name, price, qty, size, description, brand_name } = req.body;
 
-        // console.log(id);
+        console.log(id);
         const data = await pro_detailModel.findByIdAndUpdate(id, {
             product_name: req.body.product_name,
             price: req.body.price,
@@ -60,7 +63,7 @@ const product_detailsPut = async (req, res) => {
             brand_name: req.body.brand_name,
             cid: req.body.cid,
         })
-        // console.log(data);
+        console.log(data);
         res.send(data)
     } catch (error) {
         res.send(error);
@@ -79,7 +82,8 @@ const oneProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const oneProduct = await pro_detailModel.findOne({ _id: id })
-        res.send(oneProduct.cid)
+        res.send(oneProduct)
+        // res.send(oneProduct);
     } catch (error) {
         // res.status(401).send(error)
         console.log("error", error)
@@ -89,15 +93,34 @@ const oneProduct = async (req, res) => {
 
 const categoryProduct = async (req, res) => {
     try {
-        const id = req.params.id;
-        const oneProduct = await pro_detailModel.findOne({ _id: id })
-        // res.send(oneProduct.cid)
+        let query = {};
 
+        if (req.params.cid) {
+            query.cid = req.params.cid;
+        }
+
+        // if (req.query.keyword) {
+        //     query.$or = [
+        //         { product_name: { $regex: req.query.keyword, $options: "i" } },
+        //     ];
+        // }
+        // Search for products containing the keyword in the product_name field
+        const data = await pro_detailModel
+            .find(query)
+            .populate("cid")
+            // .populate("uid")
+
+        console.log(data, "!!!!!!!!!1");
+        // console.log("Query:", { product_name: { $regex: keyword, $options: "i" } });
+        // console.log("Data:", data);
+
+        res.status(200).send({ message: "Success", data: data });
     } catch (error) {
-        // res.status(401).send(error)
-        console.log("error", error)
+        console.error("Error:", error);
+        res.status(500).send({ message: "Internal Server Error" });
     }
-}
+};
+
 
 const searchProduct = async (req, res) => {
     try {

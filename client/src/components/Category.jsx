@@ -6,40 +6,41 @@ import Footer from './Footer'
 import Search from './Search'
 function Category() {
     const navigate = useNavigate()
-    const [profiles, setProfiles] = useState("")
-    const [search, setSearch] = useState();
+    // const [profiles, setProfiles] = useState("")
+    // const [search, setSearch] = useState();
     var token = localStorage.getItem("token");
 
-    var params = useParams();
-    console.log(params);
+    var {id} = useParams();
+    // console.log(id,"iiiiiiiiiiiiiiiiiiiiippppppppppp");
 
 
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
+    const [category,setCategory]=useState([])
 
     useEffect(() => {
         display();
 
     }, [])
 
-    const profile = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8080/auth/${token}`);
-            console.log(res.data);
-            if (res.data === "Token is expired ") {
-                // console.log(res.data);
-                localStorage.removeItem("token");
-                navigate("/login");
-                alert("Token is expired ");
-            }
-            else {
-                setProfiles(res.data);
-                console.log("admin =" + res.data.isAdmin)
-            }
-        } catch (error) {
-            console.log("profile err", error);
-        }
-    };
+    // const profile = async () => {
+    //     try {
+    //         const res = await axios.get(`http://localhost:8080/auth/${token}`);
+    //         console.log(res.data);
+    //         if (res.data === "Token is expired ") {
+    //             // console.log(res.data);
+    //             localStorage.removeItem("token");
+    //             navigate("/login");
+    //             alert("Token is expired ");
+    //         }
+    //         else {
+    //             setProfiles(res.data);
+    //             console.log("admin =" + res.data.isAdmin)
+    //         }
+    //     } catch (error) {
+    //         console.log("profile err", error);
+    //     }
+    // };
 
 
     const searchFunction = (data) => {
@@ -58,29 +59,21 @@ function Category() {
 
     }
 
-    if(!params){
+
     const display = async () => {
         try {
-            const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
-                setProduct(result?.data)
-                setProductData(result?.data)
+            const result = await axios.get(`http://localhost:8080/category/${id}`).then((result) => {
+                // setProduct(result?.data)
+                // setProductData(result?.data)
+                setCategory(result?.data)
+                console.log(setProductData);
             })
         } catch (error) {
             console.log(error)
+            // res.send(error)
         }
     }
-    }else{
-        const display = async () => {
-            try {
-                const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
-                    setProduct(result?.data)
-                    setProductData(result?.data)
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        } 
-    }
+
 
     //========= category display =========
     const [category_name, setCategory_name] = useState([]);
@@ -217,7 +210,7 @@ function Category() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col-lg-12">
+                                        {/* <div className="col-lg-12">
                                             <h4 className="mb-3">Featured products</h4>
                                             {product.map((item) => (
 
@@ -236,13 +229,12 @@ function Category() {
                                                         </div>
                                                         <div className="d-flex mb-2">
                                                             <h5 className="fw-bold me-2">₹{item.price}</h5>
-                                                            {/* <h5 className="text-danger text-decoration-line-through">4.11 $</h5> */}
                                                         </div>
                                                     </div>
                                                 </div>
                                             ))}
 
-                                        </div>
+                                        </div> */}
                                         {/* <div className="col-lg-12">
                                             <div className="position-relative">
                                                 <img src="assets/img/banner-fruits.jpg" className="img-fluid w-100 rounded" alt />

@@ -87,7 +87,8 @@ app.get("/getproduct", pro_detailModel.product_detailsGet);
 app.put("/updproduct/:id", upload.array("image"), pro_detailModel.product_detailsPut);
 app.delete("/delproduct/:id", pro_detailModel.product_detailsDelete);
 app.get("/oneproduct/:id", pro_detailModel.oneProduct)
-app.get("/category/:id", pro_detailModel.categoryProduct)
+app.get("/category/:cid", pro_detailModel.categoryProduct)
+// app.get("/getproduct/:id", pro_detailModel.product_detailsGet);
 
 app.get("/search-product", pro_detailModel.searchProduct)
 

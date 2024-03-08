@@ -20729,7 +20729,7 @@ div.tagsinput {
               font-size: inherit;
               color: inherit; }
         .sidebar .nav .nav-item .nav-link .menu-title {
-          color: inherit;
+          color: whitesmoke;
           display: inline-block;
           font-size: 0.9375rem;
           line-height: 1;
@@ -20897,7 +20897,7 @@ div.tagsinput {
       .sidebar .nav.sub-menu .nav-item {
         padding: 0; }
         .sidebar .nav.sub-menu .nav-item .nav-link {
-          color: #6c7293;
+          color: #ced9dc;
           padding: 0.5rem 0.35rem;
           position: relative;
           font-size: 0.855rem;

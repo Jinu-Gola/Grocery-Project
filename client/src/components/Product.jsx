@@ -10,14 +10,15 @@ function Product() {
     const [search, setSearch] = useState();
     var token = localStorage.getItem("token");
 
-    var params = useParams();
-    console.log(params);
+    // var {params} = useParams();
+    // console.log(params);
 
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
 
     useEffect(() => {
         display();
+        profile()
 
     }, [])
 
@@ -33,7 +34,7 @@ function Product() {
             }
             else {
                 setProfiles(res.data);
-                console.log("admin =" + res.data.isAdmin)
+                // console.log("admin =" + res.data.isAdmin)
             }
         } catch (error) {
             console.log("profile err", error);
@@ -74,31 +75,58 @@ function Product() {
         }
     }
 
-    if (!params) {
-        const display = async () => {
-            try {
-                const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
-                    setProduct(result?.data)
-                    setProductData(result?.data)
-                })
-            } catch (error) {
-                console.log(error)
+    const addToCart = async (cartProduct) => {
+        var cart = []
+        cart = JSON.parse(localStorage.getItem('cartlist')) || [];
+        if (cart.length > 0) {
+            let count = cart.some(item => item._id === cartProduct._id)
+            console.log(count, "aaaaaaaaaaaaaaa");
+            if (!count) {
+                cart.push({ ...cartProduct, u_qty: 1, total_amt: cartProduct.price })
+                localStorage.setItem('cartlist', JSON.stringify(cart));
+                window.location.reload()
+                alert("Product Added to Cartlist...!!")
+            } else {
+                alert("Product Already Exist in Cartlist")
             }
-        }
+        } else {
 
-    }
-    else{
-        const display = async () => {
-            try {
-                const result = await axios.get(`http://localhost:8080/category/${params}`).then((result) => {
-                    setProduct(result?.data)
-                    setProductData(result?.data)
-                })
-            } catch (error) {
-                console.log(error)
-            }
+            cart.push({ ...cartProduct, u_qty: 1, total_amt: cartProduct.price })
+            localStorage.setItem('cartlist', JSON.stringify(cart));
+            window.location.reload()
+            alert("ProductAdded to Cartlist...!!!")
+
         }
     }
+    
+    const display = async () => {
+        //     if (!params) {
+        try {
+            const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
+                setProduct(result?.data) //fiter product data
+                setProductData(result?.data) //all product data
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    // else {
+    //     try {
+    //         const result = await axios.get(`http://localhost:8080/category/${params}`).then((result) => {
+    //             setProduct(result?.data) //fiter product data
+    //             setProductData(result?.data) //all product data
+    //         })
+    //         // console.log(setProductData);
+    //         // console.log(setProduct);
+
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     }
+
+
+    // }
+
 
     return (
         <>
@@ -247,20 +275,20 @@ function Product() {
                                 <div className="col-lg-9">
                                     <div className="row g-4 justify-content-center" >
                                         {product.map((item) => (
-                                            <div className="col-md-6 col-lg-6 col-xl-4" onClick={() => navigate(`/product-detail/${item._id}`)}>
+                                            <div className="col-md-6 col-lg-6 col-xl-4">
 
                                                 <div className="rounded position-relative fruite-item">
-                                                    <div className="fruite-img">
+                                                    <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                         <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 h-100 rounded-top " alt />
                                                     </div>
-                                                    {/* <div className="text-white bg-secondary px-3 py-1 rounded position-absolute" style={{ top: 10, left: 10 }}>Fruits</div> */}
+                                                    <div className="  px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px" }}><i className="fa fa-heart fa-2x text-black " /></div>
                                                     <div className="p-4 border border-secondary border-top-0 rounded-bottom">
                                                         <h5 className='productName'>{item.product_name}</h5>
                                                         {/* <p>{item.description}</p> */}
                                                         <div className="d-flex justify-content-between flex-lg-wrap flex-column">
                                                             <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
-                                                            <button className="btn border border-secondary rounded-pill mt-3 px-3 text-primary"><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
-
+                                                            <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item)  }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
+                                                            {/* <i className="fa fa-heart me-2 text-danger rounded-pill mt-3 px-3 " /> */}
                                                         </div>
                                                         {/* <div className="d-flex .justify-content-around flex-lg-wrap"> */}
                                                         {/* </div> */}

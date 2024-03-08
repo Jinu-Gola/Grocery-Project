@@ -30,7 +30,7 @@ function UpdateProduct() {
             if (res.data === "Token is expired ") {
                 // console.log(res.data);
                 localStorage.removeItem("token");
-                navigate("/login");
+                navigate("/");
                 alert("Token is expired ");
             }
             else {
@@ -71,7 +71,7 @@ function UpdateProduct() {
             const response = await axios.get("http://localhost:8080/oneproduct/" + id);
            
 
-            console.log("response");
+            console.log(response);
             // setFormdata(response.data);
             setFormdata({
                 image: response.data.image[0],
