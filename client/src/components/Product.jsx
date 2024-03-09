@@ -6,21 +6,60 @@ import Footer from './Footer'
 import Search from './Search'
 function Product() {
     const navigate = useNavigate()
+    var { id } = useParams();
     const [profiles, setProfiles] = useState("")
     const [search, setSearch] = useState();
     var token = localStorage.getItem("token");
-
+console.log(id);
     // var {params} = useParams();
     // console.log(params);
-
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
+    const [price, setPrice] = useState(0)
 
     useEffect(() => {
         display();
         profile()
 
     }, [])
+
+    useEffect(() => {
+        if(price >=1){
+            try {
+                axios.get(`http://localhost:8080/getproduct/?min=0=&max=${price}`).then((result) => {
+                    setProduct(result?.data) //fiter product data
+                    setProductData(result?.data) //all product data
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        // display();
+    }, [price])
+
+    useEffect(() => {
+        if(id){
+            try {
+                axios.get(`http://localhost:8080/category/${id}`).then((result) => {
+                    console.log(result.data.data);
+                    setProduct(result?.data?.data) //fiter product data
+                    setProductData(result?.data?.data) //all product data
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                 axios.get("http://localhost:8080/getproduct").then((result) => {
+                    setProduct(result?.data) //fiter product data
+                    setProductData(result?.data) //all product data
+                })
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+    }, [id])
 
     const profile = async () => {
         try {
@@ -68,7 +107,6 @@ function Product() {
         try {
             const result = await axios.get("http://localhost:8080/categ").then((result) => {
                 setCategory_name(result?.data)
-
             })
         } catch (error) {
             console.log(error)
@@ -82,7 +120,7 @@ function Product() {
             let count = cart.some(item => item._id === cartProduct._id)
             console.log(count, "aaaaaaaaaaaaaaa");
             if (!count) {
-                cart.push({ ...cartProduct, u_qty: 1, total_amt: cartProduct.price })
+                cart.push({ ...cartProduct, qty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
                 alert("Product Added to Cartlist...!!")
@@ -91,10 +129,10 @@ function Product() {
             }
         } else {
 
-            cart.push({ ...cartProduct, u_qty: 1, total_amt: cartProduct.price })
+            cart.push({ ...cartProduct, qty: 1, total_amt: cartProduct.price })
             localStorage.setItem('cartlist', JSON.stringify(cart));
             window.location.reload()
-            alert("ProductAdded to Cartlist...!!!")
+            alert("Product Added to Cartlist...!!!")
 
         }
     }
@@ -127,6 +165,8 @@ function Product() {
 
     // }
 
+ 
+
 
     return (
         <>
@@ -145,7 +185,6 @@ function Product() {
                         </div>
                     </div>
                 </div> */}
-
             </div>
             <Search />
             {/* Single Page Header start */}
@@ -196,7 +235,7 @@ function Product() {
                                                     <li>
                                                         {category_name.map((item) => (
                                                             <div className="d-flex justify-content-between fruite-name">
-                                                                <Link to={`/category/${item._id}`} ><i className="fas fa-fruit-alt me-2" />{item.cname}</Link>
+                                                                <Link to={`/product/${item._id}`} ><i className="fas fa-fruit-alt me-2" />{item.cname}</Link>
                                                                 {/* <span>(3)</span> */}
                                                             </div>
                                                         ))}
@@ -207,8 +246,8 @@ function Product() {
                                         <div className="col-lg-12">
                                             <div className="mb-3">
                                                 <h4 className="mb-2">Price</h4>
-                                                <input type="range" className="form-range w-100" id="rangeInput" name="rangeInput" min={0} max={500} defaultValue={0} oninput="amount.value=rangeInput.value" />
-                                                <output id="amount" name="amount" min-velue={0} max-value={500} htmlFor="rangeInput">0</output>
+                                                <input type="range" className="form-range w-100" id="rangeInput" step="" name="rangeInput" min={0} max={1000} defaultValue={price} onChange={(e)=>{setPrice(e.target.value);}}/>
+                                                <output id="amount" name="rangeInput" min-velue={0} max-value={1000} htmlFor="rangeInput">{price}</output>
                                             </div>
                                         </div>
                                         <div className="col-lg-12">
@@ -239,7 +278,6 @@ function Product() {
                                         <div className="col-lg-12">
                                             <h4 className="mb-3">Featured products</h4>
                                             {product.map((item) => (
-
                                                 <div className="d-flex align-items-center justify-content-start" >
                                                     <div className="rounded me-4" style={{ width: 100, height: 100 }}>
                                                         <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid rounded" />

@@ -42,8 +42,8 @@ const subcateModel = require("./Controller/subcategory.js")
 // const productModel=require("./Controller/product.controller.js")
 const pro_detailModel = require('./Controller/proDetail.controller.js')
 const cartModel = require("./Controller/cart.controller.js")
+const payment=require('./Controller/payment.controller.js')
 // const { config } = require("process");
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -124,7 +124,9 @@ app.get("/search-product", pro_detailModel.searchProduct)
 // app.get("/cont/:id", verifyToken, contactModel.contGet)
 // app.delete("/cont/:id", contactModel.contDel)
 
-
+// payment api
+app.post("/orders",payment.orders)
+app.post('/verify',payment.verfiy)
 
 
 app.listen(8080);

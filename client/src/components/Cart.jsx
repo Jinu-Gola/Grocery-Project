@@ -1,14 +1,36 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Search from './Search'
 import Header from './Header'
 import Footer from './Footer'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import axios from 'axios'
 
 function Cart() {
-    const cartlist = JSON.parse(localStorage.getItem('cartlist'))
-    const [cartitem, setCartItem] = useState(cartlist)
+    var token = localStorage.getItem("token");
+
+    const navigate = useNavigate()
+    const [cartitem, setCartItem] = useState([])
     const [cartTotal, setCartTotal] = useState(0);
+    const [profiles, setProfiles] = useState("")
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/login')
+        }
+        profile();
+        cartList()
+    }, [])
+
+    const cartList = async () => {
+        let cartlist = [];
+        cartlist = JSON.parse(localStorage.getItem('cartlist'))
+        setCartItem(cartlist)
+    }
+
+    const totalPrice = () => {
+        return cartitem.reduce((total, item) => total + (item.qty * item.price), 0)
+    }
 
     const removeCart = (item) => {
         const newCart = cartitem.filter((cart) => cart._id !== item._id)
@@ -17,19 +39,80 @@ function Cart() {
     }
     // console.log(cartitem,"after itemssss removed...");
 
-    const handleQty = (qty, item, p_total) => {
-        console.log(cartitem[item], "iiiiiiiiiiiiiiiii");
-        cartitem[item] = { ...cartitem[item], u_qty: qty, total_amt: parseInt(qty) * parseInt(cartitem[item].price) }
+    const handleQty = (qty, index, item) => {
+        cartitem[index] = { ...item, qty: +qty, total_amt: +qty * +item.price }
         setCartItem([...cartitem])
+        // console.log(cartitem[index]);
         localStorage.setItem('cartlist', JSON.stringify(cartitem))
     }
 
-    // const subTotals=(total)=>{
-    //     console.log(p_total, parseInt(cartTotal),parseInt(p_total));
-    //     let subTotal=parseInt(cartTotal)+parseInt(p_total)
-    //     setCartTotal(subTotal)
 
-    // }
+    const hadelpayment = async (amt) => {
+        try {
+            const _data = { amount: amt };
+            const res = await axios.post('http://localhost:8080/orders', _data)
+            console.log("payment data", res.data);
+            handelopenrazorpay(res.data.data);
+        } catch (error) {
+            console.log("payment error", error);
+        }
+    }
+
+
+    const profile = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+            console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/login");
+                alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                // console.log("admin =" + res.data.isAdmin)
+            }
+        } catch (error) {
+            console.log("profile err", error);
+        }
+    };
+
+    const handelopenrazorpay = (data) => {
+        var options = {
+            "key": "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
+            "amount": data.amount / 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": data.currency,
+            "name": "SuperGrocery",
+            "description": "Test Transaction",
+            "order_id": data.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
+            "handler": function (response) {
+                // console.log("response",response);
+
+                axios.post('http://localhost:8080/verify', { response: response }).then((res) => {
+                    if (res.status === 200) {
+                        console.log("if condition", res)
+                        localStorage.removeItem("cartlist");
+                        
+                        cartList()
+                        navigate('/');
+                    }
+                    else {
+                        console.log("else condition", res);
+                    }
+                })
+
+
+
+
+            },
+            "theme": {
+                "color": "#81c408"
+            }
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+    }
 
     return (
         <>
@@ -64,7 +147,8 @@ function Cart() {
                             <tbody>
                                 {cartitem && cartitem?.map((item, index) => {
                                     let p_total = parseInt(item?.qty) * parseInt(item?.price);
-
+                                    const totalqty = +item.qty
+                                    console.log(totalqty);
                                     return (<tr>
                                         <th scope="row">
                                             <div className="d-flex align-items-center">
@@ -81,21 +165,21 @@ function Cart() {
                                             <div className="input-group quantity mt-4" style={{ width: 100 }}>
                                                 <div className="input-group-btn">
                                                     <button className="btn btn-sm btn-minus rounded-circle bg-light border" onClick={() => {
-                                                        // if (item.u_qty > 1) {
-                                                        handleQty(item.qty - 1, item, p_total)
-                                                        // }
-                                                        // else {
-                                                        alert("Not valid...")
-                                                        // }
+                                                        if (item.qty > 1) {
+                                                            handleQty(+item.qty - 1, index, item)
+                                                        }
+                                                        else {
+                                                            alert("Not valid...")
+                                                        }
                                                     }}>
                                                         <i className="fa fa-minus" />
                                                     </button>
                                                 </div>
-                                                <input type="text" className="form-control form-control-sm text-center border-0" value={item.u_qty} />
+                                                <input type="text" className="form-control form-control-sm text-center border-0" value={item.qty} />
                                                 <div className="input-group-btn">
                                                     <button className="btn btn-sm btn-plus rounded-circle bg-light border" onClick={() => {
-                                                        if (item.qty > item.u_qty) {
-                                                            handleQty(item.u_qty + 1, item, p_total)
+                                                        if (item.qty < 10) {
+                                                            handleQty(+item.qty + 1, index, item)
                                                         }
                                                         else {
                                                             alert('You cannot add product greater than total quantity of product..')
@@ -117,7 +201,7 @@ function Cart() {
                                             </button>
                                         </td>
                                     </tr>)
-                                })};
+                                })}
                             </tbody>
                         </table>
                     </div>
@@ -133,7 +217,7 @@ function Cart() {
                                     <h1 className="display-6 mb-4">Cart <span className="fw-normal">Total</span></h1>
                                     <div className="d-flex justify-content-between mb-4">
                                         <h5 className="mb-0 me-4">Subtotal:</h5>
-                                        <p className="mb-0">₹{cartitem?.reduce((tot, obj) => parseInt(tot) + parseInt(obj.total_amt), 0)}</p>
+                                        <p className="mb-0">₹{totalPrice()}</p>
                                     </div>
                                     <div className="d-flex justify-content-between">
                                         <h5 className="mb-0 me-4">Shipping</h5>
@@ -146,9 +230,9 @@ function Cart() {
                                 <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                                     <h5 className="mb-0 ps-4 me-4">Total</h5>
                                     {/* cartitem!=null?g_Total:item?.reduce(tot,obj)=>parseInt(tot) */}
-                                    <p className="mb-0 pe-4">₹{cartitem?.reduce((tot, obj) => parseInt(tot) + parseInt(obj.total_amt), 0)}</p>
+                                    <p className="mb-0 pe-4">₹{totalPrice()}</p>
                                 </div>
-                                <button className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
+                                <button className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onClick={() => { hadelpayment(totalPrice()) }}>Proceed Checkout</button>
                             </div>
                         </div>
                     </div>

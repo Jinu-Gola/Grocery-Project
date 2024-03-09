@@ -34,6 +34,15 @@ const product_detailsPost = async (req, res) => {
 
 const product_detailsGet = async (req, res) => {
     try {
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
+        if (minPrice && maxPrice) {
+            query.price = { $gte: minPrice, $lte: maxPrice };
+        } else if (minPrice) {
+            query.price = { $gte: minPrice };
+        } else if (maxPrice) {
+            query.price = { $lte: maxPrice };
+        }
         const data = await pro_detailModel.find();
         res.send(data);
     } catch (error) {
@@ -94,11 +103,20 @@ const oneProduct = async (req, res) => {
 const categoryProduct = async (req, res) => {
     try {
         let query = {};
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
 
         if (req.params.cid) {
             query.cid = req.params.cid;
         }
 
+        if (minPrice && maxPrice) {
+            query.price = { $gte: minPrice, $lte: maxPrice };
+        } else if (minPrice) {
+            query.price = { $gte: minPrice };
+        } else if (maxPrice) {
+            query.price = { $lte: maxPrice };
+        }
         // if (req.query.keyword) {
         //     query.$or = [
         //         { product_name: { $regex: req.query.keyword, $options: "i" } },
@@ -108,7 +126,7 @@ const categoryProduct = async (req, res) => {
         const data = await pro_detailModel
             .find(query)
             .populate("cid")
-            // .populate("uid")
+        // .populate("uid")
 
         console.log(data, "!!!!!!!!!1");
         // console.log("Query:", { product_name: { $regex: keyword, $options: "i" } });

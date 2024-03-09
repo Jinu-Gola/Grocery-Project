@@ -54,7 +54,7 @@ function Header(props) {
                         </div>
                     </div>
                 </div> */}
-                <div className="container px-0  bg-primary d-none d-lg-block">
+                <div className="container px-0  bg-primary">
                     <nav className="navbar navbar-light bg-white navbar-expand-xl">
                         <Link to='/' className="navbar-brand"><i className="fas fa-shopping-basket text-primary display-6"> SUPERGROCY</i></Link>
                         <button className="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -69,7 +69,7 @@ function Header(props) {
                                     <Link onClick={()=>navigate('/product')} className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Our Products</Link>
                                     <div className="dropdown-menu m-0 bg-secondary rounded-0">
                                         {category_name.map((item) => (
-                                            <Link to={`/category/${item._id}`} className="dropdown-item">{item.cname}</Link>
+                                            <Link to={`/product/${item._id}`} className="dropdown-item">{item.cname}</Link>
                                         ))}
                                     </div>
                                 </div>

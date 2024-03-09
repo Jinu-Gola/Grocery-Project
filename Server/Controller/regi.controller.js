@@ -6,29 +6,39 @@ const secretkey = '#jin@l#gol@'
 
 
 const usepost = async (req, res) => {
-    const { name, email, password, mobile } = req.body;
-    if (!name.match(/[a-z]/ || /[A-Z]/)) {
-        res.status(400).send({ Message: "Name must be only latters" })
+    try {
+        const { name, email, password, mobile } = req.body;
+        // if (!name.match(/[a-z]/ || /[A-Z]/)) {
+        //     res.status(400).send({ Message: "Name must be only latters" })
+        // }
+
+        // const user = await regModel.findOne({ email: email })
+        // if (user) {
+        //     alert('Email Already Exist..Try another one..!');
+        // }
+        const pass = await bcrypt.hash(password, 10);
+        const data = await regModel.create({
+            name: name,
+            email: email,
+            mobile: mobile,
+            password: pass,
+            // age: req.body.age,
+            // address: req.body.address,
+            // gender: req.body.gender,
+
+        })
+        if (data) {
+            res.status(200).send({ status: 1, message: "Signup Successful", data: data });
+        } else {
+            res.status(401).send("SignUp UnSuccessfull");
+        }
+        // const data = await regModel.create(req.body);
+        // res.send(data);
+    
+    } catch (error) {
+        res.send(error);
+
     }
-
-    const user = await regModel.findOne({ email: email })
-    if (user) {
-        alert('Email Already Exist..Try another one..!');
-    }
-    const pass = await bcrypt.hash(password, 10);
-    const data = await regModel.create({
-        name: name,
-        email: email,
-        mobile: mobile,
-        password: pass,
-        // age: req.body.age,
-        // address: req.body.address,
-        // gender: req.body.gender,
-
-    })
-
-    // const data = await regModel.create(req.body);
-    res.send(data);
 }
 
 const useget = async (req, res) => {
@@ -40,12 +50,12 @@ const useput = async (req, res) => {
     const id = req.params.id;
     const data = await regModel.findByIdAndUpdate(id, {
         name: req.body.name,
-        age: req.body.age,
         email: req.body.email,
         mobile: req.body.mobile,
-        address: req.body.address,
-        gender: req.body.gender,
         password: req.body.password,
+        // address: req.body.address,
+        // gender: req.body.gender,
+        // age: req.body.age,
 
     })
     res.send(data);
@@ -76,17 +86,7 @@ const loginUser = async (req, res) => {
         } else {
             res.status(401).send({ Message: "Email is Invalid..." });
         }
-        // if(email===user.email){
-        //     if(!pass){
-        //         res.send({message:"Password is invalid.."});
-        //     }
-        //     else{
-        //         res.send(user);
-        //     }
-        // }
-        // else{
-        //     res.send({message:"Email is invalid..."});
-        // }
+       
     } catch (error) {
         // res.send(error);
         res.send({ message: "Password and Email both are invalid.." });
