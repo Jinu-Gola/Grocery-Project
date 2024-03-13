@@ -7,10 +7,10 @@ import Search from './Search'
 function Product() {
     const navigate = useNavigate()
     var { id } = useParams();
-    const [profiles, setProfiles] = useState("")
+    // const [profiles, setProfiles] = useState("")
     const [search, setSearch] = useState();
-    var token = localStorage.getItem("token");
-console.log(id);
+    // var token = localStorage.getItem("token");
+    console.log(id);
     // var {params} = useParams();
     // console.log(params);
     const [product, setProduct] = useState([]);
@@ -19,26 +19,25 @@ console.log(id);
 
     useEffect(() => {
         display();
-        profile()
+        // profile()
 
     }, [])
 
-    useEffect(() => {
-        if(price >=1){
-            try {
-                axios.get(`http://localhost:8080/getproduct/?min=0=&max=${price}`).then((result) => {
-                    setProduct(result?.data) //fiter product data
-                    setProductData(result?.data) //all product data
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        // display();
-    }, [price])
+    // useEffect(() => {
+    //     if(price >=1){
+    //         try {
+    //             axios.get(`http://localhost:8080/getproduct/?min=0=&max=${price}`).then((result) => {
+    //                 setProduct(result?.data) //fiter product data
+    //                 setProductData(result?.data) //all product data
+    //             })
+    //         } catch (error) {
+    //             console.log(error)
+    //         }
+    //     }
+    // }, [price])
 
     useEffect(() => {
-        if(id){
+        if (id) {
             try {
                 axios.get(`http://localhost:8080/category/${id}`).then((result) => {
                     console.log(result.data.data);
@@ -50,7 +49,7 @@ console.log(id);
             }
         } else {
             try {
-                 axios.get("http://localhost:8080/getproduct").then((result) => {
+                axios.get("http://localhost:8080/getproduct").then((result) => {
                     setProduct(result?.data) //fiter product data
                     setProductData(result?.data) //all product data
                 })
@@ -61,24 +60,24 @@ console.log(id);
         }
     }, [id])
 
-    const profile = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8080/auth/${token}`);
-            console.log(res.data);
-            if (res.data === "Token is expired ") {
-                // console.log(res.data);
-                localStorage.removeItem("token");
-                navigate("/login");
-                alert("Token is expired ");
-            }
-            else {
-                setProfiles(res.data);
-                // console.log("admin =" + res.data.isAdmin)
-            }
-        } catch (error) {
-            console.log("profile err", error);
-        }
-    };
+    // const profile = async () => {
+    //     try {
+    //         const res = await axios.get(`http://localhost:8080/auth/${token}`);
+    //         // console.log(res.data);
+    //         if (res.data === "Token is expired ") {
+    //             // console.log(res.data);
+    //             localStorage.removeItem("token");
+    //             navigate("/login");
+    //             alert("Token is expired ");
+    //         }
+    //         else {
+    //             setProfiles(res.data);
+    //             // console.log("admin =" + res.data.isAdmin)
+    //         }
+    //     } catch (error) {
+    //         console.log("profile err", error);
+    //     }
+    // };
 
 
     const searchFunction = (data) => {
@@ -120,7 +119,9 @@ console.log(id);
             let count = cart.some(item => item._id === cartProduct._id)
             console.log(count, "aaaaaaaaaaaaaaa");
             if (!count) {
-                cart.push({ ...cartProduct, qty: 1, total_amt: cartProduct.price })
+                console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "***************");
+
+                cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
                 alert("Product Added to Cartlist...!!")
@@ -128,15 +129,43 @@ console.log(id);
                 alert("Product Already Exist in Cartlist")
             }
         } else {
-
-            cart.push({ ...cartProduct, qty: 1, total_amt: cartProduct.price })
+            console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "BBBBBBBB");
+            cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
             localStorage.setItem('cartlist', JSON.stringify(cart));
             window.location.reload()
             alert("Product Added to Cartlist...!!!")
 
         }
     }
-    
+
+
+    const addToFav = async (favProduct) => {
+        var fav = []
+        console.log(fav, "fffffffffffff");
+        console.log(favProduct, "pppppppppppp");
+        fav = JSON.parse(localStorage.getItem('whishlist')) || [];
+        if (fav.length > 0) {
+            let count = fav.some(item => item._id === favProduct._id)
+            console.log(count, "aaaaaaaaaaaaaaa");
+            if (!count) {
+                fav.push({ ...favProduct })
+                localStorage.setItem('whishlist', JSON.stringify(fav));
+                window.location.reload()
+                alert("Product Added to Whishlist...!!")
+            } else {
+                alert("Product Already Exist in Whishlist")
+            }
+        } else {
+
+            fav.push({ ...favProduct })
+            localStorage.setItem('whishlist', JSON.stringify(fav));
+            window.location.reload()
+            alert("Product Added to Whishlist...!!!")
+
+        }
+    }
+
+
     const display = async () => {
         //     if (!params) {
         try {
@@ -165,7 +194,7 @@ console.log(id);
 
     // }
 
- 
+
 
 
     return (
@@ -246,7 +275,7 @@ console.log(id);
                                         <div className="col-lg-12">
                                             <div className="mb-3">
                                                 <h4 className="mb-2">Price</h4>
-                                                <input type="range" className="form-range w-100" id="rangeInput" step="" name="rangeInput" min={0} max={1000} defaultValue={price} onChange={(e)=>{setPrice(e.target.value);}}/>
+                                                <input type="range" className="form-range w-100" id="rangeInput" step="" name="rangeInput" min={0} max={1000} defaultValue={price} onChange={(e) => { setPrice(e.target.value); }} />
                                                 <output id="amount" name="rangeInput" min-velue={0} max-value={1000} htmlFor="rangeInput">{price}</output>
                                             </div>
                                         </div>
@@ -275,7 +304,7 @@ console.log(id);
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col-lg-12">
+                                        {/* <div className="col-lg-12">
                                             <h4 className="mb-3">Featured products</h4>
                                             {product.map((item) => (
                                                 <div className="d-flex align-items-center justify-content-start" >
@@ -293,43 +322,33 @@ console.log(id);
                                                         </div>
                                                         <div className="d-flex mb-2">
                                                             <h5 className="fw-bold me-2">₹{item.price}</h5>
-                                                            {/* <h5 className="text-danger text-decoration-line-through">4.11 $</h5> */}
                                                         </div>
                                                     </div>
                                                 </div>
                                             ))}
 
                                         </div>
-                                        {/* <div className="col-lg-12">
-                                            <div className="position-relative">
-                                                <img src="assets/img/banner-fruits.jpg" className="img-fluid w-100 rounded" alt />
-                                                <div className="position-absolute" style={{ top: '50%', right: 10, transform: 'translateY(-50%)' }}>
-                                                    <h3 className="text-secondary fw-bold">Fresh <br /> Fruits <br /> Banner</h3>
-                                                </div>
-                                            </div>
-                                        </div> */}
+                                         */}
                                     </div>
                                 </div>
                                 <div className="col-lg-9">
                                     <div className="row g-4 justify-content-center" >
                                         {product.map((item) => (
+                                        
                                             <div className="col-md-6 col-lg-6 col-xl-4">
 
                                                 <div className="rounded position-relative fruite-item">
                                                     <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                         <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 h-100 rounded-top " alt />
                                                     </div>
-                                                    <div className="  px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px" }}><i className="fa fa-heart fa-2x text-black " /></div>
+                                                    <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
                                                     <div className="p-4 border border-secondary border-top-0 rounded-bottom">
                                                         <h5 className='productName'>{item.product_name}</h5>
-                                                        {/* <p>{item.description}</p> */}
                                                         <div className="d-flex justify-content-between flex-lg-wrap flex-column">
                                                             <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
-                                                            <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item)  }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
-                                                            {/* <i className="fa fa-heart me-2 text-danger rounded-pill mt-3 px-3 " /> */}
+                                                            <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
                                                         </div>
-                                                        {/* <div className="d-flex .justify-content-around flex-lg-wrap"> */}
-                                                        {/* </div> */}
+                                                      
                                                     </div>
                                                 </div>
                                             </div>

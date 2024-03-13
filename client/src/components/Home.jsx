@@ -12,6 +12,7 @@ import Fruits from './Fruits'
 import Vegitables from './Vegitables'
 import axios from 'axios'
 import { useNavigate ,Link} from 'react-router-dom'
+import Whishlist from './Whishlist'
 
 
 
@@ -20,32 +21,13 @@ function Home(props) {
     const navigate = useNavigate()
     var token = localStorage.getItem("token");
 
-    const [profiles, setProfiles] = useState("")
     const [search, setSearch] = useState("")
     useEffect(() => {
         display();
-        profile();
 
     }, [])
 
-    const profile = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8080/auth/${token}`);
-            console.log(res.data);
-            if (res.data === "Token is expired ") {
-                // console.log(res.data);
-                localStorage.removeItem("token");
-                navigate("/login");
-                alert("Token is expired ");
-            }
-            else {
-                setProfiles(res.data);
-                // console.log("admin =" + res.data.isAdmin)
-            }
-        } catch (error) {
-            console.log("profile err", error);
-        }
-    };
+    
 
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
@@ -75,6 +57,56 @@ function Home(props) {
         //    console.log(filterProduct);
         setProduct(filterProduct)
 
+    }
+
+    const addToCart = async (cartProduct) => {
+        var cart = []
+        cart = JSON.parse(localStorage.getItem('cartlist')) || [];
+        if (cart.length > 0) {
+            let count = cart.some(item => item._id === cartProduct._id)
+            console.log(count, "aaaaaaaaaaaaaaa");
+            if (!count) {
+                cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
+                localStorage.setItem('cartlist', JSON.stringify(cart));
+                window.location.reload()
+                alert("Product Added to Cartlist...!!")
+            } else {
+                alert("Product Already Exist in Cartlist")
+            }
+        } else {
+
+            cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
+            localStorage.setItem('cartlist', JSON.stringify(cart));
+            window.location.reload()
+            alert("Product Added to Cartlist...!!!")
+
+        }
+    }
+
+    const addToFav = async (favProduct) => {
+        var fav = []
+        console.log(fav, "fffffffffffff");
+        console.log(favProduct, "pppppppppppp");
+        fav = JSON.parse(localStorage.getItem('whishlist')) || [];
+        if (fav.length > 0) {
+            let count = fav.some(item => item._id === favProduct._id)
+            console.log(count, "aaaaaaaaaaaaaaa");
+            if (!count) {
+                fav.push({ ...favProduct })
+                localStorage.setItem('whishlist', JSON.stringify(fav));
+                window.location.reload()
+                alert("Product Added to Whishlist...!!")
+            } else {
+                alert("Product Already Exist in Whishlist")
+            }
+        } else {
+
+            fav.push({ ...favProduct })
+            localStorage.setItem('whishlist', JSON.stringify(fav));
+            window.location.reload()
+            alert("Product Added to Whishlist...!!!")
+
+        }
     }
     return (
         <>
@@ -143,20 +175,20 @@ function Home(props) {
                                         <div className="col-lg-12">
                                             <div className="row g-4">
                                                 {product.map((item) => (
-                                                    <div className="col-md-6 col-lg-4 col-xl-3" onClick={() => navigate(`/product-detail/${item._id}`)}>
+                                                    <div className="col-md-6 col-lg-6 col-xl-3" >
 
                                                         <div className="rounded position-relative fruite-item">
-                                                            <div className="fruite-img">
+                                                            <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                                 <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
                                                             </div>
-                                                            <div className="  px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px" }}><i className="fa fa-heart fa-2x text-black " /></div>
+                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black"/></div>
 
                                                             <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
-                                                                <h5 className='product'>{item.product_name}</h5>
+                                                                <h5 className='productName'>{item.product_name}</h5>
                                                                 {/* <p>{item.description}</p> */}
                                                                 <div className="d-flex justify-content-between flex-lg-wrap">
                                                                     <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
-                                                                    <button className="btn border border-secondary rounded-pill px-3 text-primary"><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
+                                                                    <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
                                                                 </div>
                                                                 {/* <div className='d-flex .justify-content-around flex-lg-wrap'> */}
                                                                 {/* </div> */}

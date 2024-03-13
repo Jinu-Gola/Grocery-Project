@@ -101,7 +101,7 @@ function UpdateProduct() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(formdata);
+        // console.log(formdata);
 
 
         try {

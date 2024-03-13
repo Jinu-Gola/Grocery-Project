@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useNavigate, useParams } from 'react-router-dom';
 
-function ViewProduct() {
+function ViewProduct(props) {
     const navigate = useNavigate();
 
     var token = localStorage.getItem("token");
@@ -30,11 +30,11 @@ function ViewProduct() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/");
-                alert("Token is expired ");
+                // alert("Token is expired ");
             }
             else {
                 setProfiles(res.data);
-                console.log("admin =" + res.data.isAdmin)
+                // console.log("admin =" + res.data.isAdmin)
             }
         } catch (error) {
             console.log("profile err", error);
@@ -103,6 +103,15 @@ function ViewProduct() {
             console.log("Error : " + error)
         }
     }
+    const [search, setSearch] = useState("")
+    useEffect(() => {
+        // console.log(search);
+        if (search) {
+            // navigate('/productlist')
+            props.searchFunction && props.searchFunction(search)
+        }
+
+    }, [search])
 
     return (
         <>
@@ -117,6 +126,13 @@ function ViewProduct() {
                     {/* partial */}
                     <div className="main-panel">
                         <div className="content-wrapper">
+                            <ul className="navbar-nav w-100">
+                                <li className="nav-item">
+                                    <form className="nav-link mt-3 mt-md-0  d-lg-flex search">
+                                        <input type="text" className="form-control" onChange={(e) => setSearch(e.target.value)} placeholder="Search products" />
+                                    </form>
+                                </li>
+                            </ul>
                             <div className="row">
                                 {data.map((item, index) => (
 

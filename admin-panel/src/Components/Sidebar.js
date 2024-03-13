@@ -101,7 +101,7 @@ function Sidebar() {
                             <span className="menu-icon">
                                 <i className="mdi mdi-security" />
                             </span>
-                            <span className="menu-title">Category Pages</span>
+                            <span className="menu-title">Manage Category </span>
                             <i className="menu-arrow" />
                         </a>
                         <div className="collapse" id="auth">
@@ -109,10 +109,10 @@ function Sidebar() {
                                 <li className="nav-item">
                                     <Link to='/addcat' className="nav-link" >Add Category</Link>
                                 </li>
+                                <li className="nav-item"> <Link to='/categorylist' className="nav-link" >Category List</Link></li>
                                 <li className="nav-item">
                                     <Link to='/addsubcat' className="nav-link" >Add Sub-Category</Link>
                                 </li>
-                                <li className="nav-item"> <Link to='/categorylist' className="nav-link" >Category List</Link></li>
                                 <li className="nav-item"> <Link to='/sub-categorylist' className="nav-link" > Sub-Category List </Link></li>
                             </ul>
                         </div>
@@ -122,7 +122,7 @@ function Sidebar() {
                             <span className="menu-icon">
                                 <i className="mdi mdi-cart-plus" />
                             </span>
-                            <span className="menu-title">Product Pages</span>
+                            <span className="menu-title">Manage Products </span>
                             <i className="menu-arrow" />
                         </a>
                         <div className="collapse" id="ui-basic">
@@ -138,23 +138,16 @@ function Sidebar() {
                             </ul>
                         </div>
                     </li>
+                
+                    <li className="nav-item menu-items">
+                        <Link to='/manageuser' className="nav-link" >
+                            <span className="menu-icon">
+                                <i className="mdi mdi-account" />
+                            </span>
+                            <span className="menu-title">Manage Users</span>
+                        </Link>
+                    </li>
                     {/* <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/forms/basic_elements.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-playlist-play" />
-                            </span>
-                            <span className="menu-title">Form Elements</span>
-                        </a>
-                    </li>
-                    <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/tables/basic-table.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-table-large" />
-                            </span>
-                            <span className="menu-title">Tables</span>
-                        </a>
-                    </li>
-                    <li className="nav-item menu-items">
                         <a className="nav-link" href="pages/charts/chartjs.html">
                             <span className="menu-icon">
                                 <i className="mdi mdi-chart-bar" />
@@ -169,7 +162,7 @@ function Sidebar() {
                             </span>
                             <span className="menu-title">Icons</span>
                         </a>
-                    </li> */}
+                    </li>  */}
                     
                     {/* <li className="nav-item menu-items">
                         <a className="nav-link" href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">

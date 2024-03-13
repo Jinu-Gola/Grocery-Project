@@ -7,18 +7,18 @@ import { useState } from 'react'
 import axios from 'axios'
 
 function Cart() {
-    var token = localStorage.getItem("token");
+    // var token = localStorage.getItem("token");
 
     const navigate = useNavigate()
     const [cartitem, setCartItem] = useState([])
     const [cartTotal, setCartTotal] = useState(0);
-    const [profiles, setProfiles] = useState("")
+    // const [profiles, setProfiles] = useState("")
 
     useEffect(() => {
-        if (!token) {
-            navigate('/login')
-        }
-        profile();
+        // if (!token) {
+        //     navigate('/login')
+        // }
+        // profile();
         cartList()
     }, [])
 
@@ -28,9 +28,9 @@ function Cart() {
         setCartItem(cartlist)
     }
 
-    const totalPrice = () => {
-        return cartitem.reduce((total, item) => total + (item.qty * item.price), 0)
-    }
+    const totalPrice = () => 
+        cartitem?.reduce((total, item) => parseInt(total) + (parseInt(item.uqty) * parseInt(item.price)), 0)
+    
 
     const removeCart = (item) => {
         const newCart = cartitem.filter((cart) => cart._id !== item._id)
@@ -40,79 +40,80 @@ function Cart() {
     // console.log(cartitem,"after itemssss removed...");
 
     const handleQty = (qty, index, item) => {
-        cartitem[index] = { ...item, qty: +qty, total_amt: +qty * +item.price }
+        console.log(parseInt(qty) * parseInt(item.price),"MMMMMMMMMMMMMMMMM");
+        cartitem[index] = { ...item, uqty: parseInt(qty), total_amt: parseInt(qty) * parseInt(item.price) }
         setCartItem([...cartitem])
         // console.log(cartitem[index]);
         localStorage.setItem('cartlist', JSON.stringify(cartitem))
     }
 
 
-    const hadelpayment = async (amt) => {
-        try {
-            const _data = { amount: amt };
-            const res = await axios.post('http://localhost:8080/orders', _data)
-            console.log("payment data", res.data);
-            handelopenrazorpay(res.data.data);
-        } catch (error) {
-            console.log("payment error", error);
-        }
-    }
+    // const hadelpayment = async (amt) => {
+    //     try {
+    //         const _data = { amount: amt };
+    //         const res = await axios.post('http://localhost:8080/orders', _data)
+    //         console.log("payment data", res.data);
+    //         handelopenrazorpay(res.data.data);
+    //     } catch (error) {
+    //         console.log("payment error", error);
+    //     }
+    // }
 
 
-    const profile = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8080/auth/${token}`);
-            console.log(res.data);
-            if (res.data === "Token is expired ") {
-                // console.log(res.data);
-                localStorage.removeItem("token");
-                navigate("/login");
-                alert("Token is expired ");
-            }
-            else {
-                setProfiles(res.data);
-                // console.log("admin =" + res.data.isAdmin)
-            }
-        } catch (error) {
-            console.log("profile err", error);
-        }
-    };
+    // const profile = async () => {
+    //     try {
+    //         const res = await axios.get(`http://localhost:8080/auth/${token}`);
+    //         console.log(res.data);
+    //         if (res.data === "Token is expired ") {
+    //             // console.log(res.data);
+    //             localStorage.removeItem("token");
+    //             navigate("/login");
+    //             alert("Token is expired ");
+    //         }
+    //         else {
+    //             setProfiles(res.data);
+    //             // console.log("admin =" + res.data.isAdmin)
+    //         }
+    //     } catch (error) {
+    //         console.log("profile err", error);
+    //     }
+    // };
 
-    const handelopenrazorpay = (data) => {
-        var options = {
-            "key": "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
-            "amount": data.amount / 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            "currency": data.currency,
-            "name": "SuperGrocery",
-            "description": "Test Transaction",
-            "order_id": data.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
-            "handler": function (response) {
-                // console.log("response",response);
+    // const handelopenrazorpay = (data) => {
+    //     var options = {
+    //         "key": "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
+    //         "amount": data.amount / 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    //         "currency": data.currency,
+    //         "name": "SuperGrocery",
+    //         "description": "Test Transaction",
+    //         "order_id": data.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
+    //         "handler": function (response) {
+    //             // console.log("response",response);
 
-                axios.post('http://localhost:8080/verify', { response: response }).then((res) => {
-                    if (res.status === 200) {
-                        console.log("if condition", res)
-                        localStorage.removeItem("cartlist");
+    //             axios.post('http://localhost:8080/verify', { response: response }).then((res) => {
+    //                 if (res.status === 200) {
+    //                     console.log("if condition", res)
+    //                     localStorage.removeItem("cartlist");
                         
-                        cartList()
-                        navigate('/');
-                    }
-                    else {
-                        console.log("else condition", res);
-                    }
-                })
+    //                     cartList()
+    //                     navigate('/');
+    //                 }
+    //                 else {
+    //                     console.log("else condition", res);
+    //                 }
+    //             })
 
 
 
 
-            },
-            "theme": {
-                "color": "#81c408"
-            }
-        };
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-    }
+    //         },
+    //         "theme": {
+    //             "color": "#81c408"
+    //         }
+    //     };
+    //     const rzp = new window.Razorpay(options);
+    //     rzp.open();
+    // }
 
     return (
         <>
@@ -146,9 +147,7 @@ function Cart() {
                             </thead>
                             <tbody>
                                 {cartitem && cartitem?.map((item, index) => {
-                                    let p_total = parseInt(item?.qty) * parseInt(item?.price);
-                                    const totalqty = +item.qty
-                                    console.log(totalqty);
+                                    let p_total = parseInt(item?.uqty) * parseInt(item?.price);
                                     return (<tr>
                                         <th scope="row">
                                             <div className="d-flex align-items-center">
@@ -165,8 +164,8 @@ function Cart() {
                                             <div className="input-group quantity mt-4" style={{ width: 100 }}>
                                                 <div className="input-group-btn">
                                                     <button className="btn btn-sm btn-minus rounded-circle bg-light border" onClick={() => {
-                                                        if (item.qty > 1) {
-                                                            handleQty(+item.qty - 1, index, item)
+                                                        if (item.uqty > 1) {
+                                                            handleQty(+item.uqty - 1, index, item)
                                                         }
                                                         else {
                                                             alert("Not valid...")
@@ -175,11 +174,12 @@ function Cart() {
                                                         <i className="fa fa-minus" />
                                                     </button>
                                                 </div>
-                                                <input type="text" className="form-control form-control-sm text-center border-0" value={item.qty} />
+                                                <input type="text" className="form-control form-control-sm text-center border-0" value={item.uqty} />
                                                 <div className="input-group-btn">
                                                     <button className="btn btn-sm btn-plus rounded-circle bg-light border" onClick={() => {
-                                                        if (item.qty < 10) {
-                                                            handleQty(+item.qty + 1, index, item)
+                                               
+                                                        if (item.uqty < item.qty) {
+                                                            handleQty(+item.uqty + 1, index, item)
                                                         }
                                                         else {
                                                             alert('You cannot add product greater than total quantity of product..')
@@ -205,10 +205,10 @@ function Cart() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="mt-5">
+                    {/* <div className="mt-5">
                         <input type="text" className="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code" />
                         <button className="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
-                    </div>
+                    </div> */}
                     <div className="row g-4 justify-content-end">
                         <div className="col-8" />
                         <div className="col-sm-8 col-md-7 col-lg-6 col-xl-4">
@@ -232,7 +232,7 @@ function Cart() {
                                     {/* cartitem!=null?g_Total:item?.reduce(tot,obj)=>parseInt(tot) */}
                                     <p className="mb-0 pe-4">₹{totalPrice()}</p>
                                 </div>
-                                <button className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onClick={() => { hadelpayment(totalPrice()) }}>Proceed Checkout</button>
+                                <button className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button" onClick={() => navigate('/billing') }>Proceed Checkout</button>
                             </div>
                         </div>
                     </div>

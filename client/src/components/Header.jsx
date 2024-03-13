@@ -32,10 +32,44 @@ function Header(props) {
             console.log(error)
         }
     }
-
+    //cart count
     const[cart,setCart]=useState(0)
     const cartlist=JSON.parse(localStorage.getItem('cartlist'));
     // console.log(cartlist,"ccccccccccccccccc");
+
+    //whishlist count
+    const [fav, setFav] = useState(0)
+    const whishlist = JSON.parse(localStorage.getItem('whishlist'));
+    // console.log(whishlist,"wwwwwwwwwwwwwwww");
+
+    //logout
+    var token = localStorage.getItem("token");
+
+    const[profiles,setProfiles]=useState("")
+    const logOut=()=>{
+        localStorage.removeItem('token')
+        // navigate('/login')
+        profile();
+
+    }
+    const profile = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+            console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/login");
+                // alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                // console.log("admin =" + res.data.isAdmin)
+            }
+        } catch (error) {
+            console.log("profile err", error);
+        }
+    };
 
     return (
         <>
@@ -63,8 +97,7 @@ function Header(props) {
                         <div className="collapse navbar-collapse bg-white" id="navbarCollapse">
                             <div className="navbar-nav mx-auto">
                                 <Link to="/" className="nav-item nav-link active">Home</Link>
-                                {/* <Link to="/product" className="nav-item nav-link">Our Products</Link> */}
-                                {/* <Link to="/product-detail/:id" className="nav-item nav-link">Product Detail</Link> */}
+                               
                                 <div className="nav-item dropdown">
                                     <Link onClick={()=>navigate('/product')} className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Our Products</Link>
                                     <div className="dropdown-menu m-0 bg-secondary rounded-0">
@@ -77,7 +110,7 @@ function Header(props) {
                                     <Link className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</Link>
                                     <div className="dropdown-menu m-0 bg-secondary rounded-0">
                                         <Link to="/cart" className="dropdown-item">Cart</Link>
-                                        <Link to="/billing" className="dropdown-item">Checkout</Link>
+                                        {/* <Link to="/billing" className="dropdown-item">Checkout</Link> */}
                                         <Link to="/review" className="dropdown-item">Testimonial</Link>
                                         {/* <Link to="404.html" className="dropdown-item">404 Page</Link> */}
                                     </div>
@@ -92,12 +125,17 @@ function Header(props) {
                                     <i className="fa fa-shopping-bag fa-2x" />
                                     <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: '-5px', left: 15, height: 20, minWidth: 20 }} onClick={()=>{setCart(1)}} >{localStorage.getItem('cartlist') ? JSON.parse(localStorage.getItem('cartlist')).length : 0}</span>
                                 </Link>
-                                <Link to="" className="position-relative me-4 my-auto">
+                                <Link to="/whishlist" className="position-relative me-4 my-auto">
                                     <i className="fa fa-heart fa-2x" />
-                                    <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: '-5px', left: 15, height: 20, minWidth: 20 }}  >0</span>
+                                    <span className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style={{ top: '-5px', left: 15, height: 20, minWidth: 20 }} onClick={() => { setFav(1) }} >{localStorage.getItem('whishlist') ? JSON.parse(localStorage.getItem('whishlist')).length : 0}</span>
                                 </Link>
-                                <Link to="/login" className="my-auto">
+                                {/* if(token) */}
+                                
+                                <Link to="/login" className="position-relative me-4 my-auto">
                                     <i className="fas fa-user fa-2x" />
+                                </Link>
+                                <Link onClick={()=>logOut()} className="position-relative me-4 my-auto">
+                                    <i className="fas fa-sign-out-alt fa-2x" />
                                 </Link>
                             </div>
                         </div>

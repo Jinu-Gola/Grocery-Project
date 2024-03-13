@@ -106,16 +106,16 @@ const categoryProduct = async (req, res) => {
         const minPrice = req.query.minPrice;
         const maxPrice = req.query.maxPrice;
 
-        if (req.params.cid) {
-            query.cid = req.params.cid;
-        }
-
         if (minPrice && maxPrice) {
             query.price = { $gte: minPrice, $lte: maxPrice };
         } else if (minPrice) {
             query.price = { $gte: minPrice };
         } else if (maxPrice) {
             query.price = { $lte: maxPrice };
+        }
+
+        if (req.params.cid) {
+            query.cid = req.params.cid;
         }
         // if (req.query.keyword) {
         //     query.$or = [
@@ -128,7 +128,8 @@ const categoryProduct = async (req, res) => {
             .populate("cid")
         // .populate("uid")
 
-        console.log(data, "!!!!!!!!!1");
+        // console.log(data, "!!!!!!!!!1");
+
         // console.log("Query:", { product_name: { $regex: keyword, $options: "i" } });
         // console.log("Data:", data);
 

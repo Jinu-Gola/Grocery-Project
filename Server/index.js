@@ -43,6 +43,7 @@ const subcateModel = require("./Controller/subcategory.js")
 const pro_detailModel = require('./Controller/proDetail.controller.js')
 const cartModel = require("./Controller/cart.controller.js")
 const payment=require('./Controller/payment.controller.js')
+const ordercontroller=require('./Controller/orders.controller.js')
 // const { config } = require("process");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -50,9 +51,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // User Registration and Login API
 app.post("/regis", userModel.usepost)
-app.get("/regis", verifyToken, userModel.useget)
+app.get("/getuser", userModel.useget)
 app.put("/regis/:id", userModel.useput)
-app.delete("/regis/:id", userModel.usedelete)
+app.delete("/del_user/:id", userModel.usedelete)
 app.post("/login", userModel.loginUser)
 // app.get("/profile/:id", userModel.profile)
 app.get("/auth/:tok", userModel.auth)
@@ -93,11 +94,9 @@ app.get("/category/:cid", pro_detailModel.categoryProduct)
 app.get("/search-product", pro_detailModel.searchProduct)
 
 
-// Product API
-// app.post("/product", upload.array("images"), productModel.addProduct)
-// app.get("/product", productModel.productGet)
-// app.put("/product/:id", verifyToken, upload.array("images"), productModel.productUpd)
-// app.delete("/delproduct/:id", productModel.productDel)
+//order api
+app.post("/check-out", ordercontroller.orderPlace)
+
 
 
 // Product Brand API
@@ -125,7 +124,7 @@ app.get("/search-product", pro_detailModel.searchProduct)
 // app.delete("/cont/:id", contactModel.contDel)
 
 // payment api
-app.post("/orders",payment.orders)
+app.post("/payment",payment.orders)
 app.post('/verify',payment.verfiy)
 
 

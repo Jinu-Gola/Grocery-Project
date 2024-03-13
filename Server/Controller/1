@@ -1,0 +1,146 @@
+const { orderModel } = require('../Model/order')
+const { order_detailModel } = require('../Model/order')
+const pro_detailModel = require('../Model/product_detail');
+const moment = require('moment');
+
+const orderPlace = async (req, res) => {
+    const product = req.body.product
+    var pid = [];
+    for (let i = 0; i < product.length; i++) {
+        pid[i] = product[i]._id;
+    }
+    try {
+        const orderdate = moment().format('DD-MM-YYYY');
+
+        // const { uid, fname, lname, adderss, mobile, email, order_date, transaction_id, order_status, total_amt, subtotal, discount } = req.body;
+
+        const orderData = await orderModel.create({
+            uid: req.body.uid,
+            fname: req.body.fname,
+            lname: req.body.lname,
+            adderss: req.body.adderss,
+            mobile: req.body.mobile,
+            email: req.body.email,
+            order_date: orderdate,
+            transaction_id: req.body.transaction_id,
+            order_status: 0,
+            total_amt: req.body.total_amt,
+            subtotal: req.body.subtotal,
+            discount: req.body.discount,
+
+        })
+
+        for (let item of product) {
+            try {
+                const productDetails = await order_detailModel.create({
+                    // pid: item._id,
+                    // pname: item.name,
+                    // pqty: item.userqty,
+                    // price: item.price,
+                    // orderid: order._id,
+                    // email: email,
+                    // fname: fname,
+                    // lname: lname,
+                    // phone: phone,
+                    // country: country,
+                    // state: state,
+                    // city: city
+
+                    o_id: order._id,
+                    p_id: req.body._id,
+                    price: item.price,
+                    uqty: item.uqty,
+                    // total_amts: ,
+                    size_of_product: item.size,
+                    city: req.body.city,
+                    country: req.body.country,
+                    pincode: req.body.pincode,
+                    email: req.body.email,
+                    returnstatus: 0
+
+                });
+
+                // Update the quantity of the product
+                var find = await pro_detailModel.findOne({ _id: item._id });
+                console.log("find", find);
+                if (find) {
+                    const qtyup = find.qty - item.uqty;
+                    console.log("qtyup", qtyup);
+                    var up = await pro_detailModel.findByIdAndUpdate(
+                        { _id: item._id },
+                        { qty: qtyup }
+                        , { new: true }
+                    );
+                }
+
+
+                console.log("Product updated:", item._id);
+                console.log("Order detail added:", productDetails, up);
+            } catch (error) {
+                console.error("Error processing product:", error);
+            }
+
+
+        }
+        // .then((result) => {
+        //     console.log(result, "order information....");
+        //     if (result) {
+        //         console.log(req.body, "bbbbbbbb");
+        //         for (let i = 0; i < req.body.orderDetail.length; i++) {
+        //             let p_qty
+        //             pro_detailModel.find({
+        //                 _id: req.body.orderDetail[i]._id
+        //             }, { qty: 1, _id: 0 }).then((final_p_qty) => {
+        //                 if (final_p_qty) {
+        //                     p_qty = parseInt(final_p_qty[0].qty) - parseInt(req.body.orderDetail[i].uqty)
+        //                     console.log(p_qty, "product quantity...");
+        //                 }
+        //             })
+        //             // const { o_id, p_id, price, uqty, total_amts, size_of_product, city, country, pincode, email, returnstatus } = req.body
+        //             order_detailModel.create({
+        // o_id: result._id,
+        // p_id: req.body.orderDetail[i]._id,
+        // price: req.body.orderDetail[i].price,
+        // uqty: req.body.orderDetail[i].uqty,
+        // total_amts: req.body.orderDetail[i].total_amts,
+        // size_of_product: req.body.orderDetail[i].size_of_product,
+        // city: req.body.orderDetail[i].city,
+        // country: req.body.orderDetail[i].country,
+        // pincode: req.body.orderDetail[i].pincode,
+        // email: req.body.orderDetail[i].email,
+        // returnstatus: 0
+
+
+        //             }).then((result) => {
+        //                 console.log(result, p_qty, "order details information");
+        //                 if (result) {
+        //                     pro_detailModel.findByIdAndUpdate({ _id: req.body.orderDetail[i]._id }, {
+        //                         qty: p_qty
+        //                     }).then((result) => {
+        //                         console.log(result, "product qty updated");
+        //                     })
+        //                 }
+        //             })
+
+        //             res.send({ status: 1, result: result, message: "order Place Successfully.." })
+
+        //         }
+        //     }
+        //     else {
+        //         res.send({ status: 0, result: [], message: "order not placed" })
+
+        //     }
+        // })
+
+
+
+
+    } catch (error) {
+        console.log(error);
+        res.send(error)
+    }
+}
+
+module.exports = {
+    orderPlace
+}

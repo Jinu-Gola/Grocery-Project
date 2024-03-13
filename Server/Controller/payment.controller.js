@@ -16,7 +16,7 @@ const orders = (req, res) => {
         if (err) {
             return res.send({ code: 500, message: "Server Err." });
         }
-        return res.send({ code: 200, message: "order created", data: order });
+        return res.send( order );
     });
 };
 

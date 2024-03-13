@@ -36,9 +36,10 @@ function Footer() {
               <div className="col-lg-3 col-md-6">
                 <div className="footer-item">
                   <h4 className="text-light mb-3">Why People Like us!</h4>
-                  <p className="mb-4">typesetting, remaining essentially unchanged. It was
-                    popularised in the 1960s with the like Aldus PageMaker including of Lorem Ipsum.</p>
-                  <a href className="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
+                  <p className="mb-4">
+                    Because we are focused on the customer services and our products are really well and good it's not our statement but it is our customer review.
+                  </p>
+                  {/* <a href className="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a> */}
                 </div>
               </div>
               <div className="col-lg-3 col-md-6">
@@ -58,7 +59,7 @@ function Footer() {
                   <Link to='' className="btn-link" >My Account</Link>
                   <Link to='/product-detail' className="btn-link" >Shop details</Link>
                   <Link to='/cart' className="btn-link" >Shopping Cart</Link>
-                  <Link to='' className="btn-link" >Wishlist</Link>
+                  <Link to='/whishlist' className="btn-link" >Wishlist</Link>
                   <Link to='' className="btn-link" >Order History</Link>
                   <Link to='' className="btn-link" >International Orders</Link>
                 </div>

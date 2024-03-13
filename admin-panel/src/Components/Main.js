@@ -1,141 +1,166 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'
+
 
 function Main() {
-  return (
-    <>
-          <div className="main-panel">
-              <div className="content-wrapper">
-                  {/* <div className="row">
-                      <div className="col-12 grid-margin stretch-card">
-                          <div className="card corona-gradient-card">
-                              <div className="card-body py-0 px-0 px-sm-3">
-                                  <div className="row align-items-center">
-                                      <div className="col-4 col-sm-3 col-xl-2">
-                                          <img
-                                              src="assets/images/dashboard/Group126@2x.png"
-                                              className="gradient-corona-img img-fluid"
-                                              alt=""
-                                          />
-                                      </div>
-                                      <div className="col-5 col-sm-7 col-xl-8 p-0">
-                                          <h4 className="mb-1 mb-sm-0">Want even more features?</h4>
-                                          <p className="mb-0 font-weight-normal d-none d-sm-block">
-                                              Check out our Pro version with 5 unique layouts!
-                                          </p>
-                                      </div>
-                                      <div className="col-3 col-sm-2 col-xl-2 pl-0 text-center">
-                                          <span>
-                                              <a
-                                                  href="https://www.bootstrapdash.com/product/corona-admin-template/"
-                                                  target="_blank"
-                                                  className="btn btn-outline-light btn-rounded get-started-btn"
-                                              >
-                                                  Upgrade to PRO
-                                              </a>
-                                          </span>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div> */}
-                  <div className="row">
-                      <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
-                          <div className="card">
-                              <div className="card-body">
-                                  <div className="row">
-                                      <div className="col-9">
-                                          <div className="d-flex align-items-center align-self-start">
-                                              <h3 className="mb-0">$12.34</h3>
-                                              <p className="text-success ml-2 mb-0 font-weight-medium">
-                                                  +3.5%
-                                              </p>
-                                          </div>
-                                      </div>
-                                      <div className="col-3">
-                                          <div className="icon icon-box-success ">
-                                              <span className="mdi mdi-arrow-top-right icon-item" />
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <h6 className="text-muted font-weight-normal">
-                                      Potential growth
-                                  </h6>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
-                          <div className="card">
-                              <div className="card-body">
-                                  <div className="row">
-                                      <div className="col-9">
-                                          <div className="d-flex align-items-center align-self-start">
-                                              <h3 className="mb-0">$17.34</h3>
-                                              <p className="text-success ml-2 mb-0 font-weight-medium">
-                                                  +11%
-                                              </p>
-                                          </div>
-                                      </div>
-                                      <div className="col-3">
-                                          <div className="icon icon-box-success">
-                                              <span className="mdi mdi-arrow-top-right icon-item" />
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <h6 className="text-muted font-weight-normal">
-                                      Revenue current
-                                  </h6>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
-                          <div className="card">
-                              <div className="card-body">
-                                  <div className="row">
-                                      <div className="col-9">
-                                          <div className="d-flex align-items-center align-self-start">
-                                              <h3 className="mb-0">$12.34</h3>
-                                              <p className="text-danger ml-2 mb-0 font-weight-medium">
-                                                  -2.4%
-                                              </p>
-                                          </div>
-                                      </div>
-                                      <div className="col-3">
-                                          <div className="icon icon-box-danger">
-                                              <span className="mdi mdi-arrow-bottom-left icon-item" />
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <h6 className="text-muted font-weight-normal">Daily Income</h6>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
-                          <div className="card">
-                              <div className="card-body">
-                                  <div className="row">
-                                      <div className="col-9">
-                                          <div className="d-flex align-items-center align-self-start">
-                                              <h3 className="mb-0">$31.53</h3>
-                                              <p className="text-success ml-2 mb-0 font-weight-medium">
-                                                  +3.5%
-                                              </p>
-                                          </div>
-                                      </div>
-                                      <div className="col-3">
-                                          <div className="icon icon-box-success ">
-                                              <span className="mdi mdi-arrow-top-right icon-item" />
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <h6 className="text-muted font-weight-normal">
-                                      Expense current
-                                  </h6>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="row">
+    const navigate = useNavigate();
+
+    var token = localStorage.getItem("token");
+    const [profiles, setProfiles] = useState("")
+    useEffect(() => {
+
+        if (!token) {
+            navigate('/')
+            // alert("Please Login First..!")
+        }
+        else {
+            profile();
+            // data();
+
+        }
+    }, [])
+
+    const profile = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+            // console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/");
+                alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                console.log("admin =" + res.data.isAdmin)
+            }
+        } catch (error) {
+            console.log("profile err", error);
+        }
+    };
+
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        display();
+    }, [])
+
+    const display = async () => {
+        try {
+            await axios.get("http://localhost:8080/getuser").then((result) => {
+                // console.log("next")
+                // console.log("api data", result)
+                setData(result?.data)
+                // console.log("data", data)
+            })
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    return (
+        <>
+            <div className="main-panel">
+                <div className="content-wrapper">
+
+                    <div className="row">
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">$12.34</h3>
+                                                {/* <p className="text-success ml-2 mb-0 font-weight-medium">
+                                                    +3.5%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-success ">
+                                                <span className="mdi mdi-arrow-top-right icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">
+                                        Total Products
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">$17.34</h3>
+                                                {/* <p className="text-success ml-2 mb-0 font-weight-medium">
+                                                    +11%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-success">
+                                                <span className="mdi mdi-arrow-top-right icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">
+                                       Total Users
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">$12.34</h3>
+                                                {/* <p className="text-danger ml-2 mb-0 font-weight-medium">
+                                                    -2.4%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-danger">
+                                                <span className="mdi mdi-arrow-bottom-left icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">Daily Income</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">$31.53</h3>
+                                                {/* <p className="text-success ml-2 mb-0 font-weight-medium">
+                                                    +3.5%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-success ">
+                                                <span className="mdi mdi-arrow-top-right icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">
+                                       Total Orders
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* <div className="row">
                       <div className="col-md-4 grid-margin stretch-card">
                           <div className="card">
                               <div className="card-body">
@@ -288,8 +313,8 @@ function Main() {
                               </div>
                           </div>
                       </div>
-                  </div>
-                  <div className="row">
+                  </div> */}
+                    {/* <div className="row">
                       <div className="col-sm-4 grid-margin">
                           <div className="card">
                               <div className="card-body">
@@ -298,9 +323,9 @@ function Main() {
                                       <div className="col-8 col-sm-12 col-xl-8 my-auto">
                                           <div className="d-flex d-sm-block d-md-flex align-items-center">
                                               <h2 className="mb-0">$32123</h2>
-                                              <p className="text-success ml-2 mb-0 font-weight-medium">
-                                                  +3.5%
-                                              </p>
+                                            //   <p className="text-success ml-2 mb-0 font-weight-medium">
+                                            //       +3.5%
+                                            //   </p>
                                           </div>
                                           <h6 className="text-muted font-weight-normal">
                                               11.38% Since last month
@@ -321,9 +346,9 @@ function Main() {
                                       <div className="col-8 col-sm-12 col-xl-8 my-auto">
                                           <div className="d-flex d-sm-block d-md-flex align-items-center">
                                               <h2 className="mb-0">$45850</h2>
-                                              <p className="text-success ml-2 mb-0 font-weight-medium">
-                                                  +8.3%
-                                              </p>
+                                            //   <p className="text-success ml-2 mb-0 font-weight-medium">
+                                            //       +8.3%
+                                            //   </p>
                                           </div>
                                           <h6 className="text-muted font-weight-normal">
                                               {" "}
@@ -360,8 +385,8 @@ function Main() {
                               </div>
                           </div>
                       </div>
-                  </div>
-                  <div className="row ">
+                  </div> */}
+                    {/* <div className="row ">
                       <div className="col-12 grid-margin">
                           <div className="card">
                               <div className="card-body">
@@ -541,9 +566,9 @@ function Main() {
                               </div>
                           </div>
                       </div>
-                  </div>
-                  <div className="row">
-                      {/* <div className="col-md-6 col-xl-4 grid-margin stretch-card">
+                  </div> */}
+                    <div className="row">
+                        {/* <div className="col-md-6 col-xl-4 grid-margin stretch-card">
                           <div className="card">
                               <div className="card-body">
                                   <div className="d-flex flex-row justify-content-between">
@@ -691,7 +716,7 @@ function Main() {
                               </div>
                           </div>
                       </div> */}
-                      {/* <div className="col-md-12 col-xl-4 grid-margin stretch-card">
+                        {/* <div className="col-md-12 col-xl-4 grid-margin stretch-card">
                           <div className="card">
                               <div className="card-body">
                                   <h4 className="card-title">To do list</h4>
@@ -761,101 +786,48 @@ function Main() {
                               </div>
                           </div>
                       </div> */}
-                  </div>
-                  <div className="row">
-                      <div className="col-12">
-                          <div className="card">
-                              <div className="card-body">
-                                  <h4 className="card-title">Visitors by Countries</h4>
-                                  <div className="row">
-                                      <div className="col-md-5">
-                                          <div className="table-responsive">
-                                              <table className="table">
-                                                  <tbody>
-                                                      <tr>
-                                                          <td>
-                                                              <i className="flag-icon flag-icon-us" />
-                                                          </td>
-                                                          <td>USA</td>
-                                                          <td className="text-right"> 1500 </td>
-                                                          <td className="text-right font-weight-medium">
-                                                              {" "}
-                                                              56.35%{" "}
-                                                          </td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td>
-                                                              <i className="flag-icon flag-icon-de" />
-                                                          </td>
-                                                          <td>Germany</td>
-                                                          <td className="text-right"> 800 </td>
-                                                          <td className="text-right font-weight-medium">
-                                                              {" "}
-                                                              33.25%{" "}
-                                                          </td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td>
-                                                              <i className="flag-icon flag-icon-au" />
-                                                          </td>
-                                                          <td>Australia</td>
-                                                          <td className="text-right"> 760 </td>
-                                                          <td className="text-right font-weight-medium">
-                                                              {" "}
-                                                              15.45%{" "}
-                                                          </td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td>
-                                                              <i className="flag-icon flag-icon-gb" />
-                                                          </td>
-                                                          <td>United Kingdom</td>
-                                                          <td className="text-right"> 450 </td>
-                                                          <td className="text-right font-weight-medium">
-                                                              {" "}
-                                                              25.00%{" "}
-                                                          </td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td>
-                                                              <i className="flag-icon flag-icon-ro" />
-                                                          </td>
-                                                          <td>Romania</td>
-                                                          <td className="text-right"> 620 </td>
-                                                          <td className="text-right font-weight-medium">
-                                                              {" "}
-                                                              10.25%{" "}
-                                                          </td>
-                                                      </tr>
-                                                      <tr>
-                                                          <td>
-                                                              <i className="flag-icon flag-icon-br" />
-                                                          </td>
-                                                          <td>Brasil</td>
-                                                          <td className="text-right"> 230 </td>
-                                                          <td className="text-right font-weight-medium">
-                                                              {" "}
-                                                              75.00%{" "}
-                                                          </td>
-                                                      </tr>
-                                                  </tbody>
-                                              </table>
-                                          </div>
-                                      </div>
-                                      <div className="col-md-7">
-                                          <div id="audience-map" className="vector-map" />
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              {/* content-wrapper ends */}
-              
-          </div> 
-    </>
-  )
+                    </div>
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h4 className="card-title">Visitors</h4>
+                                    <div className="row">
+                                        <div className="col-md-5">
+                                            <div className="table-responsive">
+                                                <table className="table">
+                                                    <tbody>
+                                                        {data.map((item, index) => (
+
+                                                            <tr>
+                                                               
+                                                                <td>{item.name}</td>
+                                                                <td className="text-right"> {item.email} </td>
+                                                                <td className="text-right font-weight-medium">
+                                                                    {" "}
+                                                                    {item.mobile}{" "}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-7">
+                                            <div id="audience-map" className="vector-map" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* content-wrapper ends */}
+
+            </div>
+        </>
+    )
 }
 
 export default Main
