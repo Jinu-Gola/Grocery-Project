@@ -1,190 +1,270 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
-import axios from 'axios';
-import 'react-toastify/dist/ReactToastify.min.css'
-import { ToastContainer, toast } from 'react-toastify'
-import Footer from './Footer';
-import Header from './Header';
-import Search from './Search';
+import React, { useState, useEffect } from 'react'
+import Header from './Header'
+import Search from './Search'
+import Footer from './Footer'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+// const moment = require('moment');
+// import useRazorpay from 'react-razorpay';
+
+
 
 function Billing() {
-    const [cartitems, setCartitems] = useState([]);
-    const [inputs, setInputs] = useState({});
-    const [err, setErr] = useState('');
-    const [data, setData] = useState();
-    const [payid, setPayid] = useState('');
-    // 
-    const navigat = useNavigate();
+    const navigate = useNavigate();
+    var token = localStorage.getItem("token");
 
-    const show = () => {
-        toast.success("Network Error", {
-            position: "top-center"
-        });
-    };
+    const [userData, setuserData] = useState({
+        fname: "",
+        lname: "",
+        address: "",
+        mobile: "",
+        email: "",
+        // order_date: "",
+        // uid: "",
+        // transaction_id: "",
+        // order_status: "",
+        // total_amt: "",
+        // subtotal: "",
+        // discount:""
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const tok = localStorage.getItem("token");
-            if (!tok) {
-                navigat('/login');
-            } else {
-                try {
-                    const res = await axios.get(`http://localhost:8080/auth/${tok}`);
-                    if (res.data === "Token is expired ") {
-                        localStorage.removeItem("token");
-                        navigat("/login");
-                    } else {
-                        setData(res.data);
-                        console.log("profile data", data);
-                        getcart();
-                    }
-                } catch (error) {
-                    console.log("profile err", error);
-                }
-            }
-        };
-        fetchData();
-    }, [navigat]);
+    });
 
-    const totalcart = () => {
-        return cartitems?.reduce((total, item) => total + Number(item.price * item.uqty), 0)
-    }
-
-    const getcart = () => {
-        const cartlist = JSON.parse(localStorage.getItem("cartlist"));
-        console.log("cart ", cartlist)
-        setCartitems(cartlist);
-        console.log("cart ", cartitems)
-    }
-
-    const handelpayment = async (amt) => {
-        try {
-            // setLoading(true);
-            const { data: paymentData } = await axios.post('http://localhost:8080/payment', { amount: amt });
-            console.log("payment data", paymentData);
-            handelopenrazorpay(paymentData);
-        } catch (error) {
-            console.log("payment error", error);
-        } finally {
-            // setLoading(false);
-        }
-    }
-
-    const handelopenrazorpay = (dat) => {
-        if (window.Razorpay) {
-            const options = {
-                "key": "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
-                "amount": dat.amount / 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                "currency": dat.currency,
-                "name": "Lapworld",
-                "description": "Test Transaction",
-                "order_id": dat.id, // This is a sample Order ID. Pass the id obtained in the response of Step 1
-                "handler": function (response) {
-                    console.log("response", response);
-                    setPayid(response.razorpay_payment_id);
-                    // setOrid(response.razorpay_order_id);
-                    // setSign(response.razorpay_signature);
-                    let object = {
-                        // orderInfo: {
-                            uid: data._id,
-                            fname: inputs.fname,
-                            lname: inputs.lname,
-                            adderss: inputs.adderss,
-                            mobile: inputs.mobile,
-                            email: inputs.email,
-                            transaction_id: response.razorpay_payment_id,
-                            total_amt: dat.amount,
-                            subtotal: dat.amount,
-                            discount: 0,
-                            product: cartitems
-
-                        // },
-                    }
-                    axios.post('http://localhost:8080/verify', { response: response }).then((res) => {
-                        if (res.status === 200) {
-                            axios.post('http://localhost:8080/check-out', { object });
-                            console.log("Order placed successfully");
-                            console.log("if condition", res);
-                            localStorage.removeItem("cartlist");
-                            getcart();
-                            navigat('/');
-                        } else {
-
-                            console.log("else condition", res);
-                        }
-                    });
-                },
-                "theme": {
-                    "color": "#3399cc"
-                }
-            };
-            const rzp = new window.Razorpay(options);
-            rzp.open();
-        }
-        else {
-            show();
-            console.log("please login again")
-        }
+    const [cartitem, setCartItem] = useState([])
+    const [cartTotal, setCartTotal] = useState(0);
+    const [profiles, setProfiles] = useState("")
+    const [formerror, setformerror] = useState({});
 
 
+    // const [inputs, setInputs] = useState({})
+    const [err, setErr] = useState("")
 
-    }
+
+    // const handleChange = (e) => {
+    //     const name = e?.target?.name;
+    //     const value = e?.target?.value;
+    //     setInputs({ ...inputs, [name]: value })
+    // }
 
     const handleChange = (e) => {
-        setInputs({ ...inputs, [e.target.name]: e.target.value })
+        console.log(e.target.value, "KKKKKKK");
+        setuserData({ ...userData, [e.target.name]: e.target.value })
     }
 
-    const handelSubmit = (e) => {
-        e.preventDefault();
-        console.log(inputs);
-        if (!inputs.fname || !inputs.lname || !inputs.mobile || !inputs.address || !inputs.country || !inputs.email || !inputs.city || !inputs.pincode) {
-            setErr("Please fill the all  fields");
-            return;
-        }
-        else if (!inputs.fname.match(/^[a-zA-Z' ]+$/)) {
-            setErr("Please enter valid first name");
-            return;
-        }
-        else if (!inputs.lname.match(/^[a-zA-Z' ]+$/)) {
-            setErr("Please enter valid last name");
-            return;
-        }
-        else if (!inputs.mobile.match(/^[0-9]{10,}$/)) {
-            setErr("Please enter valid phone number");
-            return;
-        }
-        else if (!inputs.address.match(/^[a-zA-Z' ]{5,}$/)) {
-            setErr("Please enter valid address");
-            return;
-        }
-        else if (!inputs.country.match(/^[a-zA-Z' ]+$/)) {
-            setErr("Please enter valid country name");
-            return;
-        }
-        else if (!inputs.city.match(/^[a-zA-Z' ]+$/)) {
-            setErr("Please enter valid city name");
-            return ;
-        }
-        else if (!inputs.pincode.match(/^[0-9]{6,}$/)) {
-            setErr("Please enter valid pincode ");
-            return;
-        }
-        else if (!inputs.email.match(/^[a-z0-9._]+@[a-z]+\.[a-z]{2,4}$/)) {
-            setErr("Please enter valid pincode ");
-            return;
-        }
-        else {
-            setErr('');
-            handelpayment(totalcart());
-        }
-        console.log(inputs);
 
+    const handleSubmit = async (e) => {
+        // e.preventDefault();
+        console.log(userData, "hhhhhhhhhhhhiiiiiiiiiiiiiiiii");
+        hadelpayment(userData)
+
+        // var userId = localStorage.getItem("user")
+
+        // console.log(userData);
+        // const data2 = axios.post('http://localhost:8080/check-out', {
+        //     fname: userData.fname,
+        //     lname: userData.lname,
+        //     address: userData.address,
+        //     mobile: userData.mobile,
+        //     email: userData.email,
+        //     order_date: moment.orderdate,
+        //     uid: userId,
+        //     order_status: 0,
+        //     // transaction_id: response.razorpay_payment_id,
+        //     total_amt: parseInt(total),
+        //     subtotal: parseInt(total),
+        //     discount: 0,
+
+        // })
+        // console.log(data2, "alll dataaaaa");
+
+        const error = {}
+        const emailpattern = /^[a-z0-9._]+@[a-z]+\.[a-z]{2,4}$/
+        const namepattern = /^[a-zA-Z\s]{2,50}$/;
+        const phonepattern = /^[0-9]{10,}$/;
+
+
+        if (!userData.fname) {
+            error.fname = "Name is required!"
+        }
+        else if (!namepattern.test(userData.fname)) {
+            error.fname = "Please Enter valid name"
+        }
+
+        if (!userData.lname) {
+            error.lname = "Name is required!"
+        }
+        else if (!namepattern.test(userData.lname)) {
+            error.lname = "Please Enter valid name"
+        }
+
+        if (!userData.email) {
+            error.email = "Email is required!"
+        }
+        else if (!emailpattern.test(userData.email)) {
+            error.email = "Please Enter valid email address"
+        }
+
+        if (!userData.mobile) {
+            error.mobile = "Phone number is required!"
+        }
+        else if (!phonepattern.test(userData.mobile)) {
+            error.mobile = "Please Enter valid phone number"
+        }
+
+        if (!userData.city) {
+            error.city = "Phone number is required!"
+        }
+        else if (!phonepattern.test(userData.city)) {
+            error.city = "Please Enter valid phone number"
+        }
+
+        if (!userData.country) {
+            error.country = "Phone number is required!"
+        }
+        else if (!namepattern.test(userData.country)) {
+            error.country = "Please Enter valid phone number"
+        }
+
+        if (!userData.pincode) {
+            error.pincode = "Phone number is required!"
+        }
+        else if (!phonepattern.test(userData.pincode)) {
+            error.pincode = "Please Enter valid phone number"
+        }
+
+        if (!userData.address) {
+            error.address = "Phone number is required!"
+        }
+        else if (!namepattern.test(userData.address)) {
+            error.address = "Please Enter valid phone number"
+        }
+
+
+        return error;
     }
-    
+
+    const cart_list = JSON.parse(localStorage.getItem('cartlist'))
+    // const login_list = JSON.parse(localStorage.getItem('user'))
+
+
+
+
+    // useEffect(() => {
+    //     // const user_id = login_list === null ? "" : login_list[0]?.email
+
+    //     const data = cart_list?.filter((data) => data.uid === login_list)
+    //         .map((datas) => {
+    //             return datas
+    //         })
+    //     //   cartitem(data)
+    // }, []);
+
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/login')
+        }
+        profile();
+        cartList();
+        totalPrice();
+    }, [])
+
+
+    const cartList = async () => {
+        let cartlist = [];
+        cartlist = JSON.parse(localStorage.getItem('cartlist'))
+        setCartItem(cartlist)
+    }
+
+    const totalPrice = () =>
+        cartitem?.reduce((total, item) => parseInt(total) + (parseInt(item.uqty) * parseInt(item.price)), 0)
+
+
+
+    const profile = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+                // console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/login");
+                // alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                // console.log("admin =" + res.data.isAdmin)
+            }
+        } catch (error) {
+            console.log("profile err", error);
+        }
+    };
+
+
+
+
+
+
+
+    const hadelpayment = (e) => {
+        // console.log("HandlePaymenttttttttttttttttttt");
+        //   const Razorpay = useRazorpay();
+        // setformerror(handleSubmit(userData));
+        e.preventDefault()
+        const user_id = localStorage.getItem('user')
+        // console.log(user_id, "uuuuuuu");
+        var total = Number(totalPrice())
+        var options = {
+            key: "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
+            amount: parseInt(total) * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            currency: "INR",
+            name: "SuperGrocery",
+            description: "Test Transaction",
+            order_id: "", //This is a sample Order ID. Pass the id obtained in the response of Step 1
+            handler: function (response) {
+                console.log("response", response);
+                let object = {
+                    orderInfo: {
+                        uid: user_id,
+                        fname: userData.fname,
+                        lname: userData.lname,
+                        address: userData.address,
+                        mobile: userData.mobile,
+                        email: userData.email,
+                        transaction_id: response.razorpay_payment_id,
+                        total_amt: parseInt(total) ,
+                        subtotal: parseInt(total) ,
+                        discount: 0,
+
+                    },
+                    orderDetail: cartitem
+                }
+                console.log(object,
+                    'LLLLLLLLLLLLL');
+                axios.post('http://localhost:8080/check-out', object).then((res) => {
+                    if (res.status === 200) {
+                        console.log("if condition", res)
+                        localStorage.removeItem("cartlist");
+
+                        cartList()
+                        navigate('/');
+                    }
+                    else {
+                        console.log("else condition", res);
+                    }
+                })
+
+
+
+            },
+            theme: {
+                "color": "#81c408"
+            }
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+    }
     return (
         <>
-                <ToastContainer />
-
             <Header />
             <Search />
             {/* Single Page Header start */}
@@ -201,20 +281,20 @@ function Billing() {
             <div className="container-fluid py-5">
                 <div className="container py-5">
                     <h1 className="mb-4">Billing details</h1>
-                    <form onSubmit={handelSubmit}>
+                    <form onSubmit={hadelpayment}>
                         <div className="row g-5">
                             <div className="col-md-12 col-lg-6 col-xl-7">
                                 <div className="row">
                                     <div className="col-md-12 col-lg-6">
                                         <div className="form-item w-100">
                                             <label className="form-label my-3">First Name<sup>*</sup></label>
-                                            <input type="text" className="form-control" name='fname' onChange={handleChange} required />
+                                            <input type="text" className="form-control" name='fname' value={userData.fname} onChange={handleChange} required />
                                         </div>
                                     </div>
                                     <div className="col-md-12 col-lg-6">
                                         <div className="form-item w-100">
                                             <label className="form-label my-3">Last Name<sup>*</sup></label>
-                                            <input type="text" className="form-control" name='lname' onChange={handleChange} required />
+                                            <input type="text" className="form-control" name='lname' value={userData.lname} onChange={handleChange} required />
                                         </div>
                                     </div>
                                 </div>
@@ -224,27 +304,27 @@ function Billing() {
                                 </div> */}
                                 <div className="form-item">
                                     <label className="form-label my-3">Address <sup>*</sup></label>
-                                    <input type="text" className="form-control" placeholder="House Number Street Name" name='address' onChange={handleChange} required />
+                                    <input type="text" className="form-control" placeholder="House Number Street Name" name='address' value={userData.address} onChange={handleChange} required />
                                 </div>
                                 <div className="form-item">
-                                    <label className="form-label my-3">Town/City<sup>*</sup></label>
-                                    <input type="text" className="form-control" name='city' onChange={handleChange} required />
+                                    <label className="form-label my-3">City<sup>*</sup></label>
+                                    <input type="text" className="form-control" name='city' value={userData.city} onChange={handleChange} required />
                                 </div>
                                 <div className="form-item">
                                     <label className="form-label my-3">Country<sup>*</sup></label>
-                                    <input type="text" className="form-control" name='country' onChange={handleChange} required />
+                                    <input type="text" className="form-control" name='country' value={userData.country} onChange={handleChange} required />
                                 </div>
                                 <div className="form-item">
-                                    <label className="form-label my-3">Postcode/Zip<sup>*</sup></label>
-                                    <input type="text" className="form-control" name='pincode' onChange={handleChange} />
+                                    <label className="form-label my-3">Poincode<sup>*</sup></label>
+                                    <input type="text" className="form-control" name='pincode' value={userData.pincode} onChange={handleChange} />
                                 </div>
                                 <div className="form-item">
                                     <label className="form-label my-3">Mobile<sup>*</sup></label>
-                                    <input type="tel" className="form-control" name='mobile' onChange={handleChange} required />
+                                    <input type="tel" className="form-control" name='mobile' value={userData.mobile} onChange={handleChange} required />
                                 </div>
                                 <div className="form-item">
                                     <label className="form-label my-3">Email Address<sup>*</sup></label>
-                                    <input type="email" className="form-control" name='email' onChange={handleChange} required />
+                                    <input type="email" className="form-control" name='email' value={userData.email} onChange={handleChange} required />
                                 </div>
                                 <div className="form-check my-3">
                                     <input type="checkbox" className="form-check-input" id="Account-1" name="Accounts" defaultValue="Accounts" />
@@ -272,7 +352,7 @@ function Billing() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {cartitems.map((item, index) => {
+                                            {cartitem && cartitem?.map((item, index) => {
                                                 let p_total = parseInt(item?.uqty) * parseInt(item?.price);
                                                 return (<tr>
                                                     <th scope="row">
@@ -347,7 +427,7 @@ function Billing() {
                                                 <h3 className=" mb-4">Final <span className="fw-normal">Amount</span></h3>
                                                 <div className="d-flex justify-content-between mb-4">
                                                     <h5 className="mb-0 me-4">Subtotal:</h5>
-                                                    <p className="mb-0">₹{totalcart()}</p>
+                                                    <p className="mb-0">₹{totalPrice()}</p>
                                                 </div>
                                                 <div className="d-flex justify-content-between">
                                                     <h5 className="mb-0 me-4">Shipping</h5>
@@ -360,27 +440,59 @@ function Billing() {
                                             <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                                                 <h5 className="mb-0 ps-4 me-4">Total</h5>
                                                 {/* cartitem!=null?g_Total:item?.reduce(tot,obj)=>parseInt(tot) */}
-                                                <p className="mb-0 pe-4">₹{totalcart()}</p>
+                                                <p className="mb-0 pe-4">₹{totalPrice()}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                
+                                {/* <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div className="col-12">
+                                        <div className="form-check text-start my-3">
+                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Transfer-1" name="Transfer" defaultValue="Transfer" />
+                                            <label className="form-check-label" htmlFor="Transfer-1">Direct Bank Transfer</label>
+                                        </div>
+                                        <p className="text-start text-dark">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</p>
+                                    </div>
+                                </div>
+                                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div className="col-12">
+                                        <div className="form-check text-start my-3">
+                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Payments-1" name="Payments" defaultValue="Payments" />
+                                            <label className="form-check-label" htmlFor="Payments-1">Check Payments</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div className="col-12">
+                                        <div className="form-check text-start my-3">
+                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Delivery-1" name="Delivery" defaultValue="Delivery" />
+                                            <label className="form-check-label" htmlFor="Delivery-1">Cash On Delivery</label>
+                                        </div>
+                                    </div>
+                                </div> */}
+                                {/* <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                                    <div className="col-12">
+                                        <div className="form-check text-start my-3">
+                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Paypal-1" name="Paypal" defaultValue="Paypal" />
+                                            <label className="form-check-label" htmlFor="Paypal-1">Paypal</label>
+                                        </div>
+                                    </div>
+                                </div> */}
                                 <div className="row g-4 text-center align-items-center justify-content-center pt-4 ">
-                                    <button type="submit" className="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" onClick={() => { handelpayment(totalcart()) }}>Place Order</button>
+                                    <button type="submit" className="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" >Place Order</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            {/*Checkout Page End*/}
+            {/* // {/Checkout Page End/} */}
             <Footer />
 
         </>
-       
     )
 }
 
-export default Billing;
+
+export default Billing

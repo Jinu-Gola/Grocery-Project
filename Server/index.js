@@ -1,12 +1,9 @@
 const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require("cors")
-
-
-;
+const cors = require("cors");
 app.use(cors({ config: '*' }));
-
+app.use(express.json());
 const multer = require("multer");
 const path = require("path");
 app.use("/images", express.static("./images"));
@@ -35,7 +32,7 @@ const db = require("./Database/db")
 const verifyToken = require("./Middleware/useAutho.js");
 const decodeToken = require("./Middleware/decodeToken.js")
 const userModel = require("./Controller/regi.controller.js")
-// const contactModel = require("./Controller/cnt.controller")
+const contactModel = require("./Controller/cnt.controller")
 
 const cateModel = require("./Controller/categ.controller.js")
 const subcateModel = require("./Controller/subcategory.js")
@@ -44,6 +41,7 @@ const pro_detailModel = require('./Controller/proDetail.controller.js')
 const cartModel = require("./Controller/cart.controller.js")
 const payment=require('./Controller/payment.controller.js')
 const ordercontroller=require('./Controller/orders.controller.js')
+const total=require('./Controller/total.controller.js')
 // const { config } = require("process");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -94,6 +92,9 @@ app.get("/category/:cid", pro_detailModel.categoryProduct)
 app.get("/search-product", pro_detailModel.searchProduct)
 
 
+//total api
+app.get('/total',total.total)
+
 //order api
 app.post("/check-out", ordercontroller.orderPlace)
 
@@ -119,9 +120,9 @@ app.post("/check-out", ordercontroller.orderPlace)
 
 
 // Contact API
-// app.post("/cont", contactModel.contPost)
-// app.get("/cont/:id", verifyToken, contactModel.contGet)
-// app.delete("/cont/:id", contactModel.contDel)
+app.post("/addcont", contactModel.contPost)
+app.get("/cont/:id", verifyToken, contactModel.contGet)
+app.delete("/cont/:id", contactModel.contDel)
 
 // payment api
 app.post("/payment",payment.orders)

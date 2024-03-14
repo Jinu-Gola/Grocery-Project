@@ -1,63 +1,209 @@
-const { orderModel } = require('../Model/order')
-const { order_detailModel } = require('../Model/order')
-const pro_detailModel = require('../Model/product_detail');
-const moment = require('moment');
+
+
+const mongoose = require("mongoose");
+
+const orderSchema = new mongoose.Schema({
+    uid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "registration",
+        // require: true
+    },
+    fname: {
+        type: String,
+        require: true,
+    },
+    lname: {
+        type: String,
+        require: true,
+    },
+    adderss: {
+        type: String,
+        require: true,
+    },
+    mobile: {
+        type: Number,
+        require: true,
+        // unique: true
+    },
+    email: {
+        type: String,
+        require: true,
+        // unique: true
+    },
+    order_date: {
+        type: String,
+        // require: true
+    },
+    transaction_id: {
+        type: String,
+        // require: true,
+
+    },
+    total_amt: {
+        type: Number,
+        // require: true
+    },
+    subtotal: {
+        type: Number,
+        // require: true
+    },
+    discount: {
+        type: Number
+    },
+    order_status: {
+        type: Number,
+        // require: true
+        default: "pending"
+    }
+    // otp:{
+    //     type:Number
+    // }
+})
+
+const order_detailSchema = new mongoose.Schema({
+
+
+    o_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "order",
+        require: true,
+
+    },
+    p_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product_Details",
+        require: true
+    },
+    pname: {
+        type: String
+    },
+    price: {
+        type: Number,
+        // trim:true
+    },
+    uqty: {
+        type: Number,
+        require: true
+    },
+
+    total_amt: {
+        type: Number,
+        require: true
+    },
+    size_of_product: {
+        type: String
+    },
+    city: {
+        type: String,
+        // require: true,
+    },
+    country: {
+        type: String,
+        // require: true,
+    },
+    pincode: {
+        type: Number,
+        // require: true,
+    },
+    email: {
+        type: String,
+        require: true,
+        unique: true
+
+    },
+    returnstatus: {
+        type: Number
+    },
+})
+
+
+const orderModel = mongoose.model("order", orderSchema);
+const order_detailModel = mongoose.model("order_detail", order_detailSchema);
+
+
+
+module.exports = order_detailModel, orderModel;
+// module.exports = orderModel;
+
+
+
+
+
+
+
+
+// const { parse } = require('path');
+const { orderModel, order_detailModel } = require('../Model/order');
+const pro_detailModel = require('../model/product');
+const nodemailer = require("nodemailer");
+// const fs = require('fs');
+// const PDFDocument = require('pdfkit');
+
+// const generateInvoice = (product, id, email, total) => {
+//     const doc = new PDFDocument();
+//     const invoicePath = ./ invoices / ${ id }.pdf;
+//     const writeStream = fs.createWriteStream(invoicePath);
+
+//     doc.pipe(writeStream);
+
+//     doc.fontSize(10).text(Email: ${ email });
+//     doc.fontSize(12).text(Invoice for Order ID: ${ id });
+//     for (let item of product) {
+//         doc.fontSize(10).text(Product: ${ item.name });
+//         doc.fontSize(10).text(Price: ${ item.price });
+//         doc.fontSize(10).text(Quntity: ${ item.uqty });
+//     }
+//     doc.fontSize(10).text(Total Bill is: ${ total });
+
+//     doc.end();
+
+//     return invoicePath;
+// };
+
+// const products=parse(localStorage.getItem('cartlist'))
+// console.log(products,"carttttt");
 
 const orderPlace = async (req, res) => {
-    const product = req.body.product
+    var { product, uid, fname, lname, adderss, mobile, email, order_date, transaction_id, total_amt, subtotal, country, state, city } = req.body;
+    // console.log(product, uid, fname, lname, adderss, mobile, email, order_date, transaction_id, total_amt, subtotal, country, state, city, "logggggggggggg");
     var pid = [];
     for (let i = 0; i < product.length; i++) {
+        console.log(pid, "pppppppppppppqqqqqqqqq");
         pid[i] = product[i]._id;
+        console.log(product[i]._id, "iiiiiiiiiii");
     }
+    console.log(product, "ppppppppp");
     try {
-        const orderdate = moment().format('DD-MM-YYYY');
-
-        // const { uid, fname, lname, adderss, mobile, email, order_date, transaction_id, order_status, total_amt, subtotal, discount } = req.body;
-
-        const orderData = await orderModel.create({
-            uid: req.body.uid,
-            fname: req.body.fname,
-            lname: req.body.lname,
-            adderss: req.body.adderss,
-            mobile: req.body.mobile,
-            email: req.body.email,
-            order_date: orderdate,
-            transaction_id: req.body.transaction_id,
+        const order = await orderModel.create({
+            uid: uid,
+            fname: fname,
+            lname: lname,
+            adderss: adderss,
+            mobile: mobile,
+            email: email,
+            order_date: order_date,
+            transaction_id: transaction_id,
             order_status: 0,
-            total_amt: req.body.total_amt,
-            subtotal: req.body.subtotal,
-            discount: req.body.discount,
-
-        })
-
+            total_amt: total_amt,
+            subtotal: subtotal,
+            discount: 0,
+        });
+        console.log('Order created:', order);
         for (let item of product) {
+            console.log(product, "forrrrrrrrrrr");
             try {
                 const productDetails = await order_detailModel.create({
-                    // pid: item._id,
-                    // pname: item.name,
-                    // pqty: item.userqty,
-                    // price: item.price,
-                    // orderid: order._id,
-                    // email: email,
-                    // fname: fname,
-                    // lname: lname,
-                    // phone: phone,
-                    // country: country,
-                    // state: state,
-                    // city: city
-
                     o_id: order._id,
-                    p_id: req.body._id,
+                    p_id: item._id,
+                    pname: item.product_name,
                     price: item.price,
-                    uqty: item.uqty,
-                    // total_amts: ,
+                    qty: item.uqty,
                     size_of_product: item.size,
-                    city: req.body.city,
-                    country: req.body.country,
-                    pincode: req.body.pincode,
-                    email: req.body.email,
+                    city: city,
+                    country: country,
+                    pincode: pincode,
+                    email: email,
                     returnstatus: 0
-
                 });
 
                 // Update the quantity of the product
@@ -66,7 +212,7 @@ const orderPlace = async (req, res) => {
                 if (find) {
                     const qtyup = find.qty - item.uqty;
                     console.log("qtyup", qtyup);
-                    var up = await pro_detailModel.findByIdAndUpdate(
+                    var upate_qty = await pro_detailModel.findByIdAndUpdate(
                         { _id: item._id },
                         { qty: qtyup }
                         , { new: true }
@@ -75,72 +221,55 @@ const orderPlace = async (req, res) => {
 
 
                 console.log("Product updated:", item._id);
-                console.log("Order detail added:", productDetails, up);
+                console.log("Order detail added:", productDetails, upate_qty);
             } catch (error) {
                 console.error("Error processing product:", error);
             }
 
 
         }
-        // .then((result) => {
-        //     console.log(result, "order information....");
-        //     if (result) {
-        //         console.log(req.body, "bbbbbbbb");
-        //         for (let i = 0; i < req.body.orderDetail.length; i++) {
-        //             let p_qty
-        //             pro_detailModel.find({
-        //                 _id: req.body.orderDetail[i]._id
-        //             }, { qty: 1, _id: 0 }).then((final_p_qty) => {
-        //                 if (final_p_qty) {
-        //                     p_qty = parseInt(final_p_qty[0].qty) - parseInt(req.body.orderDetail[i].uqty)
-        //                     console.log(p_qty, "product quantity...");
-        //                 }
-        //             })
-        //             // const { o_id, p_id, price, uqty, total_amts, size_of_product, city, country, pincode, email, returnstatus } = req.body
-        //             order_detailModel.create({
-        // o_id: result._id,
-        // p_id: req.body.orderDetail[i]._id,
-        // price: req.body.orderDetail[i].price,
-        // uqty: req.body.orderDetail[i].uqty,
-        // total_amts: req.body.orderDetail[i].total_amts,
-        // size_of_product: req.body.orderDetail[i].size_of_product,
-        // city: req.body.orderDetail[i].city,
-        // country: req.body.orderDetail[i].country,
-        // pincode: req.body.orderDetail[i].pincode,
-        // email: req.body.orderDetail[i].email,
-        // returnstatus: 0
 
+        // Send respons with mail pdf
+        // const pdf1 = generateInvoice(product, orderid, email, amount);
 
-        //             }).then((result) => {
-        //                 console.log(result, p_qty, "order details information");
-        //                 if (result) {
-        //                     pro_detailModel.findByIdAndUpdate({ _id: req.body.orderDetail[i]._id }, {
-        //                         qty: p_qty
-        //                     }).then((result) => {
-        //                         console.log(result, "product qty updated");
-        //                     })
-        //                 }
-        //             })
+        // let transport = nodemailer.createTransport({
+        //     service: "gmail",
+        //     service: "gmail",
+        //     auth: {
+        //         user: "jinalgola@gmail.com",
+        //         pass: "uiodtwczajemtxba"
+        //     }
+        // });
+        // let mailop = {
+        //     from: "jinalgola@gmail.com",
+        //     to: email,
+        //     subject: "Your order placed",
+        //     text: "your order placed just right now",
+        //     attachments: [
+        //         {
+        //             filename: ${ orderid }.pdf,
+        //         path: pdf1
+        //             }
+        //         ]
 
-        //             res.send({ status: 1, result: result, message: "order Place Successfully.." })
-
-        //         }
+        //   }
+        // transport.sendMail(mailop, (err, info) => {
+        //     if (err) {
+        //         console.log("error mail", err);
         //     }
         //     else {
-        //         res.send({ status: 0, result: [], message: "order not placed" })
-
+        //         console.log("info", info);
         //     }
         // })
 
-
-
-
+        // console.log("email sended")
+        res.status(200).send({ message: "Order placed successfully" });
     } catch (error) {
-        console.log(error);
-        res.send(error)
+        // Handle errors
+        console.error("Error placing order:", error);
+        res.status(500).send({ error: "Failed to place order" });
     }
 }
 
-module.exports = {
-    orderPlace
-}
+
+module.exports = { orderPlace };

@@ -1,135 +1,83 @@
-
-const orderModel = require('../Model/order');
-const order_detailModel = require('../Model/order');
-const pro_detailModel = require('../model/product');
-const nodemailer = require("nodemailer");
-// const fs = require('fs');
-// const PDFDocument = require('pdfkit');
-
-// const generateInvoice = (product, id, email, total) => {
-//     const doc = new PDFDocument();
-//     const invoicePath = ./ invoices / ${ id }.pdf;
-//     const writeStream = fs.createWriteStream(invoicePath);
-
-//     doc.pipe(writeStream);
-
-//     doc.fontSize(10).text(Email: ${ email });
-//     doc.fontSize(12).text(Invoice for Order ID: ${ id });
-//     for (let item of product) {
-//         doc.fontSize(10).text(Product: ${ item.name });
-//         doc.fontSize(10).text(Price: ${ item.price });
-//         doc.fontSize(10).text(Quntity: ${ item.uqty });
-//     }
-//     doc.fontSize(10).text(Total Bill is: ${ total });
-
-//     doc.end();
-
-//     return invoicePath;
-// };
+const orderModel = require('../Model/order')
+const order_detailModel = require('../Model/order')
+const pro_detailModel = require('../Model/product_detail');
+const moment = require('moment');
 
 
 const orderPlace = async (req, res) => {
-    var { product, uid, fname, lname, adderss, mobile, email, order_date, transaction_id, total_amt, subtotal, country, state, city } = req.body;
-    var pid = [];
-    // for (let i = 0; i < product.length; i++) {
-    //     pid[i] = product[i]._id;
-    // }
     try {
-        const order = await orderModel.create({
-            uid: uid,
-            fname: fname,
-            lname: lname,
-            adderss: adderss,
-            mobile: mobile,
-            email: email,
-            order_date: order_date,
-            transaction_id: transaction_id,
+        console.log(req.body, "KKKKKKKKKKK");
+        const orderdate = moment().format('DD-MM-YYYY');
+
+        // const { uid, fname, lname, adderss, mobile, email, order_date, transaction_id, order_status, total_amt, subtotal, discount } = req.body;
+
+        const orderData = await orderModel.create({
+            uid: req.body.orderInfo.uid,
+            fname: req.body.orderInfo.fname,
+            lname: req.body.orderInfo.lname,
+            adderss: req.body.orderInfo.uid,
+            mobile: req.body.orderInfo.mobile,
+            email: req.body.orderInfo.email,
+            order_date: orderdate,
+            transaction_id: req.body.orderInfo.transaction_id,
             order_status: 0,
-            total_amt: total_amt,
-            subtotal: subtotal,
-            discount: 0,
-        });
-        console.log('Order created:', order);
-        for (let item of product) {
-            try {
-                const productDetails = await order_detailModel.create({
-                    o_id: order._id,
-                    p_id: item._id,
-                    pname: item.product_name,
-                    price: item.price,
-                    qty: item.uqty,
-                    size_of_product: item.size,
-                    city: city,
-                    country: country,
-                    pincode: pincode,
-                    email: email,
-                    returnstatus: 0
-                });
+            total_amt: req.body.orderInfo.total_amt,
+            subtotal: req.body.orderInfo.subtotal,
+            discount: req.body.orderInfo.discount,
 
-                // Update the quantity of the product
-                var find = await pro_detailModel.findOne({ _id: item._id });
-                console.log("find", find);
-                if (find) {
-                    const qtyup = find.qty - item.uqty;
-                    console.log("qtyup", qtyup);
-                    var upate_qty = await pro_detailModel.findByIdAndUpdate(
-                        { _id: item._id },
-                        { qty: qtyup }
-                        , { new: true }
-                    );
+        }).then((result) => {
+            console.log(result, "order information....");
+            if (result) {
+                console.log(req.body, "bbbbbbbb");
+                for (let i = 0; i < req.body.orderDetail.length; i++) {
+                    let p_qty
+                    pro_detailModel.find({
+                        _id: req.body.orderDetail[i]._id
+                    }, { qty: 1, _id: 0 }).then((final_p_qty) => {
+                        if (final_p_qty) {
+                            p_qty = parseInt(final_p_qty[0].qty) - parseInt(req.body.orderDetail[i].uqty)
+                            console.log(p_qty, "product quantity...");
+                        }
+                    })
+                    console.log(p_qty, "p_qty");
+                    // const { o_id, p_id, price, uqty, total_amts, size_of_product, city, country, pincode, email, returnstatus } = req.body
+                    order_detailModel.create({
+                        o_id: result._id,
+                        p_id: req.body.orderDetail[i]._id,
+                        price: req.body.orderDetail[i].price,
+                        uqty: req.body.orderDetail[i].u_qty,
+                        total_amt: req.body.orderDetail[i].total_amt,
+                        size_of_product: req.body.orderDetail[i].size
+                    }).then((result) => {
+                        console.log(result, p_qty, "order details information");
+                        if (result) {
+                            pro_detailModel.findByIdAndUpdate({ _id: req.body.orderDetail[i]._id }, {
+                                qty: p_qty
+                            }).then((result) => {
+                                console.log(result, "product qty updated");
+                            })
+                        }
+                    })
+
+                    res.send({ status: 1, result: result, message: "order Place Successfully.." })
+
                 }
-
-
-                console.log("Product updated:", item._id);
-                console.log("Order detail added:", productDetails, upate_qty);
-            } catch (error) {
-                console.error("Error processing product:", error);
             }
+            else {
+                res.send({ status: 0, result: [], message: "order not placed" })
+
+            }
+        })
 
 
-        }
 
-        // Send respons with mail pdf
-        // const pdf1 = generateInvoice(product, orderid, email, amount);
 
-        // let transport = nodemailer.createTransport({
-        //     service: "gmail",
-        //     service: "gmail",
-        //     auth: {
-        //         user: "jinalgola@gmail.com",
-        //         pass: "uiodtwczajemtxba"
-        //     }
-        // });
-        // let mailop = {
-        //     from: "jinalgola@gmail.com",
-        //     to: email,
-        //     subject: "Your order placed",
-        //     text: "your order placed just right now",
-        //     attachments: [
-        //         {
-        //             filename: ${ orderid }.pdf,
-        //         path: pdf1
-        //             }
-        //         ]
-
-        //   }
-        // transport.sendMail(mailop, (err, info) => {
-        //     if (err) {
-        //         console.log("error mail", err);
-        //     }
-        //     else {
-        //         console.log("info", info);
-        //     }
-        // })
-
-        // console.log("email sended")
-        res.status(200).send({ message: "Order placed successfully" });
     } catch (error) {
-        // Handle errors
-        console.error("Error placing order:", error);
-        res.status(500).send({ error: "Failed to place order" });
+        console.log(error);
+        res.send(error)
     }
 }
 
-
-module.exports = { orderPlace };
+module.exports = {
+    orderPlace
+}

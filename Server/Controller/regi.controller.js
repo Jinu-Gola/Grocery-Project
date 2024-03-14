@@ -79,7 +79,7 @@ const loginUser = async (req, res) => {
                 const token = jwt.sign({ _id: user._id, email: user.email, user }, secretkey, {
                     expiresIn: 2 * (60 * 60),
                 });
-                res.status(200).send({ Message: "User Login Successfully", data: user,token:token, id: user._id })
+                res.status(200).send({ Message: "User Login Successfully", data: user,token:token, uid: user._id })
             } else {
                 res.status(401).send({ Message: "Password is invalid..." });
             }

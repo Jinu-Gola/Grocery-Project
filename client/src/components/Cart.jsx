@@ -15,10 +15,6 @@ function Cart() {
     // const [profiles, setProfiles] = useState("")
 
     useEffect(() => {
-        // if (!token) {
-        //     navigate('/login')
-        // }
-        // profile();
         cartList()
     }, [])
 
@@ -48,72 +44,7 @@ function Cart() {
     }
 
 
-    // const hadelpayment = async (amt) => {
-    //     try {
-    //         const _data = { amount: amt };
-    //         const res = await axios.post('http://localhost:8080/orders', _data)
-    //         console.log("payment data", res.data);
-    //         handelopenrazorpay(res.data.data);
-    //     } catch (error) {
-    //         console.log("payment error", error);
-    //     }
-    // }
-
-
-    // const profile = async () => {
-    //     try {
-    //         const res = await axios.get(`http://localhost:8080/auth/${token}`);
-    //         console.log(res.data);
-    //         if (res.data === "Token is expired ") {
-    //             // console.log(res.data);
-    //             localStorage.removeItem("token");
-    //             navigate("/login");
-    //             alert("Token is expired ");
-    //         }
-    //         else {
-    //             setProfiles(res.data);
-    //             // console.log("admin =" + res.data.isAdmin)
-    //         }
-    //     } catch (error) {
-    //         console.log("profile err", error);
-    //     }
-    // };
-
-    // const handelopenrazorpay = (data) => {
-    //     var options = {
-    //         "key": "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
-    //         "amount": data.amount / 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-    //         "currency": data.currency,
-    //         "name": "SuperGrocery",
-    //         "description": "Test Transaction",
-    //         "order_id": data.id, //This is a sample Order ID. Pass the id obtained in the response of Step 1
-    //         "handler": function (response) {
-    //             // console.log("response",response);
-
-    //             axios.post('http://localhost:8080/verify', { response: response }).then((res) => {
-    //                 if (res.status === 200) {
-    //                     console.log("if condition", res)
-    //                     localStorage.removeItem("cartlist");
-                        
-    //                     cartList()
-    //                     navigate('/');
-    //                 }
-    //                 else {
-    //                     console.log("else condition", res);
-    //                 }
-    //             })
-
-
-
-
-    //         },
-    //         "theme": {
-    //             "color": "#81c408"
-    //         }
-    //     };
-    //     const rzp = new window.Razorpay(options);
-    //     rzp.open();
-    // }
+  
 
     return (
         <>

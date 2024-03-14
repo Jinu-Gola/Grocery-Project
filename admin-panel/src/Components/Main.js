@@ -4,6 +4,26 @@ import axios from 'axios'
 
 
 function Main() {
+
+   
+        const [totus, setTotus] = useState();
+        const [totpd, setTotpd] = useState();
+        const [totct, setTotct] = useState();
+        useEffect(() => {
+            datas();
+        }, [])
+
+        const datas = async () => {
+            try {
+                const res = await axios.get('http://localhost:5000/total');
+                setTotct(res.data.totcat)
+                setTotpd(res.data.totproduct)
+                setTotus(res.data.totuser)
+            } catch (error) {
+                // console.log("total err",error)
+            }
+        }
+
     const navigate = useNavigate();
 
     var token = localStorage.getItem("token");

@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
@@ -24,17 +23,17 @@ const orderSchema = new mongoose.Schema({
     mobile: {
         type: Number,
         require: true,
-        unique: true
+        // unique: true
     },
     email: {
         type: String,
         require: true,
-        unique: true
+        // unique: true
 
     },
     order_date: {
         type: String,
-        // require: true
+        require: true
     },
     transaction_id: {
         type: String,
@@ -54,12 +53,10 @@ const orderSchema = new mongoose.Schema({
     },
     order_status: {
         type: Number,
-        // require: true
-        default:"pending"
+        // default: "panding"
+        default:0
     }
-    // otp:{
-    //     type:Number
-    // }
+    
 })
 
 const order_detailSchema = new mongoose.Schema({
@@ -76,9 +73,6 @@ const order_detailSchema = new mongoose.Schema({
         ref: "Product_Details",
         require: true
     },
-    pname:{
-        type:String
-    },
     price: {
         type: Number,
         // trim:true
@@ -92,31 +86,10 @@ const order_detailSchema = new mongoose.Schema({
         type: Number,
         require: true
     },
-    size_of_product:{
-        type:String
-    },
-    city: {
-        type: String,
-        // require: true,
-    },
-    country: {
-        type: String,
-        // require: true,
-    },
-    pincode: {
-        type: Number,
-        // require: true,
-    },
-    email: {
-        type: String,
-        require: true,
-        unique: true
+    size_of_product: {
+        type: String
+    }
 
-    },
-    returnstatus:{
-        type:Number
-    },
-    
 
 
 })

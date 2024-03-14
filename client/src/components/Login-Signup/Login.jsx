@@ -1,72 +1,4 @@
 
-// import React, { useState } from 'react'
-// import './login-signup.css'
-// import axios from 'axios';
-// import { Link, useNavigate } from 'react-router-dom'
-// function Login() {
-
-//   const navigate = useNavigate();
-
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-//   const result = async (e) => {
-//     e.preventDefault();
-//     const response = await axios.post("http://localhost:8080/login", {
-//       email: email,
-//       password: password,
-//     })
-//     // console.log('result', result);
-//     const data = response.data
-//     if (data.isAdmin !== true) {
-//       if (email == '' && password == '') {
-//         alert('please enter email and password..!')
-//       } else {
-//         localStorage.setItem('token', response.data.token)
-//         navigate('/');
-//       }
-//       // alert('Admin login')
-//     } else {
-//       // alert('User Login')
-//       navigate('/login')
-//     }
-//   }
-
-//   // register
-
-//   const [name, setName] = useState("");
-//   const [emails, setEmails] = useState("");
-//   const [pass, setPass] = useState("");
-//   const [mobile, setMobile] = useState("");
-
-
-//   const [submit, setSubmit] = useState(false);
-//   const [error, setError] = useState(false);
-
-//   const data = async (e) => {
-
-//     e.preventDefault();
-//     axios.post('http://localhost:8080/regis', {
-//       name: name,
-//       email: emails,
-//       mobile: mobile,
-//       password: pass,
-
-//     })
-
-//     localStorage.setItem("user", JSON.stringify({ name, email, password, mobile }));
-//     if (name === '' || emails === '' || pass === '' || mobile === '') {
-//       alert(setError(true));
-//     } else {
-//       setError(false);
-//       setSubmit(true);
-//       navigate('/login');
-//     }
-
-//   }
-
-
-
 import React, { useState } from 'react'
 import './login-signup.css'
 import axios from 'axios';
@@ -101,11 +33,13 @@ function Login() {
         email: email,
         password: password,
       })
-      console.log('result', response);
-      const data = response.data
-      console.log(data);
+      // console.log('result', response);
+      // const data = response.data
+      // console.log(data);
       // localStorage.setItem("user", JSON.stringify({  email, password}));
       localStorage.setItem('token', response.data.token)
+      localStorage.setItem('user', response.data.uid)
+
 
       navigate('/');
     }

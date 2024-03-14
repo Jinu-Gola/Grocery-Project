@@ -1,18 +1,17 @@
 // const mongoose=require("mongoose");
-const { contactModel } = require("../Model/contact.js");
+const  contactModel  = require("../Model/contact.js");
 
 const contPost = async (req, res) => {
     try {
-        const { name,email, mobile, subject,message } = req.body
+        const { name,email,message } = req.body
         const data = await contactModel.create({
             name: name,
             email:email,
-            mobile: mobile,
             message: message,
-            subject:subject
+            
 
         })
-        console.log(data);
+        // console.log(data);
         res.send(data);
     } catch (error) {
         res.send(error);

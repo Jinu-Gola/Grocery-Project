@@ -1,10 +1,54 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import Header from './Header'
 import Footer from './Footer'
 import Search from './Search'
-import { Link } from 'react-router-dom'
 
 function Contact() {
+    var token = localStorage.getItem("token");
+    const navigate=useNavigate()
+    useEffect(()=>{
+        if (!token) {
+            navigate('/login')
+        }
+        profile();
+    },[])
+
+    const[profiles,setProfiles]=useState("")
+    const profile = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+            // console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/login");
+                // alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                // console.log("admin =" + res.data.isAdmin)
+            }
+        } catch (error) {
+            console.log("profile err", error);
+        }
+    };
+
+    const [inputs, setInputs] = useState({});
+
+    const handleChange = (e) => {
+        setInputs({ ...inputs, [e.target.name]: e.target.value })
+    }
+
+    const handelSubmit = (e) => {
+        e.preventDefault();
+        axios.post('http://localhost:8080/addcont', {
+            name: inputs.name,
+            email: inputs.email,
+            message: inputs.msg,
+        })
+    }
     return (
         <>
             <Header/>
@@ -36,10 +80,10 @@ function Contact() {
                                     </div>
                                 </div>
                                 <div className="col-lg-7">
-                                    <form action className>
-                                        <input type="text" className="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" />
-                                        <input type="email" className="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" />
-                                        <textarea className="w-100 form-control border-0 mb-4" rows={5} cols={10} placeholder="Your Message" defaultValue={""} />
+                                <form onSubmit={handelSubmit}>
+                                        <input type="text" className="w-100 form-control border-0 py-3 mb-4" placeholder="Your Name" name='name' value={inputs.name} onChange={handleChange}/>
+                                    <input type="email" className="w-100 form-control border-0 py-3 mb-4" placeholder="Enter Your Email" name='email' value={inputs.email} onChange={handleChange} />
+                                    <textarea className="w-100 form-control border-0 mb-4" rows={5} cols={10} placeholder="Your Message" name='msg' value={inputs.msg} onChange={handleChange} />
                                         <button className="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
                                     </form>
                                 </div>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.min.css'
+import { ToastContainer, toast } from 'react-toastify'
 import axios from 'axios'
 import Header from './Header'
 import Footer from './Footer'
@@ -17,6 +19,21 @@ function Product() {
     const [productData, setProductData] = useState([])
     const [price, setPrice] = useState(0)
 
+    const wish_alerts = () => {
+        toast.success("Product Added to Wishlist", {
+            position: "top-center"
+        });
+    };
+    const cart_alerts = () => {
+        toast.success("Product Added to Cartlist", {
+            position: "top-center"
+        });
+    };
+    const carts_alerts = () => {
+        toast.error("Product Already in Cart", {
+            position: "top-center"
+        });
+    };
     useEffect(() => {
         display();
         // profile()
@@ -124,9 +141,11 @@ function Product() {
                 cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
-                alert("Product Added to Cartlist...!!")
+                // alert("Product Added to Cartlist...!!")
+                cart_alerts()
             } else {
-                alert("Product Already Exist in Cartlist")
+                // alert("Product Already Exist in Cartlist")
+                carts_alerts()
             }
         } else {
             console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "BBBBBBBB");
@@ -160,7 +179,8 @@ function Product() {
             fav.push({ ...favProduct })
             localStorage.setItem('whishlist', JSON.stringify(fav));
             window.location.reload()
-            alert("Product Added to Whishlist...!!!")
+            wish_alerts()
+            // alert("Product Added to Whishlist...!!!")
 
         }
     }
@@ -199,6 +219,8 @@ function Product() {
 
     return (
         <>
+            <ToastContainer />
+
             <Header searchFunction={searchFunction} />
             <div className="container-fluid bg-white sticky-top">
                 {/* <div className="container topbar bg-primary d-none d-lg-block">

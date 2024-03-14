@@ -36,7 +36,7 @@ function Home(props) {
         try {
             const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
                 setProduct(result?.data)
-                console.log(result.data);
+                // console.log(result.data);
             })
         } catch (error) {
             console.log(error)

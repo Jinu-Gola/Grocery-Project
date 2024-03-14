@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const contactSchema = mongoose.Schema({
-    Name: String,
+    name: String,
     email: {
         type: String,
         unique: [
@@ -11,14 +11,6 @@ const contactSchema = mongoose.Schema({
         required: true,
         lowercase: true
     },
-    mobile:{
-        type:Number,
-        unique:true,
-        maxlength:10,
-        minlength:10,
-        required:true
-    },
-    subject:String,
     message: String
 });
 const contactModel = new mongoose.model("Contact", contactSchema)
