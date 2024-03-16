@@ -1,4 +1,4 @@
-const { regModel } = require("../Model/user.js")
+const  regModel  = require("../Model/user.js")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const secretkey = '#jin@l#gol@'

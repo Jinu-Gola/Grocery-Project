@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import 'react-toastify/dist/ReactToastify.min.css'
+import { ToastContainer, toast } from 'react-toastify'
 import Header from './Header'
 import Search from './Search'
 import Slider from './Slider'
@@ -19,7 +21,7 @@ import Whishlist from './Whishlist'
 
 function Home(props) {
     const navigate = useNavigate()
-    var token = localStorage.getItem("token");
+    // var token = localStorage.getItem("token");
 
     const [search, setSearch] = useState("")
     useEffect(() => {
@@ -27,7 +29,26 @@ function Home(props) {
 
     }, [])
 
-    
+    const wish_alerts = () => {
+        toast.success("Product Added to Wishlist", {
+            position: "top-center"
+        });
+    };
+    const wishs_alerts = () => {
+        toast.error("Product Alreay in Wishlist", {
+            position: "top-center"
+        });
+    };
+    const cart_alerts = () => {
+        toast.success("Product Added to Cartlist", {
+            position: "top-center"
+        });
+    };
+    const carts_alerts = () => {
+        toast.error("Product Already in Cart", {
+            position: "top-center"
+        });
+    };
 
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
@@ -69,16 +90,19 @@ function Home(props) {
                 cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
-                alert("Product Added to Cartlist...!!")
+                // alert("Product Added to Cartlist...!!")
+                cart_alerts()
             } else {
-                alert("Product Already Exist in Cartlist")
+                // alert("Product Already Exist in Cartlist")
+                carts_alerts()
             }
         } else {
 
             cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
             localStorage.setItem('cartlist', JSON.stringify(cart));
             window.location.reload()
-            alert("Product Added to Cartlist...!!!")
+            // alert("Product Added to Cartlist...!!!")
+            cart_alerts()
 
         }
     }
@@ -95,22 +119,26 @@ function Home(props) {
                 fav.push({ ...favProduct })
                 localStorage.setItem('whishlist', JSON.stringify(fav));
                 window.location.reload()
-                alert("Product Added to Whishlist...!!")
+                // alert("Product Added to Whishlist...!!")
+                wish_alerts()
             } else {
-                alert("Product Already Exist in Whishlist")
+                // alert("Product Already Exist in Whishlist")
+                wishs_alerts()
             }
         } else {
 
             fav.push({ ...favProduct })
             localStorage.setItem('whishlist', JSON.stringify(fav));
             window.location.reload()
-            alert("Product Added to Whishlist...!!!")
+            // alert("Product Added to Whishlist...!!!")
+            wish_alerts()
 
         }
     }
     return (
         <>
 
+            <ToastContainer />
 
 
             {/* Navbar start */}
@@ -185,7 +213,7 @@ function Home(props) {
 
                                                             <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
                                                                 <h5 className='productName'>{item.product_name}</h5>
-                                                                {/* <p>{item.description}</p> */}
+                                                                <b><p>{item.size}</p></b>
                                                                 <div className="d-flex justify-content-between flex-lg-wrap">
                                                                     <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
                                                                     <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>

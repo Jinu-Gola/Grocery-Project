@@ -97,6 +97,7 @@ app.get('/total',total.total)
 
 //order api
 app.post("/check-out", ordercontroller.orderPlace)
+app.post("/get-order",ordercontroller.orderGet)
 
 
 
@@ -121,8 +122,8 @@ app.post("/check-out", ordercontroller.orderPlace)
 
 // Contact API
 app.post("/addcont", contactModel.contPost)
-app.get("/cont/:id", verifyToken, contactModel.contGet)
-app.delete("/cont/:id", contactModel.contDel)
+app.get("/getcont", contactModel.contGet)
+app.delete("/delcont/:id", contactModel.contDel)
 
 // payment api
 app.post("/payment",payment.orders)

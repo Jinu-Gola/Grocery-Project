@@ -24,6 +24,11 @@ function Product() {
             position: "top-center"
         });
     };
+    const wishs_alerts = () => {
+        toast.error("Product Added to Wishlist", {
+            position: "top-center"
+        });
+    };
     const cart_alerts = () => {
         toast.success("Product Added to Cartlist", {
             position: "top-center"
@@ -170,9 +175,12 @@ function Product() {
                 fav.push({ ...favProduct })
                 localStorage.setItem('whishlist', JSON.stringify(fav));
                 window.location.reload()
-                alert("Product Added to Whishlist...!!")
+                // alert("Product Added to Whishlist...!!")
+                wish_alerts()
+
             } else {
-                alert("Product Already Exist in Whishlist")
+                // alert("Product Already Exist in Whishlist")
+                wishs_alerts()
             }
         } else {
 
@@ -257,10 +265,10 @@ function Product() {
                         <div className="col-lg-12">
                             <div className="row g-4">
                                 <div className="col-xl-3">
-                                    {/* <div className="input-group w-100 mx-auto d-flex">
+                                    <div className="input-group w-100 mx-auto d-flex">
                                         <input type="search" className="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" />
                                         <span id="search-icon-1" className="input-group-text p-3"><i className="fa fa-search" /></span>
-                                    </div> */}
+                                    </div>
                                 </div>
                                 <div className="col-6" />
                                 <div className="col-xl-3">
@@ -366,6 +374,8 @@ function Product() {
                                                     <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
                                                     <div className="p-4 border border-secondary border-top-0 rounded-bottom">
                                                         <h5 className='productName'>{item.product_name}</h5>
+                                                        <b><p>{item.size}</p></b>
+
                                                         <div className="d-flex justify-content-between flex-lg-wrap flex-column">
                                                             <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
                                                             <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>

@@ -7,15 +7,16 @@ import { useState } from 'react'
 import axios from 'axios'
 
 function Cart() {
-    // var token = localStorage.getItem("token");
+    var token = localStorage.getItem("token");
 
     const navigate = useNavigate()
     const [cartitem, setCartItem] = useState([])
     const [cartTotal, setCartTotal] = useState(0);
-    // const [profiles, setProfiles] = useState("")
+    const [profiles, setProfiles] = useState("")
 
     useEffect(() => {
         cartList()
+        profile()
     }, [])
 
     const cartList = async () => {
@@ -36,12 +37,31 @@ function Cart() {
     // console.log(cartitem,"after itemssss removed...");
 
     const handleQty = (qty, index, item) => {
-        console.log(parseInt(qty) * parseInt(item.price),"MMMMMMMMMMMMMMMMM");
+        // console.log(parseInt(qty) * parseInt(item.price),"MMMMMMMMMMMMMMMMM");
         cartitem[index] = { ...item, uqty: parseInt(qty), total_amt: parseInt(qty) * parseInt(item.price) }
         setCartItem([...cartitem])
         // console.log(cartitem[index]);
         localStorage.setItem('cartlist', JSON.stringify(cartitem))
     }
+    const profile = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+            // console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/login");
+                // alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                // console.log("admin =" + res.data.isAdmin)
+            }
+        } catch (error) {
+            console.log("profile err", error);
+        }
+    };
+
 
 
   

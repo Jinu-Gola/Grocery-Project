@@ -15,7 +15,7 @@ function Login() {
     }
     const handelsubmit = async (e) => {
         e.preventDefault();
-        console.log(inputs);
+        // console.log(inputs);
 
         try {
             const res = await axios.post("http://localhost:8080/login", inputs);

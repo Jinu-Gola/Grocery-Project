@@ -18,9 +18,7 @@ const regSchema = mongoose.Schema({
     // },
     email: {
         type: String,
-        unique: [
-            true,
-            "this email is already exist,please try another one.."],
+        unique:true,
         trim: true,
         required: true,
         lowercase: true
@@ -33,7 +31,7 @@ const regSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        unique: true,
+        // unique: true,
         trim: true
     },
     // gender: String,
@@ -50,4 +48,4 @@ const regSchema = mongoose.Schema({
 const regModel = new mongoose.model("registration", regSchema);
 
 
-module.exports = { regModel }
+module.exports =  regModel 

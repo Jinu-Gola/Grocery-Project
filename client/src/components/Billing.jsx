@@ -4,8 +4,8 @@ import Search from './Search'
 import Footer from './Footer'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-// const moment = require('moment');
-// import useRazorpay from 'react-razorpay';
+
+// import {useRazorpay} from 'react-razorpay';
 
 
 
@@ -19,13 +19,7 @@ function Billing() {
         address: "",
         mobile: "",
         email: "",
-        // order_date: "",
-        // uid: "",
-        // transaction_id: "",
-        // order_status: "",
-        // total_amt: "",
-        // subtotal: "",
-        // discount:""
+       
 
     });
 
@@ -45,18 +39,14 @@ function Billing() {
     //     setInputs({ ...inputs, [name]: value })
     // }
 
-    const handleChange = (e) => {
-        console.log(e.target.value, "KKKKKKK");
-        setuserData({ ...userData, [e.target.name]: e.target.value })
-    }
-
 
     const handleSubmit = async (e) => {
         // e.preventDefault();
-        console.log(userData, "hhhhhhhhhhhhiiiiiiiiiiiiiiiii");
-        hadelpayment(userData)
+        // console.log(userData, "hhhhhhhhhhhhiiiiiiiiiiiiiiiii");
+        // hadelpayment(userData)
 
         // var userId = localStorage.getItem("user")
+        // var total = Number(totalPrice())
 
         // console.log(userData);
         // const data2 = axios.post('http://localhost:8080/check-out', {
@@ -65,7 +55,7 @@ function Billing() {
         //     address: userData.address,
         //     mobile: userData.mobile,
         //     email: userData.email,
-        //     order_date: moment.orderdate,
+        //     // order_date: moment.orderdate,
         //     uid: userId,
         //     order_status: 0,
         //     // transaction_id: response.razorpay_payment_id,
@@ -142,6 +132,14 @@ function Billing() {
         return error;
     }
 
+    const handleChange = (e) => {
+        // console.log(e.target.value, "KKKKKKK");
+        setuserData({ ...userData, [e.target.name]: e.target.value })
+    }
+    // console.log(userData, "hhhhhhhhhhhhiiiiiiiiiiiiiiiii");
+
+
+
     const cart_list = JSON.parse(localStorage.getItem('cartlist'))
     // const login_list = JSON.parse(localStorage.getItem('user'))
 
@@ -183,7 +181,7 @@ function Billing() {
     const profile = async () => {
         try {
             const res = await axios.get(`http://localhost:8080/auth/${token}`);
-                // console.log(res.data);
+            // console.log(res.data);
             if (res.data === "Token is expired ") {
                 // console.log(res.data);
                 localStorage.removeItem("token");
@@ -207,8 +205,8 @@ function Billing() {
 
     const hadelpayment = (e) => {
         // console.log("HandlePaymenttttttttttttttttttt");
-        //   const Razorpay = useRazorpay();
-        // setformerror(handleSubmit(userData));
+        // const Razorpay = useRazorpay();
+        setformerror(handleSubmit(userData));
         e.preventDefault()
         const user_id = localStorage.getItem('user')
         // console.log(user_id, "uuuuuuu");
@@ -217,7 +215,7 @@ function Billing() {
             key: "rzp_test_8VysNy7EGQyYhF", // Enter the Key ID generated from the Dashboard
             amount: parseInt(total) * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
             currency: "INR",
-            name: "SuperGrocery",
+            name: "SuperGrocy",
             description: "Test Transaction",
             order_id: "", //This is a sample Order ID. Pass the id obtained in the response of Step 1
             handler: function (response) {
@@ -231,15 +229,15 @@ function Billing() {
                         mobile: userData.mobile,
                         email: userData.email,
                         transaction_id: response.razorpay_payment_id,
-                        total_amt: parseInt(total) ,
-                        subtotal: parseInt(total) ,
+                        total_amt: parseInt(total),
+                        subtotal: parseInt(total),
                         discount: 0,
 
                     },
                     orderDetail: cartitem
                 }
-                console.log(object,
-                    'LLLLLLLLLLLLL');
+                console.log(cartitem, "dddddddddddddddddd");
+                console.log(object, 'LLLLLLLLLLLLL');
                 axios.post('http://localhost:8080/check-out', object).then((res) => {
                     if (res.status === 200) {
                         console.log("if condition", res)

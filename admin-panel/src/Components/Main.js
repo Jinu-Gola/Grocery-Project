@@ -4,26 +4,6 @@ import axios from 'axios'
 
 
 function Main() {
-
-   
-        const [totus, setTotus] = useState();
-        const [totpd, setTotpd] = useState();
-        const [totct, setTotct] = useState();
-        useEffect(() => {
-            datas();
-        }, [])
-
-        const datas = async () => {
-            try {
-                const res = await axios.get('http://localhost:5000/total');
-                setTotct(res.data.totcat)
-                setTotpd(res.data.totproduct)
-                setTotus(res.data.totuser)
-            } catch (error) {
-                // console.log("total err",error)
-            }
-        }
-
     const navigate = useNavigate();
 
     var token = localStorage.getItem("token");
@@ -79,6 +59,34 @@ function Main() {
             console.log(error)
         }
     }
+
+
+    const [totus, setTotus] = useState(0);
+    const [totpd, setTotpd] = useState(0);
+    const [totorder, setTotOrder] = useState(0)
+    // const [totct, setTotct] = useState();
+    useEffect(() => {
+        datas();
+        // console.log(, "ddddddddddddd");
+    }, [])
+
+    const datas = async () => {
+        try {
+            const res = await axios.get('http://localhost:8080/total');
+            // setTotct(res.data.totcat)
+            setTotpd(res.data.totproduct)
+            // console.log(res.data.totproduct,"total product");
+            setTotus(res.data.totuser)
+            // console.log(res.data.totuser, "total user");
+
+            setTotOrder(res.data.totorder)
+            // console.log(res.data.totorder, "total order");
+
+        } catch (error) {
+            console.log("total err", error)
+        }
+    }
+
     return (
         <>
             <div className="main-panel">
@@ -91,7 +99,7 @@ function Main() {
                                     <div className="row">
                                         <div className="col-9">
                                             <div className="d-flex align-items-center align-self-start">
-                                                <h3 className="mb-0">$12.34</h3>
+                                                <h3 className="mb-0">{totus}</h3>
                                                 {/* <p className="text-success ml-2 mb-0 font-weight-medium">
                                                     +3.5%
                                                 </p> */}
@@ -99,6 +107,30 @@ function Main() {
                                         </div>
                                         {/* <div className="col-3">
                                             <div className="icon icon-box-success ">
+                                                <span className="mdi mdi-arrow-top-right icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">
+                                        Total Users
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">{totpd}</h3>
+                                                {/* <p className="text-success ml-2 mb-0 font-weight-medium">
+                                                    +11%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-success">
                                                 <span className="mdi mdi-arrow-top-right icon-item" />
                                             </div>
                                         </div> */}
@@ -115,31 +147,7 @@ function Main() {
                                     <div className="row">
                                         <div className="col-9">
                                             <div className="d-flex align-items-center align-self-start">
-                                                <h3 className="mb-0">$17.34</h3>
-                                                {/* <p className="text-success ml-2 mb-0 font-weight-medium">
-                                                    +11%
-                                                </p> */}
-                                            </div>
-                                        </div>
-                                        {/* <div className="col-3">
-                                            <div className="icon icon-box-success">
-                                                <span className="mdi mdi-arrow-top-right icon-item" />
-                                            </div>
-                                        </div> */}
-                                    </div>
-                                    <h6 className="text-muted font-weight-normal">
-                                       Total Users
-                                    </h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
-                            <div className="card">
-                                <div className="card-body">
-                                    <div className="row">
-                                        <div className="col-9">
-                                            <div className="d-flex align-items-center align-self-start">
-                                                <h3 className="mb-0">$12.34</h3>
+                                                <h3 className="mb-0">{totorder}</h3>
                                                 {/* <p className="text-danger ml-2 mb-0 font-weight-medium">
                                                     -2.4%
                                                 </p> */}
@@ -151,7 +159,7 @@ function Main() {
                                             </div>
                                         </div> */}
                                     </div>
-                                    <h6 className="text-muted font-weight-normal">Daily Income</h6>
+                                    <h6 className="text-muted font-weight-normal">Total Orders</h6>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +169,7 @@ function Main() {
                                     <div className="row">
                                         <div className="col-9">
                                             <div className="d-flex align-items-center align-self-start">
-                                                <h3 className="mb-0">$31.53</h3>
+                                                <h3 className="mb-0"></h3>
                                                 {/* <p className="text-success ml-2 mb-0 font-weight-medium">
                                                     +3.5%
                                                 </p> */}
@@ -174,7 +182,7 @@ function Main() {
                                         </div> */}
                                     </div>
                                     <h6 className="text-muted font-weight-normal">
-                                       Total Orders
+                                        Daily Income
                                     </h6>
                                 </div>
                             </div>
@@ -813,14 +821,14 @@ function Main() {
                                 <div className="card-body">
                                     <h4 className="card-title">Visitors</h4>
                                     <div className="row">
-                                        <div className="col-md-5">
+                                        <div className="col-md-6">
                                             <div className="table-responsive">
                                                 <table className="table">
                                                     <tbody>
                                                         {data.map((item, index) => (
 
                                                             <tr>
-                                                               
+
                                                                 <td>{item.name}</td>
                                                                 <td className="text-right"> {item.email} </td>
                                                                 <td className="text-right font-weight-medium">

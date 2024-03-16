@@ -147,15 +147,36 @@ function Sidebar() {
                             <span className="menu-title">Manage Users</span>
                         </Link>
                     </li>
-                    {/* <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/charts/chartjs.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-chart-bar" />
-                            </span>
-                            <span className="menu-title">Charts</span>
-                        </a>
-                    </li>
                     <li className="nav-item menu-items">
+                        <a className="nav-link" data-toggle="collapse" href="#auth1" aria-expanded="false" aria-controls="auth">
+                            <span className="menu-icon">
+                                <i className="mdi mdi-security" />
+                            </span>
+                            <span className="menu-title">Manage Orders </span>
+                            <i className="menu-arrow" />
+                        </a>
+                        <div className="collapse" id="auth1">
+                            <ul className="nav flex-column sub-menu">
+                                <li className="nav-item">
+                                    <Link to='/orderlist' className="nav-link" >All Orders</Link>
+                                </li>
+                                <li className="nav-item"> <Link to='' className="nav-link" >Dispatch Orders</Link></li>
+                                <li className="nav-item">
+                                    <Link to='/addsubcat' className="nav-link" >Pending Orders</Link>
+                                </li>
+                                <li className="nav-item"> <Link to='' className="nav-link" > Complete Order </Link></li>
+                            </ul>
+                        </div>
+                    </li>
+                    {/* <li className="nav-item menu-items">
+                        <Link to='/orderlist' className="nav-link" >
+                            <span className="menu-icon">
+                                <i className="mdi mdi-format-align-justify" />
+                            </span>
+                            <span className="menu-title">Manage Orders</span>
+                        </Link>
+                    </li> */}
+                    {/*  <li className="nav-item menu-items">
                         <a className="nav-link" href="pages/icons/mdi.html">
                             <span className="menu-icon">
                                 <i className="mdi mdi-contacts" />

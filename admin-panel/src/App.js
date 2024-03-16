@@ -10,6 +10,7 @@ import AddSubCateg from './Components/AddSubcateg'
 import ViewProduct from './Components/ViewProduct';
 import ViewCategory from './Components/ViewCategory';
 import ViewSubCateg from './Components/ViewSubCateg';
+import ViewOrder from './Components/ViewOrder';
 import ManageUser from './Components/ManageUser';
 
 import UpdateProduct from './Components/UpdateProduct';
@@ -37,6 +38,8 @@ function App() {
           <Route path="/productlist" element={<ViewProduct />} />
           <Route path="/categorylist" element={<ViewCategory />} />
           <Route path="/sub-categorylist" element={<ViewSubCateg />} />
+          <Route path="/orderlist" element={<ViewOrder />} />
+
           <Route path="/manageuser" element={<ManageUser />} />
 
 

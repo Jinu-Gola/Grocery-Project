@@ -1,512 +1,67 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import Footer from './Footer';
+import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
 
-function View_roduct() {
+function ViewOrder() {
+    const navigate = useNavigate();
 
-    const [product, setProduct] = useState([]);
+    var token = localStorage.getItem("token");
+    const [profiles, setProfiles] = useState("")
     useEffect(() => {
-        display();
+
+        if (!token) {
+            navigate('/')
+            // alert("Please Login First..!")
+        }
+        else {
+            profile();
+            // data();
+
+        }
     }, [])
-
-    const display = async () => {
-        try {
-            const result = await axios.get("http://localhost:8080/product")
-            setProduct(result.data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const deleProduct=async(id)=>{
-        try {
-            const result = await axios.delete("http://localhost:8080/product"+id);
-            console.log("product deleted..")
-            display();
-        } catch (error) {
-            console.log("Error : " +error)
-        }
-    }
-    return (
-        <>
-
-            <div className="container-scroller">
-                {/* partial:partials/_sidebar.html */}
-                <Sidebar />
-                {/* partial */}
-                <div className="container-fluid page-body-wrapper">
-                    {/* partial:partials/_navbar.html */}
-                    <Navbar />
-                    {/* partial */}
-                    {/* main-panel ends */}
-                    <div className="col-lg-12 grid-margin stretch-card">
-                        <div className="card">
-                            <div className="card-body">
-                                <h4 className="card-title">Products</h4>
-                                <p className="card-description"> Product List
-                                </p>
-                                <div className="table-responsive">
-                                    <table className="table table-striped">
-                                        {data.map(item,i)=>(
-                                            <>
-                                        
-                                        <thead>
-                                            <tr>
-                                                <th> Product Id </th>
-                                                <th> Product name </th>
-                                                <th> Price </th>
-                                                <th> Qty </th>
-                                                <th> Deadline </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-1.png" alt="image" />
-                                                </td>
-                                                <td> Herman Beck </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-success" role="progressbar" style={{ width: '25%' }} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $ 77.99 </td>
-                                                <td> May 15, 2015 </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-2.png" alt="image" />
-                                                </td>
-                                                <td> Messsy Adam </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-danger" role="progressbar" style={{ width: '75%' }} aria-valuenow={75} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $245.30 </td>
-                                                <td> July 1, 2015 </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-3.png" alt="image" />
-                                                </td>
-                                                <td> John Richards </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-warning" role="progressbar" style={{ width: '90%' }} aria-valuenow={90} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $138.00 </td>
-                                                <td> Apr 12, 2015 </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-4.png" alt="image" />
-                                                </td>
-                                                <td> Peter Meggik </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-primary" role="progressbar" style={{ width: '50%' }} aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $ 77.99 </td>
-                                                <td> May 15, 2015 </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-1.png" alt="image" />
-                                                </td>
-                                                <td> Edward </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-danger" role="progressbar" style={{ width: '35%' }} aria-valuenow={35} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $ 160.25 </td>
-                                                <td> May 03, 2015 </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-2.png" alt="image" />
-                                                </td>
-                                                <td> John Doe </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-info" role="progressbar" style={{ width: '65%' }} aria-valuenow={65} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $ 123.21 </td>
-                                                <td> April 05, 2015 </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="py-1">
-                                                    <img src="../../assets/images/faces-clipart/pic-3.png" alt="image" />
-                                                </td>
-                                                <td> Henry Tom </td>
-                                                <td>
-                                                    <div className="progress">
-                                                        <div className="progress-bar bg-warning" role="progressbar" style={{ width: '20%' }} aria-valuenow={20} aria-valuemin={0} aria-valuemax={100} />
-                                                    </div>
-                                                </td>
-                                                <td> $ 150.00 </td>
-                                                <td> June 16, 2015 </td>
-                                            </tr>
-                                        </tbody>
-                                        </>
-                                        )}
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    {/* partial:partials/_footer.html */}
-                    <Footer />
-                    {/* partial */}
-                </div>
-                {/* page-body-wrapper ends */}
-            </div>
-
-        </>
-    )
-}
-
-export default ViewProduct
-
-import React, { useState } from 'react'
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
-import axios from 'axios';
-
-function AddProduct() {
-
-    const [pname, setPname] = useState("");
-    const [desc, setDesc] = useState("");
-    const [brandid, setBrandid] = useState("");
-    const [img, setImg] = useState()
-
-    const data = async (e) => {
-     
-        e.preventDefault();
-       
-        try {
-            // console.log("try part")
-            // const res = await axios.post('http://localhost:8080/product', {
-            //     'pname': pname,
-            //     'desc': desc,
-            //     'p_b_id': brandid,
-            //     'images': img
-            // },{
-            //     headers:{
-            //         "Content-Type":"multipart/form-data"
-            //     }
-            // })
-         
-            const formData = new FormData()
-            formData.append('pname', pname)
-            formData.append('desc', desc)
-            formData.append('p_b_id', brandid)
-            formData.append('images', img)
-           
-            const res = await axios.post("http://localhost:8080/product", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            })
-
-            console.log("axios data:", res.data)
-        } catch (error) {
-            console.error(error);
-        }
-
-
-
-
-    }
-
-    // const [brand, setBrand] = useState([]);
-    // useEffect(() => {
-    //     display();
-    // }, [])
-
-    // const display = async () => {
-    //     try {
-    //         const result = await axios.get("http://localhost:8080/pro-brand")
-    //         setBrand(result.brand)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-
-    return (
-        <>
-
-            <div className="container-scroller">
-                {/* partial:partials/_sidebar.html */}
-                <Sidebar />
-                {/* partial */}
-                <div className="container-fluid page-body-wrapper">
-                    {/* partial:partials/_navbar.html */}
-                    <Navbar />
-                    {/* partial */}
-
-                    {/* main-panel ends */}
-                    <div className="col-12 grid-margin stretch-card">
-                        <div className="card">
-                            <div className="card-body">
-                                <h4 className="card-title">Add Product Form</h4>
-                                <h2 className="card-description">Add Product </h2><br />
-                                <form className="forms-sample" onSubmit={data} method='POST' encType='multipart/form-data'>
-                                    <div className="form-group">
-                                        <label htmlFor="pname">Product Name</label>
-                                        <input type="text" className="form-control" name='pname' onChange={(e) => setPname(e.target.value)} id="pname" placeholder="Product Name" />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="desc">Description</label>
-                                        <textarea className="form-control" name='desc' onChange={(e) => setDesc(e.target.value)} id="desc" rows={4} defaultValue={""} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="pro_brd_id">Brand Id</label>
-                                        <input type="text" name='pro_brd_id' onChange={(e) => setBrandid(e.target.value)} className="form-control" id="pro_brd_id" placeholder="Product-Brand Id" />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label>File upload</label>
-                                        {/* <input type="file" name="img[]" className="file-upload-default" /> */}
-                                        <div className="input-group col-xs-12">
-                                            <input type="file" className="form-control file-upload-info" name='img' onChange={(e) => setImg(e.target.files[0])} placeholder="Upload Image" />
-                                            {/* <span className="input-group-append">
-                                                <button className="file-upload-browse btn btn-primary" type="button">Upload</button>
-                                            </span> */}
-                                        </div>
-                                    </div>
-
-
-                                    <button type="submit" className="btn btn-primary mr-2">Submit</button>
-                                    <button className="btn btn-dark">Cancel</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    {/* partial:partials/_footer.html */}
-                    <Footer />
-                    {/* partial */}
-                </div>
-                {/* page-body-wrapper ends */}
-            </div>
-
-
-
-        </>
-    )
-}
-
-export default AddProduct
-
-
-import React ,{useState,useEffect} from 'react'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
-
-function Sidebar() {
-    const [data, setData] = useState([]);
-    var uid = localStorage.getItem("id");
-    console.log(uid);
-    useEffect(() => {
-        profile();
-    })
-
-
 
     const profile = async () => {
         try {
-            const res = await axios.post(`http://localhost:8080/profile/${uid}`);
-            setData(res.data);
+            const res = await axios.get(`http://localhost:8080/auth/${token}`);
+            // console.log(res.data);
+            if (res.data === "Token is expired ") {
+                // console.log(res.data);
+                localStorage.removeItem("token");
+                navigate("/");
+                alert("Token is expired ");
+            }
+            else {
+                setProfiles(res.data);
+                console.log("admin =" + res.data.isAdmin)
+            }
         } catch (error) {
             console.log("profile err", error);
         }
     };
 
-    return (
-        <>
-            <nav className="sidebar sidebar-offcanvas" id="sidebar">
-                <div className="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
-                    <Link to='/home' className="sidebar-brand brand-logo" ><img src="assets/images/logo.svg" alt="logo" /></Link>
-                    <Link to='/home' className="sidebar-brand brand-logo-mini" ><img src="assets/images/logo-mini.svg" alt="logo" /></Link>
-                </div>
-                <ul className="nav">
-                    <li className="nav-item profile">
-                        <div className="profile-desc">
-                            <div className="profile-pic">
-                                <div className="count-indicator">
-                                    <img className="img-xs rounded-circle " src="assets/images/faces/face15.jpg" alt />
-                                    <span className="count bg-success" />
-                                </div>
-                                <div className="profile-name">
-                                    <h5 className="mb-0 font-weight-normal">Gola Jinal</h5>
-                                    <span>Gold Member</span>
-                                </div>
-                            </div>
-                            <a href="#" id="profile-dropdown" data-toggle="dropdown"><i className="mdi mdi-dots-vertical" /></a>
-                            <div className="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
-                                <a href="#" className="dropdown-item preview-item">
-                                    <div className="preview-thumbnail">
-                                        <div className="preview-icon bg-dark rounded-circle">
-                                            <i className="mdi mdi-settings text-primary" />
-                                        </div>
-                                    </div>
-                                    <div className="preview-item-content">
-                                        <p className="preview-subject ellipsis mb-1 text-small">Account settings</p>
-                                    </div>
-                                </a>
-                                <div className="dropdown-divider" />
-                                <a href="#" className="dropdown-item preview-item">
-                                    <div className="preview-thumbnail">
-                                        <div className="preview-icon bg-dark rounded-circle">
-                                            <i className="mdi mdi-onepassword  text-info" />
-                                        </div>
-                                    </div>
-                                    <div className="preview-item-content">
-                                        <p className="preview-subject ellipsis mb-1 text-small">Change Password</p>
-                                    </div>
-                                </a>
-                                {/* <div className="dropdown-divider" />
-                                <a href="#" className="dropdown-item preview-item">
-                                    <div className="preview-thumbnail">
-                                        <div className="preview-icon bg-dark rounded-circle">
-                                            <i className="mdi mdi-calendar-today text-success" />
-                                        </div>
-                                    </div>
-                                    <div className="preview-item-content">
-                                        <p className="preview-subject ellipsis mb-1 text-small">To-do list</p>
-                                    </div>
-                                </a> */}
-                            </div>
-                        </div>
-                    </li>
-                    <li className="nav-item nav-category">
-                        <span className="nav-link">Navigation</span>
-                    </li>
-                    <li className="nav-item menu-items">
-                        <Link to='/home' className="nav-link" >
-                            <span className="menu-icon">
-                                <i className="mdi mdi-speedometer" />
-                            </span>
-                            <span className="menu-title">Dashboard</span>
-                        </Link>
-                    </li>
-                    <li className="nav-item menu-items">
-                        <a className="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-cart-plus" />
-                            </span>
-                            <span className="menu-title">Product Pages</span>
-                            <i className="menu-arrow" />
-                        </a>
-                        <div className="collapse" id="ui-basic">
-                            <ul className="nav flex-column sub-menu">
-                                <li className="nav-item">
-                                    <Link to='/addcat' className="nav-link" >Add Category</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to='/addsubcat' className="nav-link" >Add Sub-Category</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to='/addproduct' className="nav-link" >Add Product</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to='/productlist' className="nav-link" >Product List</Link>
-                                </li>
-                                
-                            </ul>
-                        </div>
-                    </li>
-                    {/* <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/forms/basic_elements.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-playlist-play" />
-                            </span>
-                            <span className="menu-title">Form Elements</span>
-                        </a>
-                    </li>
-                    <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/tables/basic-table.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-table-large" />
-                            </span>
-                            <span className="menu-title">Tables</span>
-                        </a>
-                    </li>
-                    <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/charts/chartjs.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-chart-bar" />
-                            </span>
-                            <span className="menu-title">Charts</span>
-                        </a>
-                    </li>
-                    <li className="nav-item menu-items">
-                        <a className="nav-link" href="pages/icons/mdi.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-contacts" />
-                            </span>
-                            <span className="menu-title">Icons</span>
-                        </a>
-                    </li> */}
-                    {/* <li className="nav-item menu-items">
-                        <a className="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-security" />
-                            </span>
-                            <span className="menu-title">User Pages</span>
-                            <i className="menu-arrow" />
-                        </a>
-                        <div className="collapse" id="auth">
-                            <ul className="nav flex-column sub-menu">
-                                <li className="nav-item"> <Link to='/login' className="nav-link" > Login </Link></li>
-                                <li className="nav-item"> <Link to='/signup' className="nav-link" > Register </Link></li>
-                            </ul>
-                        </div>
-                    </li> */}
-                    {/* <li className="nav-item menu-items">
-                        <a className="nav-link" href="http://www.bootstrapdash.com/demo/corona-free/jquery/documentation/documentation.html">
-                            <span className="menu-icon">
-                                <i className="mdi mdi-file-document-box" />
-                            </span>
-                            <span className="menu-title">Documentation</span>
-                        </a>
-                    </li> */}
-                </ul>
-            </nav>
-        </ >
-    )
-}
-
-export default Sidebar
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
-import Header from './Header'
-import Footer from './Footer'
-
-function Shop() {
-
     const [data, setData] = useState([]);
+    const [orderget, setorderget] = useState([]);
+    const [search, setSearch] = useState({
+        search: null,
+        // date: null,
+    });
+
+    const handelSearch = (e) => {
+        setSearch({ ...search, [e.target.name]: e.target.value })
+    }
     useEffect(() => {
         display();
     }, [])
 
     const display = async () => {
         try {
-            await axios.get("http://localhost:8080/getproduct").then((result) => {
-                // console.log("next")
-                // console.log("api data", result)
+            const subData = await axios.get("http://localhost:8080/subcat").then((result) => {
+
                 setData(result?.data)
-                // console.log("data", data)
+                // console.log(setData);
+                console.log("data", subData)
             })
 
 
@@ -515,120 +70,80 @@ function Shop() {
         }
     }
 
-    // const [cat, setCat] = useState([]);
-    // useEffect(() => {
-    //     disp_cat();
-    // }, [])
-
-    // const disp_cat = async () => {
-    //     try {
-    //         await axios.get("http://localhost:8080/categ").then((result) => {
-    //             // console.log("next")
-    //             // console.log("api data", result)
-    //             setData(result?.data)
-    //             // console.log("data", data)
-    //         })
 
 
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
+
     return (
         <>
-            <Header />
-            <div className="heading">
-                <h1>our category</h1>
-                <p> <a href="home.html">home &gt;&gt;</a> category </p>
-            </div>
 
+            <div className="container-scroller">
+                {/* partial:partials/_sidebar.html */}
+                <Sidebar />
+                {/* partial */}
+                <div className="container-fluid page-body-wrapper">
+                    {/* partial:partials/_navbar.html */}
+                    <Navbar />
+                    {/* partial */}
+                    <div className="main-panel">
+                        <div className="content-wrapper">
+                            <ul className="navbar-nav w-100">
+                                <li className="nav-item">
+                                    <form className="nav-link mt-3 mt-md-0  d-lg-flex search">
+                                        <input type="text" className="form-control" onChange={handelSearch} placeholder="Search products" />
+                                    </form>
+                                </li>
+                            </ul>
+                            <div className="row">
 
-            <div>
-                <section className="category">
-                    <h1 className="title"> our <span>category</span> <a href="#">view all &gt;&gt;</a> </h1>
-                    <div className="box-container">
+                                <div class="col-lg-10 grid-margin stretch-card align-center">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">All Sub-Categories</h4>
+                                            {/* <p class="card-description"> Add class <code>.table-hover</code>
+                                                </p> */}
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            {/* <th>User</th> */}
+                                                            <th>Sub-Categories</th>
+                                                            <th>Category</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {data.map((item, index) => (
+                                                            <tr>
+                                                                {/* <td>Jacob</td> */}
+                                                                <td> {item.subcname}</td>
+                                                                <td> {item.c_id}</td>
 
-                        <Link to='/fruit' className="box">
-                            <img src="/../assetf/image/cat-1.png" alt />
-                            <h3>fresh fruits</h3>
-                        </Link>
-                        <Link to='/vegis' className="box">
-                            <img src="/../assetf/image/cat-2.png" alt />
-                            <h3>vegetables</h3>
-                        </Link>
-                        <Link to='/spice' className="box">
-                            <img src="/../assetf/image/cat-3.png" alt />
-                            <h3>organic spices</h3>
-                        </Link>
-                        <Link to='' className="box">
-                            <img src="/../assetf/image/cat-4.png" alt />
-                            <h3>Baverages</h3>
-                        </Link>
-                        <Link to='/grain' className="box">
-                            <img src="/../assetf/image/cat-5.png" alt />
-                            <h3>organic wheat</h3>
-                        </Link>
-
-                    </div>
-
-                </section>
-                <section className="products">
-                    <h1 className="title"> our <span>products</span> <a href="#">view all &gt;&gt;</a> </h1>
-                    <div className="box-container">
-                        {data.map((item, index) => (
-
-                            <div className="box">
-                                <div className="icons">
-                                    <a href="#" className="fas fa-shopping-cart" />
-                                    <a href="#" className="fas fa-heart" />
-                                    <a href="#" className="fas fa-eye" />
-                                </div>
-                                <div className="image">
-                                    <img src={`http://localhost:8080/images/${item.image[0]}`} alt />
-                                </div>
-                                <div className="content">
-                                    <h3>{item.product_name}</h3>
-                                    <div className="price">{item.price} Rs(Incl. of all taxes)</div>
-                                    <div className="price">{item.size}</div>
-
-                                    <div className="stars">
-                                        <i className="fas fa-star" />
-                                        <i className="fas fa-star" />
-                                        <i className="fas fa-star" />
-                                        <i className="fas fa-star" />
-                                        <i className="far fa-star" />
+                                                                {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button> */}
+                                                                {/* <td><button type="button" className="btn btn-danger"  >Delete</button></td> */}
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
+
+
+
+
+
                             </div>
-                            /*                        <div className="box">
-                                <div className="icons">
-                                    <a href="#" className="fas fa-shopping-cart" />
-                                    <a href="#" className="fas fa-heart" />
-                                    <a href="#" className="fas fa-eye" />
-                                </div>
-                                <div className="image">
-                                    <img src="/../assetf/image/product-8.jpg" alt />
-                                </div>
-                                <div className="content">
-                                    <h3>organic food</h3>
-                                    <div className="price">$18.99</div>
-                                    <div className="stars">
-                                        <i className="fas fa-star" />
-                                        <i className="fas fa-star" />
-                                        <i className="fas fa-star" />
-                                        <i className="fas fa-star" />
-                                        <i className="far fa-star" />
-                                    </div>
-                                </div>
-                            </div> */
-
-                        ))}
+                        </div>
                     </div>
-                </section>
-            </div>
-            <Footer />
+                </div>
+            </div >
+
+
         </>
+
     )
 }
 
-export default Shop
+export default ViewOrder 
