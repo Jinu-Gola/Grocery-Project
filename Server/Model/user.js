@@ -34,6 +34,11 @@ const regSchema = mongoose.Schema({
         // unique: true,
         trim: true
     },
+    otp: {
+        type: Number,
+        // unique: true,
+        trim: true
+    },
     // gender: String,
     // age: Number,
     // address: String,

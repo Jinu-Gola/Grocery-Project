@@ -40,6 +40,10 @@ const orderSchema = new mongoose.Schema({
         require: true,
 
     },
+    // order_id: {
+    //     type: String,
+    //     require: true,
+    // },
     total_amt: {
         type: Number,
         require: true
@@ -54,9 +58,9 @@ const orderSchema = new mongoose.Schema({
     order_status: {
         type: Number,
         // default: "panding"
-        default:0
+        default: 0
     }
-    
+
 })
 
 
@@ -65,4 +69,4 @@ const orderModel = mongoose.model("order", orderSchema);
 
 
 
-module.exports =  orderModel
+module.exports = orderModel

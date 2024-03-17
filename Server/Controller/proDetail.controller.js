@@ -103,16 +103,16 @@ const oneProduct = async (req, res) => {
 const categoryProduct = async (req, res) => {
     try {
         let query = {};
-        const minPrice = req.query.minPrice;
-        const maxPrice = req.query.maxPrice;
+        // const minPrice = req.query.minPrice;
+        // const maxPrice = req.query.maxPrice;
 
-        if (minPrice && maxPrice) {
-            query.price = { $gte: minPrice, $lte: maxPrice };
-        } else if (minPrice) {
-            query.price = { $gte: minPrice };
-        } else if (maxPrice) {
-            query.price = { $lte: maxPrice };
-        }
+        // if (minPrice && maxPrice) {
+        //     query.price = { $gte: minPrice, $lte: maxPrice };
+        // } else if (minPrice) {
+        //     query.price = { $gte: minPrice };
+        // } else if (maxPrice) {
+        //     query.price = { $lte: maxPrice };
+        // }
 
         if (req.params.cid) {
             query.cid = req.params.cid;

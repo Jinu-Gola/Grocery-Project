@@ -273,12 +273,13 @@ function Product() {
                                 <div className="col-6" />
                                 <div className="col-xl-3">
                                     <div className="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                        <label htmlFor="fruits">Default Sorting:</label>
+                                        <i class="fa-solid fa-sort"></i><label htmlFor="fruits"> Sorting:</label>
                                         <select id="fruits" name="fruitlist" className="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                            <option value="volvo">Nothing</option>
-                                            <option value="saab">Popularity</option>
-                                            <option value="opel">Organic</option>
-                                            <option value="audi">Fantastic</option>
+                                            <option value="">Nothing</option>
+                                            <option value="">A-Z</option>
+                                            <option value="">Z-A</option>
+                                            <option value="">Price High-Low</option>
+                                            <option value="audi">Price Low-High</option>
                                         </select>
                                     </div>
                                 </div>
@@ -294,7 +295,7 @@ function Product() {
                                                     <li>
                                                         {category_name.map((item) => (
                                                             <div className="d-flex justify-content-between fruite-name">
-                                                                <Link to={`/product/${item._id}`} ><i className="fas fa-fruit-alt me-2" />{item.cname}</Link>
+                                                                <Link to={`/product/${item._id}`}><i className="fas fa-fruit-alt me-2" />{item.cname}</Link>
                                                                 {/* <span>(3)</span> */}
                                                             </div>
                                                         ))}

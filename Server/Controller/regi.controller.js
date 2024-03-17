@@ -1,8 +1,8 @@
-const  regModel  = require("../Model/user.js")
+const regModel = require("../Model/user.js")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const secretkey = '#jin@l#gol@'
-
+const nodemailer = require('nodemailer')
 
 
 const usepost = async (req, res) => {
@@ -34,7 +34,7 @@ const usepost = async (req, res) => {
         }
         // const data = await regModel.create(req.body);
         // res.send(data);
-    
+
     } catch (error) {
         res.send(error);
 
@@ -45,6 +45,8 @@ const useget = async (req, res) => {
     const data = await regModel.find();
     res.send(data);
 }
+
+
 
 const useput = async (req, res) => {
     const id = req.params.id;
@@ -79,14 +81,14 @@ const loginUser = async (req, res) => {
                 const token = jwt.sign({ _id: user._id, email: user.email, user }, secretkey, {
                     expiresIn: 2 * (60 * 60),
                 });
-                res.status(200).send({ Message: "User Login Successfully", data: user,token:token, uid: user._id })
+                res.status(200).send({ Message: "User Login Successfully", data: user, token: token, uid: user._id })
             } else {
                 res.status(401).send({ Message: "Password is invalid..." });
             }
         } else {
             res.status(401).send({ Message: "Email is Invalid..." });
         }
-       
+
     } catch (error) {
         // res.send(error);
         res.send({ message: "Password and Email both are invalid.." });
@@ -94,6 +96,80 @@ const loginUser = async (req, res) => {
 }
 
 
+const sendotp = async (req, res) => {
+    try {
+        console.log(req.body, "Email");
+        // const { email } = req.body;
+        const _otp = Math.floor(100000 + Math.random() * 900000);
+        console.log(_otp, "OTP");
+        let user = await regModel.findOne({ email: req.body.email });
+        // send to user mail
+        // console.log("---------->", user);
+        if (!user) {
+            res.send({ code: 500, message: "user not found" });
+        }
+
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "jinalgola@gmail.com",
+                pass: "vcjlvreyonpufzqw",
+            },
+        });
+
+        let info = await transporter.sendMail({
+            from: "jinalgola@gmail.com",
+            to: req.body.email, // list of receivers
+            subject: "OTP", // Subject line
+            text: String(_otp),
+            html: `<h1>${_otp}</h1>
+      <h4>Please Verify And Do Not Share This OTP</h4>
+       `,
+        });
+
+        if (info.messageId) {
+            // console.log(info, 84);
+            regModel
+                .updateOne({ email: req.body.email }, { otp: _otp })
+                .then((result) => {
+                    res.send({ code: 200, message: "otp send" });
+                })
+                .catch((err) => {
+                    res.send({ code: 500, message: "Server err" });
+                });
+        } else {
+            res.send({ code: 500, message: "Server err" });
+        }
+    } catch (error) {
+        res.send(error);
+    }
+};
+
+const submitotp = async (req, res) => {
+    console.log(req.body.otp, "ooooooooooo");
+    const otp = req.body.otp;
+    console.log(otp,"oppppppptt");
+    regModel
+        .findOne({ otp: otp })
+        .then(async (result) => {
+        //  update the password
+        console.log(result, "rrrrrrrrrrrrrr");
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+        regModel
+            .updateOne({ email: result.email }, { password: hashedPassword })
+            .then((result) => {
+                res.send({ code: 200, message: "Password updated" });
+            })
+            .catch((err) => {
+                res.send({ code: 500, message: "Server err" });
+            });
+    })
+    .catch((err) => {
+        res.send({ code: 500, message: "otp is wrong" });
+    });
+}
 const auth = async (req, res) => {
     try {
         const tok = req.params.tok;
@@ -130,6 +206,8 @@ module.exports = {
     usedelete,
     loginUser,
     auth,
+    sendotp,
+    submitotp
     // profile
 
 }

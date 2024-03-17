@@ -19,7 +19,7 @@ function Billing() {
         address: "",
         mobile: "",
         email: "",
-       
+
 
     });
 
@@ -199,10 +199,6 @@ function Billing() {
 
 
 
-
-
-
-
     const hadelpayment = (e) => {
         // console.log("HandlePaymenttttttttttttttttttt");
         // const Razorpay = useRazorpay();
@@ -220,7 +216,26 @@ function Billing() {
             order_id: "", //This is a sample Order ID. Pass the id obtained in the response of Step 1
             handler: function (response) {
                 console.log("response", response);
-                let object = {
+                // let object = {
+                //     orderInfo: {
+                //         uid: user_id,
+                //         fname: userData.fname,
+                //         lname: userData.lname,
+                //         address: userData.address,
+                //         mobile: userData.mobile,
+                //         email: userData.email,
+                //         transaction_id: response.razorpay_payment_id,
+                //         order_id: response.razorpay_order_id,
+                //         total_amt: parseInt(total),
+                //         subtotal: parseInt(total),
+                //         discount: 0,
+
+                //     },
+                //     orderDetail: cartitem
+                // }
+
+                const order_id = response.razorpay_order_id;
+                const object = {
                     orderInfo: {
                         uid: user_id,
                         fname: userData.fname,
@@ -229,13 +244,13 @@ function Billing() {
                         mobile: userData.mobile,
                         email: userData.email,
                         transaction_id: response.razorpay_payment_id,
+                        order_id: order_id, // Setting the order_id obtained from Razorpay
                         total_amt: parseInt(total),
                         subtotal: parseInt(total),
                         discount: 0,
-
                     },
                     orderDetail: cartitem
-                }
+                };
                 console.log(cartitem, "dddddddddddddddddd");
                 console.log(object, 'LLLLLLLLLLLLL');
                 axios.post('http://localhost:8080/check-out', object).then((res) => {
@@ -364,55 +379,7 @@ function Billing() {
                                                     <td className="py-5">₹{p_total}</td>
                                                 </tr>)
                                             })}
-                                            {/* <tr>
-                                                <th scope="row">
-                                                </th>
-                                                <td className="py-5" />
-                                                <td className="py-5" />
-                                                <td className="py-5">
-                                                    <p className="mb-0 text-dark py-3">Subtotal</p>
-                                                </td>
-                                                <td className="py-5">
-                                                    <div className="py-3 border-bottom border-top">
-                                                        <p className="mb-0 text-dark">₹{totalPrice()}</p>
-                                                    </div>
-                                                </td>
-                                            </tr> */}
-                                            {/* <tr>
-                                                <th scope="row">
-                                                </th>
-                                                <td className="py-5">
-                                                    <p className="mb-0 text-dark py-4">Shipping</p>
-                                                </td>
-                                                <td colSpan={3} className="py-5">
-                                                    <div className="form-check text-start">
-                                                        <input type="checkbox" className="form-check-input bg-primary border-0" id="Shipping-1" name="Shipping-1" value={0}/>
-                                                        <label className="form-check-label" htmlFor="Shipping-1">Free Shipping</label>
-                                                    </div>
-                                                    <div className="form-check text-start">
-                                                        <input type="checkbox" className="form-check-input bg-primary border-0" id="Shipping-2" name="Shipping-1" value={10}/>
-                                                        <label className="form-check-label" htmlFor="Shipping-2">Flat rate: ₹10.00</label>
-                                                    </div>
-                                                    {/* <div className="form-check text-start">
-                                                        <input type="checkbox" className="form-check-input bg-primary border-0" id="Shipping-3" name="Shipping-1" defaultValue="Shipping" />
-                                                        <label className="form-check-label" htmlFor="Shipping-3">Local Pickup: ₹50.00</label>
-                                                    </div> 
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">
-                                                </th>
-                                                <td className="py-5">
-                                                    <p className="mb-0 text-dark text-uppercase py-3">TOTAL</p>
-                                                </td>
-                                                <td className="py-5" />
-                                                <td className="py-5" />
-                                                <td className="py-5">
-                                                    <div className="py-3 border-bottom border-top">
-                                                        <p className="mb-0 text-dark">₹{totalPrice()}</p>
-                                                    </div>
-                                                </td>
-                                            </tr> */}
+                                    
 
                                         </tbody>
                                     </table>
@@ -444,39 +411,7 @@ function Billing() {
                                     </div>
                                 </div>
 
-                                {/* <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                    <div className="col-12">
-                                        <div className="form-check text-start my-3">
-                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Transfer-1" name="Transfer" defaultValue="Transfer" />
-                                            <label className="form-check-label" htmlFor="Transfer-1">Direct Bank Transfer</label>
-                                        </div>
-                                        <p className="text-start text-dark">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</p>
-                                    </div>
-                                </div>
-                                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                    <div className="col-12">
-                                        <div className="form-check text-start my-3">
-                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Payments-1" name="Payments" defaultValue="Payments" />
-                                            <label className="form-check-label" htmlFor="Payments-1">Check Payments</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                    <div className="col-12">
-                                        <div className="form-check text-start my-3">
-                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Delivery-1" name="Delivery" defaultValue="Delivery" />
-                                            <label className="form-check-label" htmlFor="Delivery-1">Cash On Delivery</label>
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {/* <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                    <div className="col-12">
-                                        <div className="form-check text-start my-3">
-                                            <input type="checkbox" className="form-check-input bg-primary border-0" id="Paypal-1" name="Paypal" defaultValue="Paypal" />
-                                            <label className="form-check-label" htmlFor="Paypal-1">Paypal</label>
-                                        </div>
-                                    </div>
-                                </div> */}
+                               
                                 <div className="row g-4 text-center align-items-center justify-content-center pt-4 ">
                                     <button type="submit" className="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary" >Place Order</button>
                                 </div>

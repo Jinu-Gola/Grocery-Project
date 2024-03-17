@@ -10,7 +10,11 @@ import Contact from './components/Contact';
 import Cart from './components/Cart';
 import Billing from './components/Billing';
 import Review from './components/Review';
+
 import Login from './components/Login-Signup/Login'
+import ForgetPassword from './components/Login-Signup/ForgetPassword';
+import NewSubmit from './components/Login-Signup/NewSubmit';
+
 import Signup from './components/Login-Signup/Register'
 import Fruits from './components/Fruits';
 import Vegitables from './components/Vegitables';
@@ -18,8 +22,8 @@ import ShippingFeature from './components/ShippingFeature';
 import Whishlist from './components/Whishlist';
 
 import './assets/css/bootstrap.min.css'
-import './assets/css/style.css' 
- 
+import './assets/css/style.css'
+
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -48,10 +52,13 @@ function App() {
             <Route path="/shipping" element={<ShippingFeature />} />
 
             <Route path="/cart" element={<Cart />} />
-              <Route path="/whishlist" element={<Whishlist />} />
+            <Route path="/whishlist" element={<Whishlist />} />
 
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/newsubmit" element={<NewSubmit />} />
+            <Route path="/forgetpass" element={<ForgetPassword />} />
+
+            {/* <Route path="/signup" element={<Signup />} /> */}
             {/* <Route path="/category/:id" element={<Category />} /> */}
 
             <Route path="/fruits" element={<Fruits />} />

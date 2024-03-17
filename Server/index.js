@@ -55,6 +55,9 @@ app.delete("/del_user/:id", userModel.usedelete)
 app.post("/login", userModel.loginUser)
 // app.get("/profile/:id", userModel.profile)
 app.get("/auth/:tok", userModel.auth)
+app.post('/submit-otp',userModel.submitotp)
+app.post('/send-otp', userModel.sendotp)
+
 
 // app.post("/insertsubcat", subcateModel.subcatAdd)
 
