@@ -62,20 +62,20 @@ function ViewOrder() {
 
 
 
-    // const dispatchOrderFun = async (order_id) => {
-    //     const result = await dispatchorder(order_id);
+    const dispatchOrderFun = async (order_id) => {
+        // const result = await dispatchorder(order_id);
 
-    //     if (result.status == 1) {
-    //         successNotify('Order is out of delivery.....');
-    //     }
-    //     let reload = false;
-    //     setTimeout(() => {
-    //         if (!reload) {
-    //             window.location.reload();
-    //             reload = true;
-    //         }
-    //     }, 5000);
-    // };
+        // if (result.status == 1) {
+        //     successNotify('Order is out of delivery.....');
+        // }
+        // let reload = false;
+        // setTimeout(() => {
+        //     if (!reload) {
+        //         window.location.reload();
+        //         reload = true;
+        //     }
+        // }, 5000);
+    };
 
     useEffect(() => {
         ordersGet();
@@ -117,10 +117,10 @@ function ViewOrder() {
 
                     <button
                         type='button'
-                        className='btn btn-warning '
-                    // onClick={() => {
-                    //     dispatchOrderFun(row.order._id);
-                    // }}
+                        className='btn btn-warning ' style={{ marginLeft: "30px" }}
+                        onClick={() => {
+                            dispatchOrderFun(row.order._id);
+                        }}
                     >
                         <i className='mdi mdi-ambulance'></i>
                     </button>
@@ -133,7 +133,7 @@ function ViewOrder() {
     const tablestyle = {
         headCells: {
             style: {
-                fontSize: '15px',
+                fontSize: '16px',
                 color: 'black',
                 fontWeight: 'bold',
             },
@@ -148,7 +148,7 @@ function ViewOrder() {
             <>
                 <h6
                     className='text-primary text-capitalize ps-3'
-                    style={{ padding: '10px', fontSize: '13px' }}>
+                    style={{ padding: '10px', fontSize: '14px' }}>
                     <b>
                         <u>Oder Detial:</u>
                     </b>{' '}
@@ -183,14 +183,14 @@ function ViewOrder() {
 
                 <h6
                     className='text-primary text-capitalize ps-3'
-                    style={{ padding: '10px', fontSize: '13px', paddingTop: '20px' }}>
+                    style={{ padding: '10px', fontSize: '14px', paddingTop: '20px' }}>
                     <b>
                         <u>User information:</u>
                     </b>{' '}
                 </h6>
 
                 {orderdata?.map((data) => {
-                    console.log(data,"dataaaaa");
+                    console.log(data, "dataaaaa");
                     return (
                         <>
                             <div className='row'>
@@ -206,7 +206,7 @@ function ViewOrder() {
                                     <label
                                         className='text-dark'
                                         style={{ fontSize: '12px' }}>
-                                        <b>User name : </b> <span>{data.fname +" "+data.lname}</span>
+                                        <b>User name : </b> <span>{data.fname + " " + data.lname}</span>
                                     </label>
                                 </div>
                                 <div className='col-3 ms-0 pt-0'>
@@ -224,10 +224,15 @@ function ViewOrder() {
                                     </label>
                                 </div>
                                 {/* <div className='col-2'>
-                                <label className='text-dark' style={{ fontSize: "12px" }} ><b>Flat No: </b> <span>Nidhi</span></label>
-                            </div> */}
+                                    <label
+                                        className='text-dark'
+                                        style={{ fontSize: '12px' }}>
+                                        <b>Address : </b> <span>{data.address}</span>
+                                    </label>
+                                </div> */}
+
                             </div>
-                            {console.log("looooooog",data)}
+                            {console.log("looooooog", data)}
                             {/* <div className='row'>
                                 <div className='col-1'></div>
                                 <div className='col-3 ms-0 pt-0'>
@@ -365,10 +370,10 @@ function ViewOrder() {
                                                         data={orderData.result}
                                                         columns={column}
                                                         pagination
-                                                        // customStyles={tablestyle}
+                                                        customStyles={tablestyle}
                                                         expandableRows
                                                         expandOnRowClicked
-                                                    expandableRowsComponent={expandDetails}
+                                                        expandableRowsComponent={expandDetails}
 
                                                     />
                                                 </div>

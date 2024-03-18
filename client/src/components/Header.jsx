@@ -48,28 +48,28 @@ function Header(props) {
     const[profiles,setProfiles]=useState("")
     const logOut=()=>{
         localStorage.removeItem('token')
-        // navigate('/login')
-        profile();
+        navigate('/login')
+        // profile();
 
     }
-    const profile = async () => {
-        try {
-            const res = await axios.get(`http://localhost:8080/auth/${token}`);
-            console.log(res.data);
-            if (res.data === "Token is expired ") {
-                // console.log(res.data);
-                localStorage.removeItem("token");
-                navigate("/login");
-                // alert("Token is expired ");
-            }
-            else {
-                setProfiles(res.data);
-                // console.log("admin =" + res.data.isAdmin)
-            }
-        } catch (error) {
-            console.log("profile err", error);
-        }
-    };
+    // const profile = async () => {
+    //     try {
+    //         const res = await axios.get(`http://localhost:8080/auth/${token}`);
+    //         console.log(res.data);
+    //         if (res.data === "Token is expired ") {
+    //             // console.log(res.data);
+    //             localStorage.removeItem("token");
+    //             navigate("/login");
+    //             // alert("Token is expired ");
+    //         }
+    //         else {
+    //             setProfiles(res.data);
+    //             // console.log("admin =" + res.data.isAdmin)
+    //         }
+    //     } catch (error) {
+    //         console.log("profile err", error);
+    //     }
+    // };
 
     // const icon_display=()=>{
     //     if(token){

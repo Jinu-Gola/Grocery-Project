@@ -350,7 +350,7 @@ const orderPlace = async (req, res) => {
             uid: req.body.orderInfo.uid,
             fname: req.body.orderInfo.fname,
             lname: req.body.orderInfo.lname,
-            adderss: req.body.orderInfo.adderss,
+            address: req.body.orderInfo.address,
             mobile: req.body.orderInfo.mobile,
             email: req.body.orderInfo.email,
             order_date: orderdate,
@@ -487,7 +487,8 @@ const orderGet = async (req, res) => {
             }
 
         ]
-        console.log(options, "MMMMMMM");
+        // console.log(options, "MMMMMMM");
+
         // if (req.body.search != undefined && req.body.search != null && req.body.search != "") {
         //     req.body.search = req.body.search.trim();
         //     const searchValueInteger = parseInt(req.body.search);
@@ -516,9 +517,9 @@ const orderGet = async (req, res) => {
         if (orderResults.length > 0) {
             for (let i = 0; i < orderResults.length; i++) {
                 const singleOrder = { order: orderResults[i], details: [] };
-                console.log(singleOrder, "sssssssssssssss");
+                // console.log(singleOrder, "sssssssssssssss");
                 const orderDetailResults = await new Promise((resolve, reject) => {
-                    console.log("***", singleOrder.order._id);
+                    // console.log("***", singleOrder.order._id);
                     order_detailModel.aggregate([
                         {
                             $match: {
@@ -549,10 +550,10 @@ const orderGet = async (req, res) => {
                         }
                     });
                 });
-                console.log("((((", orderDetailResults);
+                // console.log("((((", orderDetailResults);
                 if (orderDetailResults.length > 0) {
                     singleOrder.details = orderDetailResults;
-                    console.log("******", singleOrder,);
+                    // console.log("******", singleOrder,);
                     orderList.push(singleOrder);
                 } else {
                     singleOrder.details = [];
