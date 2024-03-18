@@ -21,6 +21,10 @@ function Cart() {
 
     const cartList = async () => {
         let cartlist = [];
+        // uid = JSON.parse(localStorage.getItem('user'))
+        // console.log(uid,"uiddd");
+
+        // if(uid)
         cartlist = JSON.parse(localStorage.getItem('cartlist'))
         setCartItem(cartlist)
     }

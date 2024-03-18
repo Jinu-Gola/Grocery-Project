@@ -11,7 +11,7 @@ const contPost = async (req, res) => {
             
 
         })
-        // console.log(data);
+        console.log(data);
         res.send(data);
     } catch (error) {
         res.send(error);

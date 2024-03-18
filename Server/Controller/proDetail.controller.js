@@ -34,21 +34,39 @@ const product_detailsPost = async (req, res) => {
 
 const product_detailsGet = async (req, res) => {
     try {
-        const minPrice = req.query.minPrice;
-        const maxPrice = req.query.maxPrice;
-        if (minPrice && maxPrice) {
-            query.price = { $gte: minPrice, $lte: maxPrice };
-        } else if (minPrice) {
-            query.price = { $gte: minPrice };
-        } else if (maxPrice) {
-            query.price = { $lte: maxPrice };
-        }
+        // const minPrice = req.query.minPrice;
+        // const maxPrice = req.query.maxPrice;
+        // if (minPrice && maxPrice) {
+        //     query.price = { $gte: minPrice, $lte: maxPrice };
+        // } else if (minPrice) {
+        //     query.price = { $gte: minPrice };
+        // } else if (maxPrice) {
+        //     query.price = { $lte: maxPrice };
+        // }
+       
         const data = await pro_detailModel.find();
         res.send(data);
     } catch (error) {
         res.send(error);
     }
 }
+const product_detailsGet1 = async (req, res) => {
+    try {
+        const searchValueArray = [];
+        const options = [
+            {
+                $match: {},
+            }
+
+        ]
+        const data = await pro_detailModel.find();
+        res.send(data);
+    } catch (error) {
+        res.send(error);
+    }
+}
+
+
 
 const product_detailsPut = async (req, res) => {
     try {

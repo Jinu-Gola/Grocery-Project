@@ -31,6 +31,12 @@ const orderSchema = new mongoose.Schema({
         // unique: true
 
     },
+    address: {
+        type: String,
+        // require: true,
+        // unique: true
+
+    },
     order_date: {
         type: String,
         require: true

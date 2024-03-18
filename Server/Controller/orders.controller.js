@@ -332,6 +332,7 @@
 
 
 // module.exports = { orderPlace, orderGet }
+const { default: mongoose } = require('mongoose');
 const orderModel = require('../Model/order')
 const order_detailModel = require('../Model/orderdetail')
 const pro_detailModel = require('../Model/product_detail');
@@ -464,14 +465,14 @@ const orderPlace = async (req, res) => {
 }
 
 
-const orderGet1 = async (req, res) => {
-    try {
-        const data = await orderModel.find()
-        res.send({ Status: 0, data: data, message: "all orders display.." })
-    } catch (error) {
+// const orderGet1 = async (req, res) => {
+//     try {
+//         const data = await orderModel.find()
+//         res.send({ Status: 0, data: data, message: "all orders display.." })
+//     } catch (error) {
 
-    }
-}
+//     }
+// }
 
 
 const orderGet = async (req, res) => {
@@ -482,7 +483,7 @@ const orderGet = async (req, res) => {
         const searchValueArray = [];
         const options = [
             {
-                $match: { orderstatus: 0 },
+                $match: { order_status: 0 },
             }
 
         ]
@@ -494,7 +495,7 @@ const orderGet = async (req, res) => {
         //     searchValueArray.push(
         //         { "u_name": { $regex: new RegExp(req.body.search, 'i') } },
         //         { "email": { $regex: new RegExp(req.body.search, 'i') } },
-        //         { "phone": { $regex: new RegExp(req.body.search, 'i') } },
+        //         { "mobile": { $regex: new RegExp(req.body.search, 'i') } },
         //         // { "order_date": { $regex: new RegExp(startDate) } },
         //         { "total_amt": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } },
         //         { "discount": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } },
@@ -511,17 +512,22 @@ const orderGet = async (req, res) => {
 
         console.log(options[0].$match, "options");
         const orderResults = await orderModel.aggregate(options).exec();
-        // console.log(orderResults, "orderResults");
+        console.log(orderResults, "orderResults");
         if (orderResults.length > 0) {
             for (let i = 0; i < orderResults.length; i++) {
                 const singleOrder = { order: orderResults[i], details: [] };
                 console.log(singleOrder, "sssssssssssssss");
-
                 const orderDetailResults = await new Promise((resolve, reject) => {
+                    console.log("***", singleOrder.order._id);
                     order_detailModel.aggregate([
                         {
+                            $match: {
+                                o_id: mongoose.Types.ObjectId(singleOrder.order._id),
+                            },
+                        },
+                        {
                             $lookup: {
-                                from: "products",
+                                from: "product_details",
                                 localField: "p_id",
                                 foreignField: "_id",
                                 as: "product",
@@ -531,22 +537,22 @@ const orderGet = async (req, res) => {
                             $unwind: "$product",
                         },
 
-                        {
-                            $match: {
-                                o_id: mongoose.Types.ObjectId(singleOrder.order._id),
-                            },
-                        },
+                       
                     ]).exec((error, result1) => {
+                        console.log(result1,"result1");
                         if (error) {
+                            console.log("error",error);
                             reject(error);
                         } else {
+                            console.log("result1", result1);
                             resolve(result1);
                         }
                     });
                 });
-
+                console.log("((((", orderDetailResults);
                 if (orderDetailResults.length > 0) {
                     singleOrder.details = orderDetailResults;
+                    console.log("******", singleOrder,);
                     orderList.push(singleOrder);
                 } else {
                     singleOrder.details = [];

@@ -5,9 +5,11 @@ const userModel = require('../Model/user');
 
 const total = async (req, res) => {
     try {
-        var { tuser, tproduct, tcat, torder } = [];
-        var { totuser, totproduct, totcat, totorder } = 0;
-        tuser = await userModel.find();
+        var { tuser, tproduct, tcat, torder ,tadmin} = [];
+        var { totuser, totproduct, totcat, totorder,totadmin } = 0;
+        tuser = await userModel.find({ isAdmin: false });
+        // tadmin = await userModel.find({ isAdmin:true });
+
         tproduct = await pro_detailModel.find();
         tcat = await cateModel.find();
         torder = await orderModel.find();
@@ -16,8 +18,9 @@ const total = async (req, res) => {
         totproduct = tproduct.length;
         totcat = tcat.length;
         totorder = torder.length;
+        totadmin=tadmin.length;
         // console.log(totorder,"orderssssssssssssss");
-        res.send({ totuser, totproduct, totcat, totorder });
+        res.send({ totuser, totproduct, totcat, totorder,totadmin });
     } catch (error) {
         console.log("total error", error);
     }

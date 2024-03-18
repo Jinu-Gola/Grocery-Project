@@ -9,7 +9,7 @@ import Search from './Search'
 function Product() {
     const navigate = useNavigate()
     var { id } = useParams();
-    // const [profiles, setProfiles] = useState("")
+ 
     const [search, setSearch] = useState();
     // var token = localStorage.getItem("token");
     console.log(id);
@@ -273,7 +273,7 @@ function Product() {
                                 <div className="col-6" />
                                 <div className="col-xl-3">
                                     <div className="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                        <i class="fa-solid fa-sort"></i><label htmlFor="fruits"> Sorting:</label>
+                                        <label htmlFor="fruits"><i className="fa fa-search" /> Sorting:</label>
                                         <select id="fruits" name="fruitlist" className="border-0 form-select-sm bg-light me-3" form="fruitform">
                                             <option value="">Nothing</option>
                                             <option value="">A-Z</option>
@@ -379,7 +379,7 @@ function Product() {
 
                                                         <div className="d-flex justify-content-between flex-lg-wrap flex-column">
                                                             <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
-                                                            <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>
+                                                            {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> :<button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
                                                         </div>
                                                       
                                                     </div>

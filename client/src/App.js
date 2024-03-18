@@ -15,7 +15,7 @@ import Login from './components/Login-Signup/Login'
 import ForgetPassword from './components/Login-Signup/ForgetPassword';
 import NewSubmit from './components/Login-Signup/NewSubmit';
 
-import Signup from './components/Login-Signup/Register'
+// import Signup from './components/Login-Signup/Register'
 import Fruits from './components/Fruits';
 import Vegitables from './components/Vegitables';
 import ShippingFeature from './components/ShippingFeature';

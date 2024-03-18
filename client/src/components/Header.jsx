@@ -71,6 +71,12 @@ function Header(props) {
         }
     };
 
+    // const icon_display=()=>{
+    //     if(token){
+
+    //     }
+    // }
+
     return (
         <>
             {/* Navbar start */}
@@ -131,12 +137,13 @@ function Header(props) {
                                 </Link>
                                 {/* if(token) */}
                                 
+                                {!token ? 
                                 <Link to="/login" className="position-relative me-4 my-auto">
                                     <i className="fas fa-user fa-2x" />
-                                </Link>
+                                </Link> : 
                                 <Link onClick={()=>logOut()} className="position-relative me-4 my-auto">
                                     <i className="fas fa-sign-out-alt fa-2x" />
-                                </Link>
+                                </Link> }
                             </div>
                         </div>
                     </nav>

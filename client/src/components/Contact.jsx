@@ -40,7 +40,6 @@ function Contact() {
     const handleChange = (e) => {
         setInputs({ ...inputs, [e.target.name]: e.target.value })
     }
-
     const handelSubmit = (e) => {
         e.preventDefault();
         axios.post('http://localhost:8080/addcont', {
@@ -49,6 +48,7 @@ function Contact() {
             message: inputs.msg,
         })
     }
+    console.log(inputs.name, inputs.email, inputs.msg,"iiiiiii");
     return (
         <>
             <Header/>

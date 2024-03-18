@@ -1,4 +1,4 @@
-
+import './login-signup.css'
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -191,9 +191,7 @@ function Login() {
                     <input id="pass" type="password" className="input" data-type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
                   </div>
                   <div className="container">
-                    <div className="wrapper" style={{
-                      display: "inline-block", verticalAlign: "middle", marginRight: "10px"
-                    }}>
+                    <div className="wrapper">
                       <canvas
                         // className='canvas'
 
