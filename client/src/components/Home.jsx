@@ -6,12 +6,12 @@ import Search from './Search'
 import Slider from './Slider'
 import Offers from './Offers'
 // import Banner from './Banner'
-import Bestseller from './Bestseller'
+// import Bestseller from './Bestseller'
 import Features from './Features'
 import Footer from './Footer'
 // import Review from './Review'
-import Fruits from './Fruits'
-import Vegitables from './Vegitables'
+// import Fruits from './Fruits'
+// import Vegitables from './Vegitables'
 import axios from 'axios'
 import { useNavigate ,Link} from 'react-router-dom'
 import Whishlist from './Whishlist'
@@ -164,11 +164,11 @@ function Home(props) {
                     <div className="container py-5">
                         <div className="tab-class text-center">
                             <div className="row g-4">
-                                <div className="col-lg-4 text-start">
+                                <div className="col-lg-4 text-start mb-2">
                                     <h2>Our Organic Products</h2>
                                 </div>
                                 <div className="col-lg-8 text-end">
-                                    <ul className="nav nav-pills d-inline-flex text-center mb-5">
+                                    {/* <ul className="nav nav-pills d-inline-flex text-center mb-5">
                                         <li className="nav-item">
                                             <Link to='/product' className="d-flex py-2 m-2 bg-light rounded-pill" data-bs-toggle="pill" >
                                                 <span className="text-dark" style={{ width: 130 }}>All Products</span>
@@ -183,7 +183,7 @@ function Home(props) {
                                             <Link to='/fruits' className="d-flex m-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" >
                                                 <span className="text-dark" style={{ width: 130 }}>Fruits</span>
                                             </Link>
-                                        </li>
+                                        </li> */}
                                         {/* <li className="nav-item">
                                         <Link to='' className="d-flex m-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" >
                                             <span className="text-dark" style={{ width: 130 }}>Bread</span>
@@ -194,7 +194,7 @@ function Home(props) {
                                             <span className="text-dark" style={{ width: 130 }}>Meat</span>
                                         </Link>
                                     </li> */}
-                                    </ul>
+                                    {/* </ul> */}
                                 </div>
                             </div>
                             <div className="tab-content">
@@ -213,10 +213,11 @@ function Home(props) {
 
                                                             <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
                                                                 <h5 className='productName'>{item.product_name}</h5>
-                                                                <b><p>{item.size}</p></b>
+                                                                <b><p style={{marginBottom:"0px"}}>{item.size}</p></b>
                                                                 <div className="d-flex justify-content-between flex-lg-wrap">
-                                                                    <p className="text-dark fs-5 fw-bold mb-0">₹{item.price}</p>
-                                                                    {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> : <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
+                                                                    <p className="text-dark fs-5 fw-bold mt-3">₹{item.price}</p>
+                                                                    {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> : 
+                                                                    <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
 
                                                                     {/* <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button> */}
                                                                 </div>
@@ -255,7 +256,7 @@ function Home(props) {
                 {/* <Banner /> */}
                 {/* Banner Section End */}
                 {/* Bestsaler Product Start */}
-                <Bestseller />
+                {/* <Bestseller /> */}
                 {/* Bestsaler Product End */}
 
                 {/* Tastimonial Start */}

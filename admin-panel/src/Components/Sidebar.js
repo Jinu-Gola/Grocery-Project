@@ -33,7 +33,7 @@ function Sidebar() {
             <nav className="sidebar sidebar-offcanvas" id="sidebar">
                 <div className="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
                     <Link to='/home' className="sidebar-brand brand-logo" ><i className="fas fa-shopping-basket text-white "><b> SUPERGROCY</b></i></Link>
-                    <Link to='/home' className="sidebar-brand brand-logo-mini" ><img src="assets/images/logo-mini.svg" alt="logo" /></Link>
+                    <Link to='/home' className="sidebar-brand brand-logo-mini" ><h1 className='text-white'>S</h1></Link>
                 </div>
                 <ul className="nav">
                     <li className="nav-item profile">
@@ -158,13 +158,15 @@ function Sidebar() {
                         <div className="collapse" id="auth1">
                             <ul className="nav flex-column sub-menu">
                                 <li className="nav-item">
-                                    <Link to='/orderlist' className="nav-link" >All Orders</Link>
+                                    <Link to='/orderlist' className="nav-link" >Pending Orders</Link>
                                 </li>
-                                <li className="nav-item"> <Link to='' className="nav-link" >Dispatch Orders</Link></li>
+                                <li className="nav-item"> <Link to='/dispatchorder' className="nav-link" >Dispatch Orders</Link></li>
                                 <li className="nav-item">
-                                    <Link to='/addsubcat' className="nav-link" >Pending Orders</Link>
+                                    {/* <Link to='/' className="nav-link" >Pending Orders</Link> */}
                                 </li>
                                 <li className="nav-item"> <Link to='' className="nav-link" > Complete Order </Link></li>
+                                <li className="nav-item"> <Link to='' className="nav-link" > Cancel Order </Link></li>
+
                             </ul>
                         </div>
                     </li>

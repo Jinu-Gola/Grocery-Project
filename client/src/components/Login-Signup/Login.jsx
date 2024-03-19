@@ -132,23 +132,7 @@ function Login() {
     })
 
   }
-  // const handleCaptchaSubmit = async () => {
-  //   if (userInput === captchaText) {
-  //     try {
-  //       const res = await axios.post('http://localhost:5000/login', {
-  //         email,
-  //         password,
-  //       });
-  //       localStorage.setItem('token', res.data.tok);
-  //       navigate(res.data.data.isAdmin ? '/admin' : '/home');
-  //     } catch (e) {
-  //       console.log('Login failed:', e);
-  //       setErr('Please enter a valid id and password');
-  //     }
-  //   } else {
-  //     setErr('Captcha is incorrect');
-  //   }
-  // };
+
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -208,7 +192,7 @@ function Login() {
                         onClick={initializeCaptcha}
 
                       >
-                        <i className="icon" />
+                        <i fa fa-autorenew className="icon" />
                       </button>
 
                     </div>

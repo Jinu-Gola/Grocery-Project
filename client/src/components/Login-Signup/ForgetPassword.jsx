@@ -1,5 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import './login-signup.css'
+
 import { useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.min.css'
 import { ToastContainer, toast } from 'react-toastify'
@@ -39,26 +41,27 @@ function ForgetPassword() {
             <ToastContainer />
 
             <div className='root'>
-                {/* <div className="login-wrap" > */}
-                    <div className="login-html" style={{ height: "400px", width:"400px"}}>
+                <div className="login-wrap-forget" >
+                    <div className="login-html" >
                         <input id="tab-1" type="radio" name="tab" className="sign-in" /><label htmlFor="tab-1" className="tab">Forget Password</label>
                         {/* <input id="tab-2" type="radio" name="tab" className="sign-up" checked={step === 1} onClick={() => { setStep(1) }} /><label htmlFor="tab-2" className="tab">Sign Up</label> */}
                         <div className="login-form">
 
                             {/* <form className="sign-in-htm"> */}
 
-                                <div className="group">
-                                    <label htmlFor="email" className="label">Email</label>
-                                    <input id="email" type="email" className="input" data-type="email" value={email} onChange={(e) => {
-                                        setEmail(e.target.value);
-                                    }} placeholder="Email" />
-                                </div>
-                                <div className="group">
-                                    <button type="submit" className="button" onClick={handleSubmit} > SEND OTP{" "}</button>
-                                </div>
+                            <div className="group">
+                                <label htmlFor="email" className="label">Email</label>
+                                <input id="email" type="email" className="input" data-type="email" value={email} onChange={(e) => {
+                                    setEmail(e.target.value);
+                                }} placeholder="Email" />
+                            </div>
+                            <div className="group">
+                                <button type="submit" className="button" onClick={handleSubmit} > SEND OTP{" "}</button>
+                            </div>
                             {/* </form> */}
                         </div>
                     </div>
+                </div>
             </div>
         </>
     );

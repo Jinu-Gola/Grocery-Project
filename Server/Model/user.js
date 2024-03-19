@@ -45,6 +45,10 @@ const regSchema = mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    logedin:{
+        type:String,
+        default:''
     }
 
 

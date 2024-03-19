@@ -1,0 +1,690 @@
+const productModel = require("../models/product.model");
+const productMediaModel = require("../models/productmedia.model");
+const sizeattributeModel = require("../models/sizeattribute.model");
+const colorattributeModel = require("../models/colorattribute.model");
+const { ObjectId } = require("mongodb");
+const { default: mongoose } = require("mongoose");
+
+const productInsert = (req, res) => {
+  try {
+    console.log(req.body, "req.body");
+    console.log(req.files, "req.files");
+
+    productModel
+      .create({
+        product_name: req.body.product_name,
+        price: req.body.price,
+        deposite: req.body.deposite,
+        qty: req.body.qty,
+        description: req.body.description,
+        sub_c_id: req.body.sub_c_id,
+        cat_id: req.body.cat_id,
+      })
+      .then((result) => {
+        console.log(result, "11111");
+        if (result) {
+          let Image = [];
+          let sizearr = [];
+          let colorarr = [];
+
+          if (req.files.p_image.length == undefined) {
+            Image.push(req.files.p_image);
+          } else {
+            Image = req.files.p_image;
+          }
+
+          if (req.body.size_name.length == 0) {
+            console.log(req.body.size_name, "sizenameeeee");
+            sizearr.push(req.body.size_name);
+          } else {
+            sizearr = req.body.size_name;
+          }
+
+          if (req.body.color_code.length == 0) {
+            colorarr.push(req.body.color_code);
+          } else {
+            colorarr.push(req.body.color_code);
+          }
+
+          for (let i = 0; i < Image.length; i++) {
+            productMediaModel
+              .create({
+                p_image: Image[i].name,
+                product_id: result._id,
+              })
+              .then((result) => {
+                if (result) {
+                  const imagePath = Image[i];
+                  // console.log(${__dirname}/../public/assets/images/,"qqqqqqqqqqqqqqqqqqqq");
+                  imagePath.mv(
+                    ${__dirname}/../public/assets/images/${Image[i].name},
+                    (error) => {
+                      if (error) {
+                        console.log(error, "errorrrrrrrrrr");
+                      }
+                    }
+                  );
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+          for (let si = 0; si < sizearr.length; si++) {
+            sizeattributeModel
+              .create({
+                size_name: sizearr[si],
+                product_id: result._id,
+              })
+              .then((result) => {
+                // console.log(result, "<<<<<<<<<<<");
+              });
+          }
+          for (let ci = 0; ci < colorarr.length; ci++) {
+            colorattributeModel
+              .create({
+                color_code: colorarr[ci],
+                product_id: result._id,
+              })
+              .then((result) => {
+                // console.log(result, "<<<<<<<<<<<");
+              });
+          }
+          res.send({
+            status: 1,
+            result: result,
+            message: "Product Insert Successfully",
+          });
+        } else {
+          res.send({
+            status: 0,
+            result: [],
+            message: "Product Not Insert Successfully",
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const productGet = (req, res) => {
+  try {
+    const pipelineData = [
+      {
+        $lookup: {
+          from: "subcategries",
+          localField: "sub_c_id",
+          foreignField: "_id",
+          as: "sub_cat_id",
+        },
+      },
+      {
+        $lookup: {
+          from: "categries",
+          localField: "cat_id",
+          foreignField: "_id",
+          as: "cat_id",
+        },
+      },
+      {
+        $unwind: "$cat_id",
+      },
+      {
+        $lookup: {
+          from: "sizeattributes",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "size_id",
+        },
+      },
+      {
+        $lookup: {
+          from: "colorattributes",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "color_id",
+        },
+      },
+      {
+        $lookup: {
+          from: "productmedias",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "p_image",
+        },
+      },
+    ];
+    console.log('req.body', req.body);
+
+    if (Object.keys(req.body).length > 0) {
+      let catIdFilter;
+      let subCatIdFilter;
+
+      if (
+        req.body.cat_id != undefined &&
+        req.body.cat_id != null &&
+        req.body.cat_id != "" &&
+        req.body.cat_id != 0
+      ) {
+        catIdFilter = mongoose.Types.ObjectId(req.body.cat_id);
+      }
+      if (
+        req.body.sub_c_id != undefined &&
+        req.body.sub_c_id != null &&
+        req.body.sub_c_id != "" &&
+        req.body.sub_c_id != 0
+      ) {
+        subCatIdFilter = mongoose.Types.ObjectId(req.body.sub_c_id);
+      }
+
+      console.log('subCatIdFilter', subCatIdFilter);
+
+
+      let searchQuery = { $match: { $and: [] } };
+
+      if (
+        req.body.search != undefined &&
+        req.body.search != null &&
+        req.body.search != ""
+      ) {
+        searchQuery.$match.$and.push({
+          $or: [
+            { product_name: { $regex: new RegExp(req.body.search, "i") } },
+            { description: { $regex: new RegExp(req.body.search, "i") } },
+            {
+              price: isNaN(req.body.search)
+                ? null
+                : parseFloat(req.body.search),
+            },
+          ],
+        });
+      } else if (catIdFilter && searchQuery.$match.$and) {
+        searchQuery.$match.$and.push({ cat_id: catIdFilter });
+        if (subCatIdFilter) {
+            searchQuery.$match.$and.push({ sub_c_id: subCatIdFilter });
+          }
+      }      
+      else {
+        searchQuery.$match = { cat_id: catIdFilter };
+      }
+      pipelineData.unshift(searchQuery);
+
+    }
+
+    productModel.aggregate(pipelineData).exec((error, result) => {
+      if (result) {
+        res.send(result);
+      } else {
+        console.log(error);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const productGetpagination = (req, res) => {
+  try {
+    let start_page =
+      (parseInt(req.params.page) - 1) * parseInt(req.params.perPage);
+    let paramPerPage = parseInt(req.params.perPage);
+    console.log(start_page, "starting page");
+    console.log(paramPerPage, "perpage");
+    const getproduct = productModel.aggregate([
+      {
+        $lookup: {
+          from: "subcategries",
+          localField: "sub_c_id",
+          foreignField: "_id",
+          as: "sub_cat_id",
+        },
+      },
+      // {
+      //     $unwind: "$sub_c_id"
+      // },
+      {
+        $lookup: {
+          from: "categries",
+          localField: "cat_id",
+          foreignField: "_id",
+          as: "cat_id",
+        },
+      },
+      // {
+      //     $unwind: "$cat_id"
+      // },
+      {
+        $lookup: {
+          from: "sizeattributes",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "size_id",
+        },
+      },
+      // {
+      //     $unwind: "$size_id"
+      // },
+      {
+        $lookup: {
+          from: "colorattributes",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "color_id",
+        },
+      },
+      // {
+      //     $unwind: "$color_id"
+      // },
+      {
+        $lookup: {
+          from: "productmedias",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "p_image",
+        },
+      },
+      { $skip: start_page },
+      {
+        $limit: paramPerPage,
+      },
+
+      //     $skip: start_page
+      // }
+
+      // {
+      //     $count: "total"
+      // },
+
+      // {
+      //     $unwind: "$p_image"
+      // },
+    ]);
+
+    // const page = parseInt(start_page); // Page
+    // const limit = parseInt(req.params.perPage); // results per page
+    // // const startIndex = (page - 1) * limit;
+    // // const endIndex = page * limit;
+    // const options = {
+    //     page: page,
+    //     limit: limit,
+    //     // startIndex: startIndex,
+    //     // endIndex: endIndex,
+    // };
+    // productModel.aggregatePaginate(getproduct, options).then(function (results) {
+
+    //     // if (results.length > 0) {
+    //         console.log(results, "result::::");
+
+    //     // } else {
+
+    //     // }
+
+    // });
+    getproduct.exec((error, result) => {
+      console.log(result, "result::::");
+      console.log(result.length, "length::::::::::::::::");
+      if (result.length > 0) {
+        //
+        productModel
+          .find()
+          .count()
+          .then((result1) => {
+            if (result1) {
+              console.log(result1, "result1::::::::::");
+              res.send({
+                status: 1,
+                result: result,
+                totaldata: result1,
+                message: "Product List",
+              });
+            } else {
+              console.log(error);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        res.send({ status: 0, result: [], message: "Product Not Found" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const MenproductGet = (req, res) => {
+  try {
+    productModel
+      .aggregate([
+        {
+          $match: {
+            cat_id: new ObjectId("641409f9df1a2781cfbeb5ac"),
+          },
+        },
+        {
+          $lookup: {
+            from: "subcategries",
+            localField: "sub_c_id",
+            foreignField: "_id",
+            as: "sub_cat_id",
+          },
+        },
+        // {
+        //     $unwind: "$sub_c_id"
+        // },
+        {
+          $lookup: {
+            from: "categries",
+            localField: "cat_id",
+            foreignField: "_id",
+            as: "cat_id",
+          },
+        },
+        // {
+        //     $unwind: "$cat_id"
+        // },
+        {
+          $lookup: {
+            from: "sizeattributes",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "size_id",
+          },
+        },
+        // {
+        //     $unwind: "$size_id"
+        // },
+        {
+          $lookup: {
+            from: "colorattributes",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "color_id",
+          },
+        },
+        // {
+        //     $unwind: "$color_id"
+        // },
+        {
+          $lookup: {
+            from: "productmedias",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "p_image",
+          },
+        },
+        // {
+        //     $unwind: "$p_image"
+        // },
+      ])
+      .exec((error, result) => {
+        if (result) {
+          res.send(result);
+        } else {
+          console.log(error);
+        }
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const WomenproductGet = (req, res) => {
+  try {
+    productModel
+      .aggregate([
+        {
+          $match: {
+            cat_id: new ObjectId("6406166e49a41a682126d533"),
+          },
+        },
+        {
+          $lookup: {
+            from: "subcategries",
+            localField: "sub_c_id",
+            foreignField: "_id",
+            as: "sub_cat_id",
+          },
+        },
+        // {
+        //     $unwind: "$sub_c_id"
+        // },
+        {
+          $lookup: {
+            from: "categries",
+            localField: "cat_id",
+            foreignField: "_id",
+            as: "cat_id",
+          },
+        },
+        // {
+        //     $unwind: "$cat_id"
+        // },
+        {
+          $lookup: {
+            from: "sizeattributes",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "size_id",
+          },
+        },
+        // {
+        //     $unwind: "$size_id"
+        // },
+        {
+          $lookup: {
+            from: "colorattributes",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "color_id",
+          },
+        },
+        // {
+        //     $unwind: "$color_id"
+        // },
+        {
+          $lookup: {
+            from: "productmedias",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "p_image",
+          },
+        },
+        // {
+        //     $unwind: "$p_image"
+        // },
+      ])
+      .exec((error, result) => {
+        if (result) {
+          res.send(result);
+        } else {
+          console.log(error);
+        }
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const ChildrenproductGet = (req, res) => {
+  try {
+    productModel
+      .aggregate([
+        {
+          $match: {
+            cat_id: new ObjectId("64140a01df1a2781cfbeb5b0"),
+          },
+        },
+        {
+          $lookup: {
+            from: "subcategries",
+            localField: "sub_c_id",
+            foreignField: "_id",
+            as: "sub_cat_id",
+          },
+        },
+        // {
+        //     $unwind: "$sub_c_id"
+        // },
+        {
+          $lookup: {
+            from: "categries",
+            localField: "cat_id",
+            foreignField: "_id",
+            as: "cat_id",
+          },
+        },
+        // {
+        //     $unwind: "$cat_id"
+        // },
+        {
+          $lookup: {
+            from: "sizeattributes",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "size_id",
+          },
+        },
+        // {
+        //     $unwind: "$size_id"
+        // },
+        {
+          $lookup: {
+            from: "colorattributes",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "color_id",
+          },
+        },
+        // {
+        //     $unwind: "$color_id"
+        // },
+        {
+          $lookup: {
+            from: "productmedias",
+            localField: "_id",
+            foreignField: "product_id",
+            as: "p_image",
+          },
+        },
+        // {
+        //     $unwind: "$p_image"
+        // },
+      ])
+      .exec((error, result) => {
+        if (result) {
+          res.send(result);
+        } else {
+          console.log(error);
+        }
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const productUpdate = (req, res) => {
+  try {
+    console.log(req.body, "boddyy");
+    productModel
+      .findByIdAndUpdate(
+        {
+          _id: req.body._id,
+        },
+        {
+          product_name: req.body.product_name,
+          price: req.body.price,
+          deposite: req.body.deposite,
+          qty: req.body.qty,
+          description: req.body.description,
+          sub_c_id: req.body.sub_c_id,
+          // color_id: req.body.color_id,
+          // size_id: req.body.size_id,
+          cat_id: req.body.cat_id,
+        }
+      )
+      .then((result) => {
+        if (result) {
+          res.send({
+            status: 1,
+            result: result,
+            message: "Product Upadated...",
+          });
+        } else {
+          res.send({
+            status: 0,
+            result: [],
+            message: "Product Not Updated...",
+          });
+        }
+      })
+      .then((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const productDelete = (req, res) => {
+  try {
+    productModel
+      .findByIdAndDelete({
+        _id: req.body._id,
+      })
+      .then((result) => {
+        if (result) {
+          res.send({
+            status: 1,
+            result: result,
+            message: "Deleted Successsully",
+          });
+        } else {
+          res.send({ status: 0, result: [], message: "Deleted not" });
+        }
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const totalProduct = (req, res) => {
+  try {
+    productModel
+      .find()
+      .count()
+      .then((result1) => {
+        if (result1) {
+          console.log(result1, "result1::::::::::");
+          res.send({ status: 1, result: result1, message: "product List" });
+        } else {
+          res.send({
+            status: 0,
+            result: [],
+            message: "product List not found",
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  productInsert,
+  productGet,
+  productUpdate,
+  productDelete,
+  productGetpagination,
+  totalProduct,
+  MenproductGet,
+  WomenproductGet,
+  ChildrenproductGet,
+};

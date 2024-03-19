@@ -2,13 +2,17 @@ import React from 'react';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import axios from 'axios'
-import { useNavigate, Link } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.min.css'
+import { ToastContainer, toast } from 'react-toastify'
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 // import { TextField } from '@mui/material';
 
 function ViewOrder() {
     const navigate = useNavigate();
+    // const { id } = useParams()
+    // console.log(id,"idddddddddd");
 
     var token = localStorage.getItem("token");
     const [profiles, setProfiles] = useState("")
@@ -40,41 +44,50 @@ function ViewOrder() {
             console.log("profile err", error);
         }
     };
+    const dispatch_alerts = () => {
+        toast.success("Order is Out of Delivery.....", {
+            position: "top-center"
+        });
+    };
 
     const [orderData, setOrderData] = useState([]);
-    useEffect(() => {
-        ordersGet();
-    }, [])
+    // useEffect(() => {
+    //     ordersGet();
+    // }, [])
 
 
+
+    const [searchvalue, setSearchvalue] = useState({
+        search: null,
+        date: null,
+    });
 
     const ordersGet = async () => {
-        console.log(search, 'searchvalue');
-        const result = await axios.post("http://localhost:8080/get-order")
-        console.log(result, 'resultresult');
+        // console.log(searchvalue, 'searchvalue');
+        const result = await axios.post("http://localhost:8080/get-order", {
+            'search': searchvalue
+        })
+        // console.log(result, 'resultresult');
         setOrderData(result?.data);
     };
-    const [search, setSearch] = useState({
-        search: null,
-        // date: null,
-    });
     const login_list = JSON.parse(localStorage.getItem('user'));
 
 
+    const dispatchOrderFun = async (o_id) => {
+        console.log(o_id, "order id ");
+        const result = await axios.post('http://localhost:8080/dispatch-order/' + o_id);
 
-    const dispatchOrderFun = async (order_id) => {
-        // const result = await dispatchorder(order_id);
-
-        // if (result.status == 1) {
-        //     successNotify('Order is out of delivery.....');
-        // }
-        // let reload = false;
-        // setTimeout(() => {
-        //     if (!reload) {
-        //         window.location.reload();
-        //         reload = true;
-        //     }
-        // }, 5000);
+        if (result.status == 1) {
+            dispatch_alerts()
+            // successNotify('Order is out of delivery.....');
+        }
+        let reload = false;
+        setTimeout(() => {
+            if (!reload) {
+                window.location.reload();
+                reload = true;
+            }
+        }, 5000);
     };
 
     useEffect(() => {
@@ -95,12 +108,6 @@ function ViewOrder() {
             name: 'DISCOUNT',
             selector: (row) => row.order.discount,
         },
-
-        // {
-        //     name: 'DEPOSITE REFUND',
-        //     selector: (row) => row.order.refunddeposite,
-        // },
-
         {
             name: "TRANSCATION ID",
             selector: (row) => row.order.transaction_id,
@@ -113,7 +120,7 @@ function ViewOrder() {
             name: 'DISPACTH ORDER',
             cell: (row) => (
                 <>
-                    {console.log(row._id, "rowwwwwwwwwwwwww")}
+                    {console.log(row.order._id, "rowwwwwwwwwwwwww")}
 
                     <button
                         type='button'
@@ -144,6 +151,11 @@ function ViewOrder() {
     const expandDetails = ({ data }) => {
         let orderdata = [];
         orderdata.push(data.order);
+
+
+        const handelChange = (e) => {
+            
+        }
         return (
             <>
                 <h6
@@ -233,55 +245,7 @@ function ViewOrder() {
 
                             </div>
                             {console.log("looooooog", data)}
-                            {/* <div className='row'>
-                                <div className='col-1'></div>
-                                <div className='col-3 ms-0 pt-0'>
-                                    <label
-                                        className='text-dark'
-                                        style={{ fontSize: '12px' }}>
-                                        <b>Address :</b> <span>{data?.address?.address}</span>
-                                    </label>
-                                </div>
-                                <div className='col-2'>
-                                    <label
-                                        className='text-dark'
-                                        style={{ fontSize: '12px' }}>
-                                        <b>Flat no : </b> <span>{data?.address?.f_no}</span>
-                                    </label>
-                                </div>
-                                <div className='col-3 ms-0 pt-0'>
-                                    <label
-                                        className='text-dark'
-                                        style={{ fontSize: '12px' }}>
-                                        <b>Pincode : </b> <span>{data.address.pincode}</span>
-                                    </label>
-                                </div>
-                                <div className='col-2'>
-                                    <label
-                                        className='text-dark'
-                                        style={{ fontSize: '12px' }}>
-                                        <b>City : </b> <span>{data.address.city}</span>
-                                    </label>
-                                </div>
-                               
-                            </div> */}
-                            {/* <div className='row'>
-                                <div className='col-1'></div>
-                                <div className='col-3 ms-0 pt-0'>
-                                    <label
-                                        className='text-dark'
-                                        style={{ fontSize: '12px' }}>
-                                        <b>State : </b> <span>{data.address.state}</span>
-                                    </label>
-                                </div>
-                                <div className='col-2'>
-                                    <label
-                                        className='text-dark'
-                                        style={{ fontSize: '12px' }}>
-                                        <b>Country :</b> <span>{data.address.country}</span>
-                                    </label>
-                                </div>
-                            </div> */}
+
                         </>
                     );
                 })}
@@ -297,12 +261,21 @@ function ViewOrder() {
             </>
         );
     };
+    // const handelSearch = (e) => {
+    //     setSearch({ ...search, [e.target.name]: e.target.value });
+    // };
+
     const handelSearch = (e) => {
-        setSearch({ ...search, [e.target.name]: e.target.value });
+        setSearchvalue({ ...searchvalue, [e.target.name]: e.target.value });
     };
+
+    console.log(searchvalue, "searchhhh");
+
     return (
         <div>
             <>
+                <ToastContainer />
+
                 <div className="container-scroller">
                     {/* partial:partials/_sidebar.html */}
                     <Sidebar />
@@ -321,16 +294,16 @@ function ViewOrder() {
                                             <input
                                                 type="text"
                                                 className="form-control mr-2"
-                                                value={search.search}
+                                                value={searchvalue.search}
                                                 onChange={handelSearch}
-                                                placeholder="Search "
+                                                placeholder="Search"
                                                 name='search' />
                                             <input
                                                 type='date'
                                                 id='txtDate'
                                                 className='form-control mr-2'
                                                 name='date'
-                                                value={search.date}
+                                                value={searchvalue.date}
                                                 onChange={handelSearch}
                                                 style={{ width: '300px', marginRight: 0 }}
                                             />
@@ -338,7 +311,7 @@ function ViewOrder() {
                                                 type='button'
                                                 className='btn btn-warning mr-2'
                                                 onClick={() => {
-                                                    ordersGet(search);
+                                                    ordersGet(searchvalue);
                                                 }}>
                                                 {' '}
                                                 <i className='mdi mdi-magnify'></i>
@@ -347,7 +320,7 @@ function ViewOrder() {
                                                 type='button'
                                                 className='btn btn-warning mr-2 '
                                                 onClick={() => {
-                                                    setSearch({ search: "", date: "" });
+                                                    setSearchvalue({ search: "", date: "" });
                                                     ordersGet({ search: null, date: null });
 
                                                 }}>

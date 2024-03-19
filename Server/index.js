@@ -41,7 +41,8 @@ const pro_detailModel = require('./Controller/proDetail.controller.js')
 const cartModel = require("./Controller/cart.controller.js")
 const payment=require('./Controller/payment.controller.js')
 const ordercontroller=require('./Controller/orders.controller.js')
-const total=require('./Controller/total.controller.js')
+const total=require('./Controller/total.controller.js');
+const orderModel = require("./Model/order.js");
 // const { config } = require("process");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -101,6 +102,14 @@ app.get('/total',total.total)
 //order api
 app.post("/check-out", ordercontroller.orderPlace)
 app.post("/get-order",ordercontroller.orderGet)
+app.post("/userget-order", ordercontroller.usersideOrder)
+
+app.post("/dispatch-order/:id", ordercontroller.dispatchOrder)
+app.post('/get-dispatch',ordercontroller.get_dispatchOrder)
+
+app.post('/cancel-order',ordercontroller.cancelOrder)
+app.post('/get-cancel',ordercontroller.getCancelorder)
+
 
 
 

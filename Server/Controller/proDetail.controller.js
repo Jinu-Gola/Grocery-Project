@@ -43,7 +43,7 @@ const product_detailsGet = async (req, res) => {
         // } else if (maxPrice) {
         //     query.price = { $lte: maxPrice };
         // }
-       
+
         const data = await pro_detailModel.find();
         res.send(data);
     } catch (error) {
@@ -52,17 +52,153 @@ const product_detailsGet = async (req, res) => {
 }
 const product_detailsGet1 = async (req, res) => {
     try {
-        const searchValueArray = [];
-        const options = [
-            {
-                $match: {},
-            }
-
-        ]
+        const pipelineData = [];
+        console.log(req.body, "bodyyyy");
+        // if (Object.keys(req.body).length > 0) {
+        //     let searchQuery = {
+        //         $match: {}
+        //     }
+        //     if (req.body.search != undefined &&
+        //         req.body.search != null &&
+        //         req.body.search != "")
+        //         {
+        //             searchQuery.$match.$or=[{
+        //                 { product_name :{}},
+        //             }]
+        //         }
+        // }
+       
         const data = await pro_detailModel.find();
         res.send(data);
     } catch (error) {
         res.send(error);
+    }
+}
+
+const filterData = (req, res) => {
+    try {
+        console.log(req.body, "body::::::::::");
+
+        // if (req.body.price != "All") {
+        //     const priceData = req.body.price.split('-')
+        // }
+
+        const priceData = req.body.price.split("-");
+        console.log(priceData, "priceData::::");
+
+        productModel
+            .aggregate([
+                
+                {
+                    $lookup: {
+                        from: "categries",
+                        localField: "cid",
+                        foreignField: "_id",
+                        as: "cid",
+                    },
+                },
+                // {
+                //     $unwind: "$cat_id"
+                // },
+                
+           
+                {
+                    $match: {
+                        $and: [
+                            {
+                          
+                                price: { $gte: parseInt(priceData[0]) },
+                                price: { $lte: parseInt(priceData[1]) },
+                            },
+                        ],
+                    },
+                },
+            ])
+            .exec((error, result) => {
+                console.log(result, "result::::::");
+                console.log(error, "error:::::::::::");
+                if (result?.length > 0) {
+                    res.send({ status: 1, result: result, message: "Product List" });
+                } else {
+                    res.send({ status: 0, result: [], message: "Product Not Found" });
+                }
+            });
+    } catch (error) {
+        console.log(error);
+    }
+};
+const productGet = (req, res) => {
+    try {
+        productModel.aggregate([
+            {
+                $lookup: {
+                    from: "subcategries",
+                    localField: "sub_c_id",
+                    foreignField: "_id",
+                    as: "sub_cat_id"
+                },
+
+            },
+            // {
+            //     $unwind: "$sub_c_id"
+            // },
+            {
+                $lookup: {
+                    from: "categries",
+                    localField: "cat_id",
+                    foreignField: "_id",
+                    as: "cat_id"
+                },
+
+            },
+            {
+                $unwind: "$cat_id"
+            },
+            {
+                $lookup: {
+                    from: "sizeattributes",
+                    localField: "_id",
+                    foreignField: "product_id",
+                    as: "size_id"
+                },
+
+            },
+            // {
+            //     $unwind: "$size_id"
+            // },
+            {
+                $lookup: {
+                    from: "colorattributes",
+                    localField: "_id",
+                    foreignField: "product_id",
+                    as: "color_id"
+                },
+
+            },
+            // {
+            //     $unwind: "$color_id"
+            // },
+            {
+                $lookup: {
+                    from: "productmedias",
+                    localField: "_id",
+                    foreignField: "product_id",
+                    as: "p_image"
+                },
+
+            },
+            // {
+            //     $unwind: "$p_image"
+            // },
+        ]).exec((error, result) => {
+            if (result) {
+                res.send(result)
+            } else {
+                console.log(error);
+            }
+        })
+    } catch (error) {
+        console.log(error);
     }
 }
 

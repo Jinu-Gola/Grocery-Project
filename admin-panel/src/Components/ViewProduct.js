@@ -41,6 +41,14 @@ function ViewProduct(props) {
         }
     };
 
+    const [filterData, setFilterData] = useState({
+        price: "All",
+        product_name: "",
+    });
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPage = 6;
+    const [filterProduct, setFilterProduct] = useState([]);
+
 
     const [data, setData] = useState([]);
     const [product, setProduct] = useState([]);
@@ -71,6 +79,8 @@ function ViewProduct(props) {
                 // console.log("api data", result)
                 setData(result?.data)
                 setProduct(result?.data)
+                setFilterProduct(result?.data)
+                setFilterData({ price: "", product_name: "" })
 
                 // console.log("data", data)
             })
@@ -126,13 +136,13 @@ function ViewProduct(props) {
                     {/* partial */}
                     <div className="main-panel">
                         <div className="content-wrapper">
-                            <ul className="navbar-nav w-100">
+                            {/* <ul className="navbar-nav w-100">
                                 <li className="nav-item">
                                     <form className="nav-link mt-3 mt-md-0  d-lg-flex search">
                                         <input type="text" className="form-control" onChange={(e) => setSearch(e.target.value)} placeholder="Search products" />
                                     </form>
                                 </li>
-                            </ul>
+                            </ul> */}
                             <div className="row">
                                 {data.map((item, index) => (
 
@@ -161,7 +171,7 @@ function ViewProduct(props) {
                                                         <h6>M.R.P: ₹{item.price}</h6>
                                                     </div>
                                                     <div className="text-md-center text-xl-center">
-                                                        <button type="text" className="btn btn-success mr-3" onClick={() => editProduct(item._id) }>Edit</button>
+                                                        <button type="text" className="btn btn-success mr-3" onClick={() => editProduct(item._id)}>Edit</button>
                                                         <button type="text" className="btn btn-danger" onClick={() => delProduct(item._id)} >Delete</button>
                                                     </div>
                                                 </div>

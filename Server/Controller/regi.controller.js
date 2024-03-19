@@ -42,7 +42,7 @@ const usepost = async (req, res) => {
 }
 
 const useget = async (req, res) => {
-    const data = await regModel.find();
+    const data = await regModel.find({ isAdmin: false });
     res.send(data);
 }
 
@@ -81,6 +81,9 @@ const loginUser = async (req, res) => {
                 const token = jwt.sign({ _id: user._id, email: user.email, user }, secretkey, {
                     expiresIn: 2 * (60 * 60),
                 });
+                // var date = moment().format('DD-MM-YY');
+                // const up = await regModel.findByIdAndUpdate({ _id: exists._id },
+                //     { logedin: date }, { new: true });
                 res.status(200).send({ Message: "User Login Successfully", data: user, token: token, uid: user._id })
             } else {
                 res.status(401).send({ Message: "Password is invalid..." });
@@ -112,13 +115,16 @@ const sendotp = async (req, res) => {
         let transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: "jinalgola@gmail.com",
-                pass: "vcjlvreyonpufzqw",
+                // user: "jinalgola@gmail.com",
+                // pass: "vcjlvreyonpufzqw",
+                user: "jpiyaj12@gmail.com",
+                pass: "mvmvrkvnplipcjvx",
             },
         });
 
         let info = await transporter.sendMail({
-            from: "jinalgola@gmail.com",
+            // from: "jinalgola@gmail.com",
+            from: "jpiyaj12@gmail.com",
             to: req.body.email, // list of receivers
             subject: "OTP", // Subject line
             text: String(_otp),
@@ -148,27 +154,27 @@ const sendotp = async (req, res) => {
 const submitotp = async (req, res) => {
     console.log(req.body.otp, "ooooooooooo");
     const otp = req.body.otp;
-    console.log(otp,"oppppppptt");
+    console.log(otp, "oppppppptt");
     regModel
         .findOne({ otp: otp })
         .then(async (result) => {
-        //  update the password
-        console.log(result, "rrrrrrrrrrrrrr");
+            //  update the password
+            console.log(result, "rrrrrrrrrrrrrr");
 
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        regModel
-            .updateOne({ email: result.email }, { password: hashedPassword })
-            .then((result) => {
-                res.send({ code: 200, message: "Password updated" });
-            })
-            .catch((err) => {
-                res.send({ code: 500, message: "Server err" });
-            });
-    })
-    .catch((err) => {
-        res.send({ code: 500, message: "otp is wrong" });
-    });
+            regModel
+                .updateOne({ email: result.email }, { password: hashedPassword })
+                .then((result) => {
+                    res.send({ code: 200, message: "Password updated" });
+                })
+                .catch((err) => {
+                    res.send({ code: 500, message: "Server err" });
+                });
+        })
+        .catch((err) => {
+            res.send({ code: 500, message: "otp is wrong" });
+        });
 }
 const auth = async (req, res) => {
     try {

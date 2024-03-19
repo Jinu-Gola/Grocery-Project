@@ -4,16 +4,20 @@ import AHome from './Components/Home';
 import Login from './Components/Login';
 // import Signup from './Components/Signup';
 import AddProduct from './Components/AddProduct'
-import AddCategory from './Components/AddCategory'
-import AddSubCateg from './Components/AddSubcateg'
-
 import ViewProduct from './Components/ViewProduct';
+import UpdateProduct from './Components/UpdateProduct';
+
+import AddCategory from './Components/AddCategory'
 import ViewCategory from './Components/ViewCategory';
+
+import AddSubCateg from './Components/AddSubcateg'
 import ViewSubCateg from './Components/ViewSubCateg';
-import ViewOrder from './Components/ViewOrder';
+
 import ManageUser from './Components/ManageUser';
 
-import UpdateProduct from './Components/UpdateProduct';
+import ViewOrder from './Components/ViewOrder';
+import ViewDispatchOrder from './Components/ViewDispatchOrder';
+
 
 function App() {
   return (
@@ -35,12 +39,16 @@ function App() {
           <Route path="/addproduct" element={<AddProduct />} />
           <Route path="/addcat" element={<AddCategory />} />
           <Route path='/addsubcat' element={<AddSubCateg />} />
+
           <Route path="/productlist" element={<ViewProduct />} />
           <Route path="/categorylist" element={<ViewCategory />} />
           <Route path="/sub-categorylist" element={<ViewSubCateg />} />
           <Route path="/orderlist" element={<ViewOrder />} />
 
           <Route path="/manageuser" element={<ManageUser />} />
+
+          <Route path="/dispatchorder" element={<ViewDispatchOrder />} />
+
 
 
           <Route path="/updateproduct/:id" element={<UpdateProduct />} />

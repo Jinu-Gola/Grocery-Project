@@ -224,6 +224,36 @@
     background-repeat: no-repeat;
     background-size:cover;
 }
+.page-header1 {
+    /* position: relative; */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/online-delivery.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 40px;
+
+}
+
+
+.page-header2 {
+    /* position: relative; */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/pay1.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 40px;
+
+}
+
+.page-header3 {
+    /* position: relative; */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/return.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 40px;
+
+}
 
 @media (min-width: 992px) {
     .hero-header,

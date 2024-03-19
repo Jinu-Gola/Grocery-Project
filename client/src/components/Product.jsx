@@ -273,13 +273,13 @@ function Product() {
                                 <div className="col-6" />
                                 <div className="col-xl-3">
                                     <div className="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                                        <label htmlFor="fruits"><i className="fa fa-search" /> Sorting:</label>
+                                        <label htmlFor="fruits"><i className="fa fa-sort" /> Sorting:</label>
                                         <select id="fruits" name="fruitlist" className="border-0 form-select-sm bg-light me-3" form="fruitform">
                                             <option value="">Nothing</option>
                                             <option value="">A-Z</option>
                                             <option value="">Z-A</option>
-                                            <option value="">Price High-Low</option>
-                                            <option value="audi">Price Low-High</option>
+                                            {/* <option value="">Price High-Low</option>
+                                            <option value="audi">Price Low-High</option> */}
                                         </select>
                                     </div>
                                 </div>
@@ -363,12 +363,33 @@ function Product() {
                                     </div>
                                 </div>
                                 <div className="col-lg-9">
-                                    <div className="row g-4 justify-content-center" >
+                                    <div className="row g-4 " >
                                         {product.map((item) => (
                                         
                                             <div className="col-md-6 col-lg-6 col-xl-4">
 
                                                 <div className="rounded position-relative fruite-item">
+                                                            <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
+                                                                <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
+                                                            </div>
+                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black"/></div>
+
+                                                            <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
+                                                                <h5 className='productName'>{item.product_name}</h5>
+                                                                <b><p style={{marginBottom:"0px"}}>{item.size}</p></b>
+                                                                <div className="d-flex justify-content-between flex-lg-wrap">
+                                                                    <p className="text-dark fs-5 fw-bold mt-3">₹{item.price}</p>
+                                                                    {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> : 
+                                                                    <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
+
+                                                                    {/* <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button> */}
+                                                                </div>
+                                                                {/* <div className='d-flex .justify-content-around flex-lg-wrap'> */}
+                                                                {/* </div> */}
+                                                            </div>
+                                                        </div>
+
+                                                {/* <div className="rounded position-relative fruite-item">
                                                     <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                         <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 h-100 rounded-top " alt />
                                                     </div>
@@ -383,7 +404,7 @@ function Product() {
                                                         </div>
                                                       
                                                     </div>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         ))}
                                         <div className="col-12">

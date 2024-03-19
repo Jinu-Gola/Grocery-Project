@@ -18,8 +18,14 @@ import NewSubmit from './components/Login-Signup/NewSubmit';
 // import Signup from './components/Login-Signup/Register'
 import Fruits from './components/Fruits';
 import Vegitables from './components/Vegitables';
-import ShippingFeature from './components/ShippingFeature';
 import Whishlist from './components/Whishlist';
+
+// All Features
+import ShippingFeature from './components/ShippingFeature';
+import ReturnFeature from './components/ReturnFeature'
+import SecurityPayFeatures from './components/SecurityPayFeature'
+import SupportFeature from './components/SupportFeature'
+
 
 import './assets/css/bootstrap.min.css'
 import './assets/css/style.css'
@@ -49,7 +55,6 @@ function App() {
             <Route path="/review" element={<Review />} />
             <Route path="/billing" element={<Billing />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/shipping" element={<ShippingFeature />} />
 
             <Route path="/cart" element={<Cart />} />
             <Route path="/whishlist" element={<Whishlist />} />
@@ -63,6 +68,16 @@ function App() {
 
             <Route path="/fruits" element={<Fruits />} />
             <Route path="/vegitable" element={<Vegitables />} />
+
+
+
+            {/* All Features */}
+              <Route path="/freeshipping" element={<ShippingFeature />} />
+              <Route path="/support" element={<SupportFeature />} />
+              <Route path="/returns" element={<ReturnFeature />} />
+              <Route path="/securityPayment" element={<SecurityPayFeatures />} />
+
+
 
             {/* End of client Router */}
           </Routes>
