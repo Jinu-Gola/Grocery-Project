@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.min.css'
 import { ToastContainer, toast } from 'react-toastify'
 
-function ViewCategory() {
+function ViewDeliveredOrder() {
     const navigate = useNavigate();
 
     var token = localStorage.getItem("token");
@@ -39,6 +39,7 @@ function ViewCategory() {
                 navigate("/");
                 // alert("Token is expired ");
                 wishs_alerts()
+
             }
             else {
                 setProfiles(res.data);
@@ -56,11 +57,11 @@ function ViewCategory() {
 
     const display = async () => {
         try {
-            await axios.get("http://localhost:8080/categ").then((result) => {
-                // console.log("next")
-                // console.log("api data", result)
-                setData(result?.data)
-                // console.log("data", data)
+            await axios.post("http://localhost:8080/get-deliver").then((result) => {
+                console.log("next")
+                console.log("api data", result)
+                setData(result?.data.data)
+                console.log("data", result?.data)
             })
 
 
@@ -68,33 +69,16 @@ function ViewCategory() {
             console.log(error)
         }
     }
+  
 
-    const delCategory = async (id) => {
-        try {
-            console.log("delete id ", id);
+  
 
-            const result = await axios.delete("http://localhost:8080/categ/" + id);
-            console.log("product deleted..")
 
-            display();
-        } catch (error) {
-            console.log("Error : " + error)
-        }
-    }
-
-    // const editProduct = async (id) => {
-    //     try {
-    //         const result = await axios.put("http://localhost:8080/product" + id);
-    //         console.log("product updated..")
-    //         display();
-    //     } catch (error) {
-    //         console.log("Error : " + error)
-    //     }
-    // }
 
     return (
         <>
-            <ToastContainer/>
+            <ToastContainer />
+
             <div className="container-scroller">
                 {/* partial:partials/_sidebar.html */}
                 <Sidebar />
@@ -107,30 +91,50 @@ function ViewCategory() {
                         <div className="content-wrapper">
                             <div className="row">
 
-                                <div class="col-lg-10 grid-margin stretch-card align-center">
+                                <div class="col-lg-12 grid-margin stretch-card align-center">
                                     <div class="card">
                                         <div class="card-body">
-                                            <h4 class="card-title">All Categories</h4>
+                                            <h4 class="card-title">All Delivered Oder</h4>
                                             {/* <p class="card-description"> Add class <code>.table-hover</code>
                                                 </p> */}
                                             <div class="table-responsive">
                                                 <table class="table ">
                                                     <thead>
                                                         <tr>
-                                                            {/* <th>User</th> */}
-                                                            <th>Categories</th>
-                                                            {/* <th>Sale</th> */}
-                                                            <th>Action</th>
+                                                            <th>ORDER ID</th>
+                                                            <th>USER NAME</th>
+                                                            <th>MOBILE NO.</th>
+                                                            <th>TOTAL AMOUNT</th>
+                                                            <th>DISCOUNT</th>
+                                                            <th>TRANSCATION ID</th>
+                                                            <th>ORDER DATE</th>
+                                                            {/* <th>Delivered ORDER</th> */}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {data.map((item, index) => (
                                                             <tr>
                                                                 {/* <td>Jacob</td> */}
-                                                                <td> {item.cname}</td>
-                                                                
-                                                                {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button>*/}
-                                                                <td> <button type="button" className="btn btn-danger" onClick={() => delCategory(item._id)} >Delete</button></td>
+                                                                {/* <td> {item._id}</td> */}
+                                                                <td> {item._id}</td>
+                                                                <td> {item.fname + " " + item.lname}</td>
+                                                                <td> {item.mobile}</td>
+                                                                <td> {item.total_amt}</td>
+                                                                <td> {item.discount}</td>
+                                                                <td> {item.transaction_id}</td>
+                                                                <td> {item.order_date}</td>
+                                                                {/* <td>
+                                                                    <button
+                                                                        type='button'
+                                                                        className='btn btn-success' style={{ marginLeft: "30px" }}
+                                                                        onClick={() => deliveredOrder(item._id)}
+                                                                    >
+                                                                        <i className='mdi mdi-ambulance'></i>
+                                                                    </button>
+                                                                </td> */}
+
+                                                                {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button>
+                                                                <td> <button type="button" className="btn btn-danger" onClick={() => deliveredOrder(item._id)} >Delete</button></td> */}
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -140,21 +144,21 @@ function ViewCategory() {
                                     </div>
                                 </div>
 
-                                   
 
 
-                               
+
+
 
                             </div>
                         </div>
                     </div>
                 </div>
             </div >
-           
+
 
         </>
 
     )
 }
 
-export default ViewCategory
+export default ViewDeliveredOrder

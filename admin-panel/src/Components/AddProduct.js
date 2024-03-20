@@ -5,6 +5,8 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.min.css'
+import { ToastContainer, toast } from 'react-toastify'
 
 function AddProduct() {
     var token = localStorage.getItem("token");
@@ -21,7 +23,16 @@ function AddProduct() {
 
         }
     }, [])
-
+    const wishs_alerts = () => {
+        toast.error("Token is Expired...!", {
+            position: "top-center"
+        });
+    };
+    const wish_alerts = () => {
+        toast.success("Product Added Successfully...", {
+            position: "top-center"
+        });
+    };
     const profile = async () => {
         try {
             const res = await axios.get(`http://localhost:8080/auth/${token}`);
@@ -30,7 +41,8 @@ function AddProduct() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/");
-                alert("Token is expired ");
+                // alert("Token is expired ");
+                wishs_alerts()
             }
             else {
                 setProfiles(res.data);
@@ -76,6 +88,7 @@ function AddProduct() {
             })
             if (res.status == 200) {
                 navigate('/productlist')
+                wish_alerts()
             }
             console.log("axios data:", res.data)
 
@@ -107,7 +120,7 @@ function AddProduct() {
 
     return (
         <>
-
+            <ToastContainer/>
             <div className="container-scroller">
                 <Sidebar />
                 <div className="container-fluid page-body-wrapper">

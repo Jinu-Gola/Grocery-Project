@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const pro_detailModel = require("../Model/product_detail");
 
 const product_detailsPost = async (req, res) => {
@@ -54,153 +55,213 @@ const product_detailsGet1 = async (req, res) => {
     try {
         const pipelineData = [];
         console.log(req.body, "bodyyyy");
-        // if (Object.keys(req.body).length > 0) {
-        //     let searchQuery = {
-        //         $match: {}
-        //     }
-        //     if (req.body.search != undefined &&
-        //         req.body.search != null &&
-        //         req.body.search != "")
-        //         {
-        //             searchQuery.$match.$or=[{
-        //                 { product_name :{}},
-        //             }]
-        //         }
-        // }
-       
-        const data = await pro_detailModel.find();
-        res.send(data);
-    } catch (error) {
-        res.send(error);
-    }
-}
+        if (Object.keys(req.body).length > 0) {
+            let searchQuery = {
+                $match: {}
+            };
+            if (req.body.search != undefined &&
+                req.body.search != null &&
+                req.body.search != "") {
+                    console.log("in product search...");
+                searchQuery.$match.$or = [
+                    { product_name: { $regex: new RegExp(req.body.search, 'i') } },
+                    { description: { $regex: new RegExp(req.body.search, 'i') } },
+                    { price: isNaN(req.body.search) ? null : parseFloat(req.body.search) },
 
-const filterData = (req, res) => {
-    try {
-        console.log(req.body, "body::::::::::");
+                ];
 
-        // if (req.body.price != "All") {
-        //     const priceData = req.body.price.split('-')
-        // }
+            }
+            // if (req.body.cid != undefined &&
+            //     req.body.cid != null &&
+            //     req.body.cid != "") {
+            //     searchQuery.$match.cid = mongoose.Types.ObjectId(req.body.cid);
 
-        const priceData = req.body.price.split("-");
-        console.log(priceData, "priceData::::");
+            // }
+            // if (req.body.start_price != undefined &&
+            //     req.body.end_price != undefined &&
+            //     req.body.start_price != "" &&
+            //     req.body.end_price != "") {
+            //     searchQuery.$match.price = {
+            //         $gte: parseFloat(req.body.start_price),
+            //         $lte: parseFloat(req.body.start_price)
 
-        productModel
-            .aggregate([
-                
-                {
-                    $lookup: {
-                        from: "categries",
-                        localField: "cid",
-                        foreignField: "_id",
-                        as: "cid",
-                    },
-                },
-                // {
-                //     $unwind: "$cat_id"
-                // },
-                
-           
-                {
-                    $match: {
-                        $and: [
-                            {
-                          
-                                price: { $gte: parseInt(priceData[0]) },
-                                price: { $lte: parseInt(priceData[1]) },
-                            },
-                        ],
-                    },
-                },
-            ])
-            .exec((error, result) => {
-                console.log(result, "result::::::");
-                console.log(error, "error:::::::::::");
-                if (result?.length > 0) {
-                    res.send({ status: 1, result: result, message: "Product List" });
-                } else {
-                    res.send({ status: 0, result: [], message: "Product Not Found" });
-                }
-            });
-    } catch (error) {
-        console.log(error);
-    }
-};
-const productGet = (req, res) => {
-    try {
-        productModel.aggregate([
+            //     }
+
+            // }
+            pipelineData.push(searchQuery);
+        }
+        const skip = (req.body.page - 1) * req.body.perPage;
+        console.log(skip, "skippp");
+        console.log(pipelineData,"pipelineData");
+        console.log(searchQuery,"searchQuery");
+        const pipeline = [
+            ...pipelineData,
             {
                 $lookup: {
-                    from: "subcategries",
-                    localField: "sub_c_id",
+                    from: "categories",
+                    localField: "cid",
                     foreignField: "_id",
-                    as: "sub_cat_id"
+                    as: "cid"
                 },
+            },
+            { $skip: skip }, { $limit: req.body.perPage }
 
-            },
-            // {
-            //     $unwind: "$sub_c_id"
-            // },
-            {
-                $lookup: {
-                    from: "categries",
-                    localField: "cat_id",
-                    foreignField: "_id",
-                    as: "cat_id"
-                },
+        ];
+        console.log(pipeline,"pipelinee");
 
-            },
-            {
-                $unwind: "$cat_id"
-            },
-            {
-                $lookup: {
-                    from: "sizeattributes",
-                    localField: "_id",
-                    foreignField: "product_id",
-                    as: "size_id"
-                },
+        // let totProduct = 0
+        // const data = await pro_detailModel.aggregate([...pipelineData, {
+        //     $count: "_id"
+        // }]).then((res) => {
+        //     console.log(res, "responsesss");
+        //     totProduct = res[0]._id
+        // }).catch((error) => {
+        //     console.log(error, "errrrr");
+        // })
 
-            },
-            // {
-            //     $unwind: "$size_id"
-            // },
-            {
-                $lookup: {
-                    from: "colorattributes",
-                    localField: "_id",
-                    foreignField: "product_id",
-                    as: "color_id"
-                },
-
-            },
-            // {
-            //     $unwind: "$color_id"
-            // },
-            {
-                $lookup: {
-                    from: "productmedias",
-                    localField: "_id",
-                    foreignField: "product_id",
-                    as: "p_image"
-                },
-
-            },
-            // {
-            //     $unwind: "$p_image"
-            // },
-        ]).exec((error, result) => {
+        pro_detailModel.aggregate(pipeline).exec((err, result) => {
             if (result) {
-                res.send(result)
+                res.send({ data: result })
+                console.log(result,"productttt");
             } else {
-                console.log(error);
+                res.status(401).send("Filter Product Not Found")
+                console.log(err,"error");
             }
         })
-    } catch (error) {
-        console.log(error);
+        // res.send(data);
+
+    }
+    catch (error) {
+        res.send(error, "errorrr");
     }
 }
+
+// const filterData = (req, res) => {
+//     try {
+//         console.log(req.body, "body::::::::::");
+
+//         // if (req.body.price != "All") {
+//         //     const priceData = req.body.price.split('-')
+//         // }
+
+//         const priceData = req.body.price.split("-");
+//         console.log(priceData, "priceData::::");
+
+//         productModel
+//             .aggregate([
+
+//                 {
+//                     $lookup: {
+//                         from: "categries",
+//                         localField: "cid",
+//                         foreignField: "_id",
+//                         as: "cid",
+//                     },
+//                 },
+//                 // {
+//                 //     $unwind: "$cat_id"
+//                 // },
+
+
+//                 {
+//                     $match: {
+//                         $and: [
+//                             {
+
+//                                 price: { $gte: parseInt(priceData[0]) },
+//                                 price: { $lte: parseInt(priceData[1]) },
+//                             },
+//                         ],
+//                     },
+//                 },
+//             ])
+//             .exec((error, result) => {
+//                 console.log(result, "result::::::");
+//                 console.log(error, "error:::::::::::");
+//                 if (result?.length > 0) {
+//                     res.send({ status: 1, result: result, message: "Product List" });
+//                 } else {
+//                     res.send({ status: 0, result: [], message: "Product Not Found" });
+//                 }
+//             });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+// const productGet = (req, res) => {
+//     try {
+//         productModel.aggregate([
+//             {
+//                 $lookup: {
+//                     from: "subcategries",
+//                     localField: "sub_c_id",
+//                     foreignField: "_id",
+//                     as: "sub_cat_id"
+//                 },
+
+//             },
+//             // {
+//             //     $unwind: "$sub_c_id"
+//             // },
+//             {
+//                 $lookup: {
+//                     from: "categries",
+//                     localField: "cat_id",
+//                     foreignField: "_id",
+//                     as: "cat_id"
+//                 },
+
+//             },
+//             {
+//                 $unwind: "$cat_id"
+//             },
+//             {
+//                 $lookup: {
+//                     from: "sizeattributes",
+//                     localField: "_id",
+//                     foreignField: "product_id",
+//                     as: "size_id"
+//                 },
+
+//             },
+//             // {
+//             //     $unwind: "$size_id"
+//             // },
+//             {
+//                 $lookup: {
+//                     from: "colorattributes",
+//                     localField: "_id",
+//                     foreignField: "product_id",
+//                     as: "color_id"
+//                 },
+
+//             },
+//             // {
+//             //     $unwind: "$color_id"
+//             // },
+//             {
+//                 $lookup: {
+//                     from: "productmedias",
+//                     localField: "_id",
+//                     foreignField: "product_id",
+//                     as: "p_image"
+//                 },
+
+//             },
+//             // {
+//             //     $unwind: "$p_image"
+//             // },
+//         ]).exec((error, result) => {
+//             if (result) {
+//                 res.send(result)
+//             } else {
+//                 console.log(error);
+//             }
+//         })
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 
 

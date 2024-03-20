@@ -17,6 +17,7 @@ import ManageUser from './Components/ManageUser';
 
 import ViewOrder from './Components/ViewOrder';
 import ViewDispatchOrder from './Components/ViewDispatchOrder';
+import ViewDeliveredOrder from './Components/ViewDeliveredOrder';
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/manageuser" element={<ManageUser />} />
 
           <Route path="/dispatchorder" element={<ViewDispatchOrder />} />
+          <Route path="/deliveredorder" element={<ViewDeliveredOrder />} />
 
 
 

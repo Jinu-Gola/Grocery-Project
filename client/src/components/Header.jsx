@@ -47,7 +47,10 @@ function Header(props) {
 
     const[profiles,setProfiles]=useState("")
     const logOut=()=>{
+        
         localStorage.removeItem('token')
+        localStorage.removeItem('user')
+
         navigate('/login')
         // profile();
 

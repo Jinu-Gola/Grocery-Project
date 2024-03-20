@@ -3,6 +3,10 @@ import axios from 'axios'
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useNavigate, useParams } from 'react-router-dom';
+//pagination code
+import { Pagination, PaginationItem, Typography, getListItemTextUtilityClass, Slider } from "@mui/material";
+import ReactPaginate from "react-paginate";
+// import Footer from '../admin2/Footer';
 
 function ViewProduct(props) {
     const navigate = useNavigate();
@@ -41,17 +45,33 @@ function ViewProduct(props) {
         }
     };
 
-    const [filterData, setFilterData] = useState({
-        price: "All",
-        product_name: "",
-    });
-    const [currentPage, setCurrentPage] = useState(1);
-    const perPage = 6;
-    const [filterProduct, setFilterProduct] = useState([]);
+    // const [filterData, setFilterData] = useState({
+    //     price: "All",
+    //     product_name: "",
+    // });
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const perPage = 6;
+    // const Price = [
+    //     { id: 1, label: "0 - 100" },
+    //     { id: 2, label: "100 - 200" },
+    //     { id: 3, label: "200 - 300" },
+    //     { id: 4, label: "400 - 500" },
+    //     { id: 5, label: "500 - 1000" },
+    //     { id: 5, label: "1000 - 2000" }
+
+    // ]
+    // const [filterProduct, setFilterProduct] = useState([]);
 
 
     const [data, setData] = useState([]);
     const [product, setProduct] = useState([]);
+    //pagination ocde
+    const prevIcon = () => <Typography color="black">Prev</Typography>;
+    const nextIcon = () => <Typography color="black">Next</Typography>;
+    const handlePage = (page) => setPage(page);
+    const [page, setPage] = useState(1);
+    const totalPages = Math.ceil(data.length / 8);
+    const pageContent = data.slice((page - 1) * 8, page * 8);
 
     useEffect(() => {
         display();
@@ -78,18 +98,39 @@ function ViewProduct(props) {
                 // console.log("next")
                 // console.log("api data", result)
                 setData(result?.data)
-                setProduct(result?.data)
-                setFilterProduct(result?.data)
-                setFilterData({ price: "", product_name: "" })
+                setProduct(result?.data)//filter data
+                // setFilterProduct(result?.data)
+                // setFilterData({ price: "", product_name: "" })
 
                 // console.log("data", data)
             })
-
+            // console.log(setFilterProduct,"aaaaaaaaa");
 
         } catch (error) {
             console.log(error)
         }
     }
+
+
+    // const handleFilter = async (
+    //     price,
+       
+    //     product_name,
+    //     page,
+    //     perPage
+    // ) => {
+    //     console.log(price, size_id, color_code, product_name, "&*****");
+    //     const response = await filterProducts({
+    //         price,
+    //         size_id,
+    //         color_code,
+    //         product_name,
+    //         page,
+    //         perPage,
+    //     });
+    //     setData(response?.result);
+    //     // console.log(response, "response");
+    // };
 
     const delProduct = async (id) => {
         // const {id}=useParams()
@@ -183,6 +224,23 @@ function ViewProduct(props) {
                                 ))}
 
                             </div>
+                            <Pagination
+                                color="success"
+                                align="center"
+                                count={totalPages}
+                                page={page}
+                                onChange={(event, value) => handlePage(value)}
+                                renderItem={(item) => (
+                                    <PaginationItem
+                                        color="primary"
+                                        components={{
+                                            previous: prevIcon,
+                                            next: nextIcon,
+                                        }}
+                                        {...item}
+                                    />
+                                )}
+                            />
                         </div>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 // import { TextField } from '@mui/material';
 
+
 function ViewOrder() {
     const navigate = useNavigate();
     // const { id } = useParams()
@@ -25,7 +26,11 @@ function ViewOrder() {
             profile();
         }
     }, [])
-
+    const wishs_alerts = () => {
+        toast.error("Token is Expired...!", {
+            position: "top-center"
+        });
+    };
     const profile = async () => {
         try {
             const res = await axios.get(`http://localhost:8080/auth/${token}`);
@@ -34,7 +39,9 @@ function ViewOrder() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/");
-                alert("Token is expired ");
+                // alert("Token is expired ");
+                wishs_alerts()
+
             }
             else {
                 setProfiles(res.data);

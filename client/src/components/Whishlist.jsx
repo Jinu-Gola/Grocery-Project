@@ -44,7 +44,7 @@ function Whishlist() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/login");
-                alert("Token is expired ");
+                // alert("Token is expired ");
             }
             else {
                 setProfiles(res.data);

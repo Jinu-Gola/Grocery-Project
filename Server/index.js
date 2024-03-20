@@ -102,13 +102,16 @@ app.get('/total',total.total)
 //order api
 app.post("/check-out", ordercontroller.orderPlace)
 app.post("/get-order",ordercontroller.orderGet)
-app.post("/userget-order", ordercontroller.usersideOrder)
+// app.post("/userget-order", ordercontroller.usersideOrder)
+ app.post("/deliver-order/:id", ordercontroller.deliveredOrder)
+app.post('/get-deliver', ordercontroller.get_deliverOrder)
+
 
 app.post("/dispatch-order/:id", ordercontroller.dispatchOrder)
 app.post('/get-dispatch',ordercontroller.get_dispatchOrder)
 
-app.post('/cancel-order',ordercontroller.cancelOrder)
-app.post('/get-cancel',ordercontroller.getCancelorder)
+// app.post('/cancel-order',ordercontroller.cancelOrder)
+// app.post('/get-cancel',ordercontroller.getCancelorder)
 
 
 

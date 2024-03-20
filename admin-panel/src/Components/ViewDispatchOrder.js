@@ -3,6 +3,8 @@ import axios from 'axios'
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
+ import 'react-toastify/dist/ReactToastify.min.css'
+import { ToastContainer, toast } from 'react-toastify'
 
 function ViewDispatchOrder() {
     const navigate = useNavigate();
@@ -21,6 +23,11 @@ function ViewDispatchOrder() {
 
         }
     }, [])
+    const wishs_alerts = () => {
+        toast.error("Token is Expired...!", {
+            position: "top-center"
+        });
+    };
 
     const profile = async () => {
         try {
@@ -30,7 +37,9 @@ function ViewDispatchOrder() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/");
-                alert("Token is expired ");
+                // alert("Token is expired ");
+                wishs_alerts()
+
             }
             else {
                 setProfiles(res.data);
@@ -60,24 +69,35 @@ function ViewDispatchOrder() {
             console.log(error)
         }
     }
+    const dispatch_alerts = (id) => {
+        toast.success("Order is Delivered Successfully....."+id, {
+            position: "top-center"
+        });
+    };
 
-    const cancelOrder = async (id) => {
-        try {
-            // console.log("delete id ", id);
+    const deliveredOrder = async (id) => {
+        console.log(id, "order id ");
+        const result = await axios.post('http://localhost:8080/deliver-order/' + id);
 
-            const result = await axios.delete("http://localhost:8080/cancel-order/" + id);
-            console.log("product deleted..")
-
-            display();
-        } catch (error) {
-            console.log("Error : " + error)
+        if (result.status == 1) {
+            dispatch_alerts(id)
+            // successNotify('Order is out of delivery.....');
         }
-    }
+        let reload = false;
+        setTimeout(() => {
+            if (!reload) {
+                window.location.reload();
+                reload = true;
+            }
+        }, 5000);
+    };
 
+  
    
 
     return (
         <>
+            <ToastContainer />
 
             <div className="container-scroller">
                 {/* partial:partials/_sidebar.html */}
@@ -108,7 +128,7 @@ function ViewDispatchOrder() {
                                                             <th>DISCOUNT</th>
                                                             <th>TRANSCATION ID</th>
                                                             <th>ORDER DATE</th>
-                                                            <th>CANCEL ORDER</th>
+                                                            <th>Delivered ORDER</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -126,15 +146,15 @@ function ViewDispatchOrder() {
                                                                 <td>
                                                                     <button
                                                                         type='button'
-                                                                        className='btn btn-danger' style={{ marginLeft: "30px" }}
-                                                                        onClick={() => cancelOrder(item._id)} 
+                                                                        className='btn btn-success' style={{ marginLeft: "30px" }}
+                                                                        onClick={() => deliveredOrder(item._id)} 
                                                                     >
-                                                                        <i className='mdi mdi-cancel'></i>
+                                                                        <i className='mdi mdi-ambulance'></i>
                                                                     </button>
                                                                 </td>
 
                                                                 {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button>
-                                                                <td> <button type="button" className="btn btn-danger" onClick={() => cancelOrder(item._id)} >Delete</button></td> */}
+                                                                <td> <button type="button" className="btn btn-danger" onClick={() => deliveredOrder(item._id)} >Delete</button></td> */}
                                                             </tr>
                                                         ))}
                                                     </tbody>

@@ -115,16 +115,16 @@ const sendotp = async (req, res) => {
         let transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                // user: "jinalgola@gmail.com",
-                // pass: "vcjlvreyonpufzqw",
-                user: "jpiyaj12@gmail.com",
-                pass: "mvmvrkvnplipcjvx",
+                user: "jinalgola@gmail.com",
+                pass: "bhuy skmy zbjz uwlh",
+                // user: "jpiyaj12@gmail.com",
+                // pass: "mvmvrkvnplipcjvx",
             },
         });
 
         let info = await transporter.sendMail({
-            // from: "jinalgola@gmail.com",
-            from: "jpiyaj12@gmail.com",
+            from: "jinalgola@gmail.com",
+            // from: "jpiyaj12@gmail.com",
             to: req.body.email, // list of receivers
             subject: "OTP", // Subject line
             text: String(_otp),

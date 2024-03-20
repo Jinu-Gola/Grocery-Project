@@ -4,6 +4,8 @@ import Sidebar from './Sidebar';
 import Footer from './Footer';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.min.css'
+import { ToastContainer, toast } from 'react-toastify'
 
 function AddCategory() {
     const navigate = useNavigate();
@@ -21,6 +23,16 @@ function AddCategory() {
 
         }
     }, [])
+    const wish_alerts = () => {
+        toast.success("Category Added Successfully...", {
+            position: "top-center"
+        });
+    };
+    const wishs_alerts = () => {
+        toast.error("Token is Expired...!", {
+            position: "top-center"
+        });
+    };
 
     const profile = async () => {
         try {
@@ -30,7 +42,8 @@ function AddCategory() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/");
-                alert("Token is expired ");
+                // alert("Token is expired ");
+                wishs_alerts()
             }
             else {
                 setProfiles(res.data);
@@ -59,6 +72,7 @@ function AddCategory() {
             const res = await axios.post("http://localhost:8080/categ", formData)
             if (res.status == 200) {
                 navigate('/categorylist')
+                wish_alerts()
             }
             console.log("axios data:", res.data)
 
@@ -75,7 +89,7 @@ function AddCategory() {
 
     return (
         <>
-
+            <ToastContainer />
             <div className="container-scroller">
                 {/* partial:partials/_sidebar.html */}
                 <Sidebar />

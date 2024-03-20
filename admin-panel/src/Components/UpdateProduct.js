@@ -22,6 +22,11 @@ function UpdateProduct() {
 
         }
     }, [])
+    const wishs_alerts = () => {
+        toast.error("Token is Expired...!", {
+            position: "top-center"
+        });
+    };
 
     const profile = async () => {
         try {
@@ -31,7 +36,8 @@ function UpdateProduct() {
                 // console.log(res.data);
                 localStorage.removeItem("token");
                 navigate("/");
-                alert("Token is expired ");
+                // alert("Token is expired ");
+                wishs_alerts()
             }
             else {
                 setProfiles(res.data);
@@ -50,7 +56,7 @@ function UpdateProduct() {
         size: '',
         description: '',
         brand_name: '',
-        cid:''
+        cid: ''
     });
     const navigate = useNavigate();
     const { id } = useParams();
@@ -69,7 +75,7 @@ function UpdateProduct() {
         try {
             console.log("get item")
             const response = await axios.get("http://localhost:8080/oneproduct/" + id);
-           
+
 
             console.log(response);
             // setFormdata(response.data);
@@ -81,7 +87,7 @@ function UpdateProduct() {
                 size: response.data.size,
                 description: response.data.description,
                 brand_name: response.data.brand_name,
-                cid:response.data.cid
+                cid: response.data.cid
             })
             console.log("data set")
         } catch (error) {
@@ -89,7 +95,7 @@ function UpdateProduct() {
         }
     }
     const handleChange = (e) => {
-        
+
         setFormdata({ ...formdata, [e.target.name]: e.target.value })
         console.log("changed")
     }
@@ -113,7 +119,7 @@ function UpdateProduct() {
                 'size': formdata.size,
                 'description': formdata.description,
                 'brand_name': formdata.brand_name,
-                'cid':formdata.cid
+                'cid': formdata.cid
             }, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -155,8 +161,8 @@ function UpdateProduct() {
     return (
         <>
 
+            <ToastContainer />
             <div className="container-scroller">
-                <ToastContainer />
                 <Sidebar />
                 <div className="container-fluid page-body-wrapper">
                     <Navbar />
@@ -217,9 +223,9 @@ function UpdateProduct() {
                                                 </select>
                                                 {/* <input type="text" class="form-control" name="cid" placeholder="Product Category ID" value={formdata.cid} onChange={handleChange} /> */}
                                             </div>
-                                           
+
                                         </div>
-                                    </div>                                  
+                                    </div>
 
                                     <div className="form-group">
                                         <label htmlFor="desc">Description</label>

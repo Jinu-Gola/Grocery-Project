@@ -164,8 +164,8 @@ function Sidebar() {
                                 <li className="nav-item">
                                     {/* <Link to='/' className="nav-link" >Pending Orders</Link> */}
                                 </li>
-                                <li className="nav-item"> <Link to='' className="nav-link" > Complete Order </Link></li>
-                                <li className="nav-item"> <Link to='' className="nav-link" > Cancel Order </Link></li>
+                                <li className="nav-item"> <Link to='/deliveredorder' className="nav-link" > Complete Order </Link></li>
+                                {/* <li className="nav-item"> <Link to='' className="nav-link" > Cancel Order </Link></li> */}
 
                             </ul>
                         </div>

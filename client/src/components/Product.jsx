@@ -9,15 +9,38 @@ import Search from './Search'
 function Product() {
     const navigate = useNavigate()
     var { id } = useParams();
- 
-    const [search, setSearch] = useState();
-    // var token = localStorage.getItem("token");
     console.log(id);
-    // var {params} = useParams();
-    // console.log(params);
-    const [product, setProduct] = useState([]);
-    const [productData, setProductData] = useState([])
-    const [price, setPrice] = useState(0)
+    var token = localStorage.getItem("token");
+
+
+    const defaultSearch = {
+        search: '',
+        cid: 0,
+        start_price: 0,
+        end_price: 0
+    }
+    const priceRange = [
+        { id: 1, label: "10 - 100" },
+        { id: 2, label: "100 - 500" },
+        { id: 4, label: "500 - 1000" },
+        { id: 5, label: "1000 - 2000" },
+        { id: 3, label: "2000 - 5000" },
+
+
+    ]
+
+    const [search, setSearch] = useState();//for search with api get-product
+    const [product, setProduct] = useState([]);//for search product
+    const [productData, setProductData] = useState([]) //for all product
+    // const [price, setPrice] = useState(0)
+
+
+    const [page, setPage] = useState(1);//for page redirect
+    const [pageSize, setPageSize] = useState(6);//perpage product size
+    const [totalData, setTotalData] = useState();
+
+    const [filterProduct, setFilterProduct] = useState([]);//for filter product data
+    const [searchvalue, setSearchValue] = useState(defaultSearch)
 
     const wish_alerts = () => {
         toast.success("Product Added to Wishlist", {
@@ -39,11 +62,21 @@ function Product() {
             position: "top-center"
         });
     };
-    useEffect(() => {
-        display();
-        // profile()
+    const carts_alerts2 = () => {
+        toast.error("Please Login First", {
+            position: "top-center"
+        });
+    };
+    const wishs_alerts2 = () => {
+        toast.error("Please Login First", {
+            position: "top-center"
+        });
+    };
+    // useEffect(() => {
+    //     // display();
+    //     // profile()
 
-    }, [])
+    // }, [])
 
     // useEffect(() => {
     //     if(price >=1){
@@ -59,47 +92,32 @@ function Product() {
     // }, [price])
 
     useEffect(() => {
-        if (id) {
-            try {
-                axios.get(`http://localhost:8080/category/${id}`).then((result) => {
-                    console.log(result.data.data);
-                    setProduct(result?.data?.data) //fiter product data
-                    setProductData(result?.data?.data) //all product data
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        } else {
-            try {
-                axios.get("http://localhost:8080/getproduct").then((result) => {
-                    setProduct(result?.data) //fiter product data
-                    setProductData(result?.data) //all product data
-                })
-            } catch (error) {
-                console.log(error)
-            }
+        display(id)
+        display1()
+        // if (id) {
+        //     try {
+        //         axios.get(`http://localhost:8080/category/${id}`).then((result) => {
+        //             console.log(result.data.data);
+        //             setProduct(result?.data?.data) //fiter product data
+        //             setProductData(result?.data?.data) //all product data
+        //         })
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // } else {
+        //     try {
+        //         axios.get("http://localhost:8080/getproduct").then((result) => {
+        //             setProduct(result?.data) //fiter product data
+        //             setProductData(result?.data) //all product data
+        //         })
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
 
-        }
+        // }
     }, [id])
 
-    // const profile = async () => {
-    //     try {
-    //         const res = await axios.get(`http://localhost:8080/auth/${token}`);
-    //         // console.log(res.data);
-    //         if (res.data === "Token is expired ") {
-    //             // console.log(res.data);
-    //             localStorage.removeItem("token");
-    //             navigate("/login");
-    //             alert("Token is expired ");
-    //         }
-    //         else {
-    //             setProfiles(res.data);
-    //             // console.log("admin =" + res.data.isAdmin)
-    //         }
-    //     } catch (error) {
-    //         console.log("profile err", error);
-    //     }
-    // };
+
 
 
     const searchFunction = (data) => {
@@ -135,92 +153,116 @@ function Product() {
     }
 
     const addToCart = async (cartProduct) => {
-        var cart = []
-        cart = JSON.parse(localStorage.getItem('cartlist')) || [];
-        if (cart.length > 0) {
-            let count = cart.some(item => item._id === cartProduct._id)
-            console.log(count, "aaaaaaaaaaaaaaa");
-            if (!count) {
-                console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "***************");
+        if (token) {
 
+            var cart = []
+            cart = JSON.parse(localStorage.getItem('cartlist')) || [];
+            if (cart.length > 0) {
+                let count = cart.some(item => item._id === cartProduct._id)
+                console.log(count, "aaaaaaaaaaaaaaa");
+                if (!count) {
+                    console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "***************");
+
+                    cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
+                    localStorage.setItem('cartlist', JSON.stringify(cart));
+                    window.location.reload()
+                    // alert("Product Added to Cartlist...!!")
+                    cart_alerts()
+                } else {
+                    // alert("Product Already Exist in Cartlist")
+                    carts_alerts()
+                }
+            } else {
+                console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "BBBBBBBB");
                 cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
-                // alert("Product Added to Cartlist...!!")
-                cart_alerts()
-            } else {
-                // alert("Product Already Exist in Cartlist")
-                carts_alerts()
+                alert("Product Added to Cartlist...!!!")
+
             }
         } else {
-            console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "BBBBBBBB");
-            cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
-            localStorage.setItem('cartlist', JSON.stringify(cart));
-            window.location.reload()
-            alert("Product Added to Cartlist...!!!")
-
+            carts_alerts2();
         }
     }
 
 
     const addToFav = async (favProduct) => {
-        var fav = []
-        console.log(fav, "fffffffffffff");
-        console.log(favProduct, "pppppppppppp");
-        fav = JSON.parse(localStorage.getItem('whishlist')) || [];
-        if (fav.length > 0) {
-            let count = fav.some(item => item._id === favProduct._id)
-            console.log(count, "aaaaaaaaaaaaaaa");
-            if (!count) {
+        if (token) {
+            var fav = []
+            console.log(fav, "fffffffffffff");
+            console.log(favProduct, "pppppppppppp");
+            fav = JSON.parse(localStorage.getItem('whishlist')) || [];
+            if (fav.length > 0) {
+                let count = fav.some(item => item._id === favProduct._id)
+                console.log(count, "aaaaaaaaaaaaaaa");
+                if (!count) {
+                    fav.push({ ...favProduct })
+                    localStorage.setItem('whishlist', JSON.stringify(fav));
+                    window.location.reload()
+                    // alert("Product Added to Whishlist...!!")
+                    wish_alerts()
+
+                } else {
+                    // alert("Product Already Exist in Whishlist")
+                    wishs_alerts()
+                }
+            } else {
+
                 fav.push({ ...favProduct })
                 localStorage.setItem('whishlist', JSON.stringify(fav));
                 window.location.reload()
-                // alert("Product Added to Whishlist...!!")
                 wish_alerts()
+                // alert("Product Added to Whishlist...!!!")
 
-            } else {
-                // alert("Product Already Exist in Whishlist")
-                wishs_alerts()
             }
         } else {
-
-            fav.push({ ...favProduct })
-            localStorage.setItem('whishlist', JSON.stringify(fav));
-            window.location.reload()
-            wish_alerts()
-            // alert("Product Added to Whishlist...!!!")
-
+            wishs_alerts2()
         }
     }
 
 
     const display = async () => {
-        //     if (!params) {
-        try {
-            const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
-                setProduct(result?.data) //fiter product data
-                setProductData(result?.data) //all product data
-            })
-        } catch (error) {
-            console.log(error)
+        if (id) {
+            try {
+                axios.get(`http://localhost:8080/category/${id}`).then((result) => {
+                    console.log(result.data.data);
+                    setProduct(result?.data?.data) //fiter product data
+                    setProductData(result?.data?.data) //all product data
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                axios.get("http://localhost:8080/getproduct").then((result) => {
+                    setProduct(result?.data) //fiter product data
+                    setProductData(result?.data) //all product data
+                })
+            } catch (error) {
+                console.log(error)
+            }
+
         }
+
+
+
+        // const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
+        //     setProduct(result?.data) //fiter product data
+        //     setProductData(result?.data) //all product data
+        // })
+
     }
-    // else {
-    //     try {
-    //         const result = await axios.get(`http://localhost:8080/category/${params}`).then((result) => {
-    //             setProduct(result?.data) //fiter product data
-    //             setProductData(result?.data) //all product data
-    //         })
-    //         // console.log(setProductData);
-    //         // console.log(setProduct);
 
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    //     }
+    const display1 = async (data) => {
+        const result = await axios.get("http://localhost:8080/getproduct", {
+            ...data ,
+            page: page, perPage: pageSize
+        });
+        console.log(result?.data,"result with filter");
+        setProductData(result?.data)
+        setTotalData(result?.count)
 
-
-    // }
+    }
 
 
 
@@ -303,36 +345,74 @@ function Product() {
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div className="col-lg-12">
+                                        {/* <div className="col-lg-12">
                                             <div className="mb-3">
                                                 <h4 className="mb-2">Price</h4>
                                                 <input type="range" className="form-range w-100" id="rangeInput" step="" name="rangeInput" min={0} max={1000} defaultValue={price} onChange={(e) => { setPrice(e.target.value); }} />
                                                 <output id="amount" name="rangeInput" min-velue={0} max-value={1000} htmlFor="rangeInput">{price}</output>
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className="col-lg-12">
                                             <div className="mb-3">
-                                                <h4>Additional</h4>
-                                                <div className="mb-2">
-                                                    <input type="radio" className="me-2" id="Categories-1" name="Categories-1" defaultValue="Beverages" />
-                                                    <label htmlFor="Categories-1"> Organic</label>
+                                                <h4>Price Range</h4>
+                                                {priceRange?.map((pricerange) => {
+                                                    console.log(pricerange, "rangeeee");
+                                                    return (<div className="mb-2">
+                                                        <input
+                                                            type="radio"
+                                                            className="me-2"
+                                                            id={pricerange.label}
+                                                            name="price_range"
+                                                            value={searchvalue.price}
+                                                            checked={searchvalue.price === pricerange.id}
+                                                            onClick={(e) => {
+                                                                const [start, end] = pricerange.label.split(' - ');
+                                                                setSearchValue((prevState) => ({
+                                                                    // ...prevState,
+                                                                    start_price: start,
+                                                                    end_price: end,
+                                                                    price: pricerange.id,
+
+                                                                }));
+                                                                display1({ ...searchvalue, start_price: start, end_price: end })
+                                                            }} />
+                                                        <label htmlFor={pricerange.label}> {pricerange.label}</label>
+                                                    </div>)
+                                                })}
+
+                                                {/* <div className="mb-2">
+                                                    <input type="radio" className="me-2" id={pricerange.label} value={searchvalue.price } checked={searchvalue.price===pricerange.id} name="price_range"  onClick={(e)=>{
+                                                        const[start,end]=pricerange.label.split(' - ');
+                                                        setSearchValue((prevState)=>{
+                                                            ...prevState,
+                                                            start_price:start,
+
+                                                        })
+                                                    }} />
+                                                    <label htmlFor="Categories-3"> 500-1000</label>
                                                 </div>
                                                 <div className="mb-2">
-                                                    <input type="radio" className="me-2" id="Categories-2" name="Categories-1" defaultValue="Beverages" />
-                                                    <label htmlFor="Categories-2"> Fresh</label>
+                                                    <input type="radio" className="me-2" id={pricerange.label} value={searchvalue.price } checked={searchvalue.price===pricerange.id} name="price_range"  onClick={(e)=>{
+                                                        const[start,end]=pricerange.label.split(' - ');
+                                                        setSearchValue((prevState)=>{
+                                                            ...prevState,
+                                                            start_price:start,
+
+                                                        })
+                                                    }} />
+                                                    <label htmlFor="Categories-4"> 1000-2000</label>
                                                 </div>
                                                 <div className="mb-2">
-                                                    <input type="radio" className="me-2" id="Categories-3" name="Categories-1" defaultValue="Beverages" />
-                                                    <label htmlFor="Categories-3"> Sales</label>
-                                                </div>
-                                                <div className="mb-2">
-                                                    <input type="radio" className="me-2" id="Categories-4" name="Categories-1" defaultValue="Beverages" />
-                                                    <label htmlFor="Categories-4"> Discount</label>
-                                                </div>
-                                                <div className="mb-2">
-                                                    <input type="radio" className="me-2" id="Categories-5" name="Categories-1" defaultValue="Beverages" />
-                                                    <label htmlFor="Categories-5"> Expired</label>
-                                                </div>
+                                                    <input type="radio" className="me-2" id={pricerange.label} value={searchvalue.price } checked={searchvalue.price===pricerange.id} name="price_range"  onClick={(e)=>{
+                                                        const[start,end]=pricerange.label.split(' - ');
+                                                        setSearchValue((prevState)=>{
+                                                            ...prevState,
+                                                            start_price:start,
+
+                                                        })
+                                                    }} />
+                                                    <label htmlFor="Categories-5"> 2000-5000</label>
+                                                </div> */}
                                             </div>
                                         </div>
                                         {/* <div className="col-lg-12">
@@ -365,29 +445,29 @@ function Product() {
                                 <div className="col-lg-9">
                                     <div className="row g-4 " >
                                         {product.map((item) => (
-                                        
+
                                             <div className="col-md-6 col-lg-6 col-xl-4">
 
                                                 <div className="rounded position-relative fruite-item">
-                                                            <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
-                                                                <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
-                                                            </div>
-                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black"/></div>
+                                                    <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
+                                                        <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
+                                                    </div>
+                                                    <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
 
-                                                            <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
-                                                                <h5 className='productName'>{item.product_name}</h5>
-                                                                <b><p style={{marginBottom:"0px"}}>{item.size}</p></b>
-                                                                <div className="d-flex justify-content-between flex-lg-wrap">
-                                                                    <p className="text-dark fs-5 fw-bold mt-3">₹{item.price}</p>
-                                                                    {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> : 
-                                                                    <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
+                                                    <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
+                                                        <h5 className='productName'>{item.product_name}</h5>
+                                                        <b><p style={{ marginBottom: "0px" }}>{item.size}</p></b>
+                                                        <div className="d-flex justify-content-between flex-lg-wrap">
+                                                            <p className="text-dark fs-5 fw-bold mt-3">₹{item.price}</p>
+                                                            {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> :
+                                                                <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
 
-                                                                    {/* <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button> */}
-                                                                </div>
-                                                                {/* <div className='d-flex .justify-content-around flex-lg-wrap'> */}
-                                                                {/* </div> */}
-                                                            </div>
+                                                            {/* <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button> */}
                                                         </div>
+                                                        {/* <div className='d-flex .justify-content-around flex-lg-wrap'> */}
+                                                        {/* </div> */}
+                                                    </div>
+                                                </div>
 
                                                 {/* <div className="rounded position-relative fruite-item">
                                                     <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>

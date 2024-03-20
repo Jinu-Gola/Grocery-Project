@@ -13,7 +13,7 @@ import Footer from './Footer'
 // import Fruits from './Fruits'
 // import Vegitables from './Vegitables'
 import axios from 'axios'
-import { useNavigate ,Link} from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Whishlist from './Whishlist'
 
 
@@ -21,7 +21,7 @@ import Whishlist from './Whishlist'
 
 function Home(props) {
     const navigate = useNavigate()
-    // var token = localStorage.getItem("token");
+    var token = localStorage.getItem("token");
 
     const [search, setSearch] = useState("")
     useEffect(() => {
@@ -46,6 +46,16 @@ function Home(props) {
     };
     const carts_alerts = () => {
         toast.error("Product Already in Cart", {
+            position: "top-center"
+        });
+    };
+    const carts_alerts2 = () => {
+        toast.error("Without Login Not Add To Cart", {
+            position: "top-center"
+        });
+    };
+    const wishs_alerts2 = () => {
+        toast.error("Without Login Not Add To Whishlist", {
             position: "top-center"
         });
     };
@@ -81,58 +91,67 @@ function Home(props) {
     }
 
     const addToCart = async (cartProduct) => {
-        var cart = []
-        cart = JSON.parse(localStorage.getItem('cartlist')) || [];
-        if (cart.length > 0) {
-            let count = cart.some(item => item._id === cartProduct._id)
-            console.log(count, "aaaaaaaaaaaaaaa");
-            if (!count) {
+        if (token) {
+            var cart = []
+            cart = JSON.parse(localStorage.getItem('cartlist')) || [];
+            if (cart.length > 0) {
+                let count = cart.some(item => item._id === cartProduct._id)
+                console.log(count, "aaaaaaaaaaaaaaa");
+                if (!count) {
+                    cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
+                    localStorage.setItem('cartlist', JSON.stringify(cart));
+                    window.location.reload()
+                    // alert("Product Added to Cartlist...!!")
+                    cart_alerts()
+                } else {
+                    // alert("Product Already Exist in Cartlist")
+                    carts_alerts()
+                }
+            } else {
+
                 cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
-                // alert("Product Added to Cartlist...!!")
+                // alert("Product Added to Cartlist...!!!")
                 cart_alerts()
-            } else {
-                // alert("Product Already Exist in Cartlist")
-                carts_alerts()
+
             }
         } else {
-
-            cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
-            localStorage.setItem('cartlist', JSON.stringify(cart));
-            window.location.reload()
-            // alert("Product Added to Cartlist...!!!")
-            cart_alerts()
-
+            carts_alerts2();
         }
     }
 
     const addToFav = async (favProduct) => {
-        var fav = []
-        console.log(fav, "fffffffffffff");
-        console.log(favProduct, "pppppppppppp");
-        fav = JSON.parse(localStorage.getItem('whishlist')) || [];
-        if (fav.length > 0) {
-            let count = fav.some(item => item._id === favProduct._id)
-            console.log(count, "aaaaaaaaaaaaaaa");
-            if (!count) {
+        if (token) {
+
+            var fav = []
+            console.log(fav, "fffffffffffff");
+            console.log(favProduct, "pppppppppppp");
+            fav = JSON.parse(localStorage.getItem('whishlist')) || [];
+            if (fav.length > 0) {
+                let count = fav.some(item => item._id === favProduct._id)
+                console.log(count, "aaaaaaaaaaaaaaa");
+                if (!count) {
+                    fav.push({ ...favProduct })
+                    localStorage.setItem('whishlist', JSON.stringify(fav));
+                    window.location.reload()
+                    // alert("Product Added to Whishlist...!!")
+                    wish_alerts()
+                } else {
+                    // alert("Product Already Exist in Whishlist")
+                    wishs_alerts()
+                }
+            } else {
+
                 fav.push({ ...favProduct })
                 localStorage.setItem('whishlist', JSON.stringify(fav));
                 window.location.reload()
-                // alert("Product Added to Whishlist...!!")
+                // alert("Product Added to Whishlist...!!!")
                 wish_alerts()
-            } else {
-                // alert("Product Already Exist in Whishlist")
-                wishs_alerts()
+
             }
         } else {
-
-            fav.push({ ...favProduct })
-            localStorage.setItem('whishlist', JSON.stringify(fav));
-            window.location.reload()
-            // alert("Product Added to Whishlist...!!!")
-            wish_alerts()
-
+            wishs_alerts2()
         }
     }
     return (
@@ -184,7 +203,7 @@ function Home(props) {
                                                 <span className="text-dark" style={{ width: 130 }}>Fruits</span>
                                             </Link>
                                         </li> */}
-                                        {/* <li className="nav-item">
+                                    {/* <li className="nav-item">
                                         <Link to='' className="d-flex m-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" >
                                             <span className="text-dark" style={{ width: 130 }}>Bread</span>
                                         </Link>
@@ -209,15 +228,15 @@ function Home(props) {
                                                             <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                                 <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
                                                             </div>
-                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black"/></div>
+                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
 
                                                             <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
                                                                 <h5 className='productName'>{item.product_name}</h5>
-                                                                <b><p style={{marginBottom:"0px"}}>{item.size}</p></b>
+                                                                <b><p style={{ marginBottom: "0px" }}>{item.size}</p></b>
                                                                 <div className="d-flex justify-content-between flex-lg-wrap">
                                                                     <p className="text-dark fs-5 fw-bold mt-3">₹{item.price}</p>
-                                                                    {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> : 
-                                                                    <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
+                                                                    {item?.qty < 1 ? <span type='button' className="btn border border-danger rounded-pill mt-3 px-3 text-danger"  ><i className="fa fa-ban me-2 text-danger" /> Not Available</span> :
+                                                                        <button type='button' className="btn border border-secondary rounded-pill mt-3 px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button>}
 
                                                                     {/* <button className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => { addToCart(item) }} ><i className="fa fa-shopping-bag me-2 text-primary" /> Add to cart</button> */}
                                                                 </div>

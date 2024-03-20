@@ -62,6 +62,9 @@ function Main() {
 
 
     const [totus, setTotus] = useState(0);
+    const [totdispatchorder, setTotDispatchOrder] = useState(0);
+    const [totdeliverorder, setTotDeliverOrder] = useState(0);
+
     const [totpd, setTotpd] = useState(0);
     const [totorder, setTotOrder] = useState(0)
     const[totadmin,setTotAdmin]=useState(0)
@@ -83,6 +86,9 @@ function Main() {
             setTotOrder(res.data.totorder)
             // console.log(res.data.totorder, "total order");
             setTotAdmin(res.data.totadmin)
+            setTotDispatchOrder(res.data.totdispatchorder)
+            setTotDeliverOrder(res.data.totdeliverorder)
+
         } catch (error) {
             console.log("total err", error)
         }
@@ -184,14 +190,58 @@ function Main() {
                                             </div>
                                         </div> */}
                                     </div>
-                                    <h6 className="text-muted font-weight-normal">Total Orders</h6>
+                                    <h6 className="text-muted font-weight-normal">Total Pending Orders</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">{totdispatchorder}</h3>
+                                                {/* <p className="text-danger ml-2 mb-0 font-weight-medium">
+                                                    -2.4%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-danger">
+                                                <span className="mdi mdi-arrow-bottom-left icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">Total Dispatch Order</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-xl-3 col-sm-6 grid-margin stretch-card">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <div className="d-flex align-items-center align-self-start">
+                                                <h3 className="mb-0">{totdeliverorder}</h3>
+                                                {/* <p className="text-danger ml-2 mb-0 font-weight-medium">
+                                                    -2.4%
+                                                </p> */}
+                                            </div>
+                                        </div>
+                                        {/* <div className="col-3">
+                                            <div className="icon icon-box-danger">
+                                                <span className="mdi mdi-arrow-bottom-left icon-item" />
+                                            </div>
+                                        </div> */}
+                                    </div>
+                                    <h6 className="text-muted font-weight-normal">Total Delivered Order</h6>
                                 </div>
                             </div>
                         </div>
                         
                     </div>
-                    {/* <div className="row">
-                      <div className="col-md-4 grid-margin stretch-card">
+                    <div className="row">
+                      {/* <div className="col-md-4 grid-margin stretch-card">
                           <div className="card">
                               <div className="card-body">
                                   <h4 className="card-title">Transaction History</h4>
@@ -207,8 +257,8 @@ function Main() {
                                       <div className="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
                                           <h6 className="font-weight-bold mb-0">$236</h6>
                                       </div>
-                                  </div>
-                                  <div className="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
+                                  </div> 
+                                   <div className="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
                                       <div className="text-md-center text-xl-left">
                                           <h6 className="mb-1">Tranfer to Stripe</h6>
                                           <p className="text-muted mb-0">07 Jan 2019, 09:12AM</p>
@@ -219,8 +269,8 @@ function Main() {
                                   </div>
                               </div>
                           </div>
-                      </div>
-                      <div className="col-md-8 grid-margin stretch-card">
+                      </div> */}
+                      {/* <div className="col-md-8 grid-margin stretch-card">
                           <div className="card">
                               <div className="card-body">
                                   <div className="d-flex flex-row justify-content-between">
@@ -342,8 +392,8 @@ function Main() {
                                   </div>
                               </div>
                           </div>
-                      </div>
-                  </div> */}
+                      </div> */}
+                  </div>
                     {/* <div className="row">
                       <div className="col-sm-4 grid-margin">
                           <div className="card">
@@ -844,9 +894,9 @@ function Main() {
                                                 </table>
                                             </div>
                                         </div>
-                                        <div className="col-md-7">
+                                        {/* <div className="col-md-7">
                                             <div id="audience-map" className="vector-map" />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
