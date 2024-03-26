@@ -72,10 +72,12 @@ function ViewOrder() {
     const ordersGet = async () => {
         // console.log(searchvalue, 'searchvalue');
         const result = await axios.post("http://localhost:8080/get-order", {
-            'search': searchvalue
+            'search': searchvalue,
+            orderData
         })
         // console.log(result, 'resultresult');
         setOrderData(result?.data);
+        console.log(orderData,"oredr dataaaa");
     };
     const login_list = JSON.parse(localStorage.getItem('user'));
 
@@ -127,7 +129,7 @@ function ViewOrder() {
             name: 'DISPACTH ORDER',
             cell: (row) => (
                 <>
-                    {console.log(row.order._id, "rowwwwwwwwwwwwww")}
+                    {/* {console.log(row.order._id, "rowwwwwwwwwwwwww")} */}
 
                     <button
                         type='button'
@@ -160,16 +162,14 @@ function ViewOrder() {
         orderdata.push(data.order);
 
 
-        const handelChange = (e) => {
-            
-        }
+      
         return (
             <>
                 <h6
                     className='text-primary text-capitalize ps-3'
                     style={{ padding: '10px', fontSize: '14px' }}>
                     <b>
-                        <u>Oder Detial:</u>
+                        <u>Order Detail:</u>
                     </b>{' '}
                 </h6>
 
@@ -209,7 +209,7 @@ function ViewOrder() {
                 </h6>
 
                 {orderdata?.map((data) => {
-                    console.log(data, "dataaaaa");
+                    // console.log(data, "dataaaaa");
                     return (
                         <>
                             <div className='row'>
@@ -251,7 +251,7 @@ function ViewOrder() {
                                 </div> */}
 
                             </div>
-                            {console.log("looooooog", data)}
+                            {/* {console.log("looooooog", data)} */}
 
                         </>
                     );

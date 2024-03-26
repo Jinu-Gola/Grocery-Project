@@ -49,7 +49,7 @@ function ViewSubCateg() {
     const display = async () => {
         try {
             const subData = await axios.get("http://localhost:8080/subcat").then((result) => {
-               
+
                 setData(result?.data)
                 // console.log(setData);
                 console.log("data", subData)
@@ -74,7 +74,7 @@ function ViewSubCateg() {
         }
     }
 
-  
+
 
     return (
         <>
@@ -110,11 +110,9 @@ function ViewSubCateg() {
                                                     <tbody>
                                                         {data.map((item, index) => (
                                                             <tr>
-                                                                {/* <td>Jacob</td> */}
+                                                                
                                                                 <td> {item.subcname}</td>
-                                                                <td> {item.c_id}</td>
-
-                                                                {/* <td class="text-danger"> 28.76% <i class="mdi mdi-arrow-down"></i></td> <button type="button" className="btn btn-success"  >Edit</button> */}
+                                                                <td> {item.c_id.cname}</td>
                                                                 <td><button type="button" className="btn btn-danger" onClick={() => delSubcat(item._id)} >Delete</button></td>
                                                             </tr>
                                                         ))}

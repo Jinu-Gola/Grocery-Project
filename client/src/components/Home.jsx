@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.min.css'
 import { ToastContainer, toast } from 'react-toastify'
 import Header from './Header'
 import Search from './Search'
-import Slider from './Slider'
+import Sliders from './Slider'
 import Offers from './Offers'
 // import Banner from './Banner'
 // import Bestseller from './Bestseller'
@@ -14,7 +14,9 @@ import Footer from './Footer'
 // import Vegitables from './Vegitables'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
-import Whishlist from './Whishlist'
+// import Whishlist from './Whishlist'
+import { Pagination, PaginationItem, Typography, getListItemTextUtilityClass, Slider } from "@mui/material";
+import ReactPaginate from "react-paginate";
 
 
 
@@ -62,7 +64,15 @@ function Home(props) {
 
     const [product, setProduct] = useState([]);
     const [productData, setProductData] = useState([])
-
+    //pagination code
+    const prevIcon = () => <Typography color="black">Prev</Typography>;
+    const nextIcon = () => <Typography color="black">Next</Typography>;
+    const handlePage = (page) => setPage(page);
+    const [page, setPage] = useState(1);
+    const totalPages = Math.ceil(product.length / 8);
+    console.log(product.length, "total pages");
+    const pageContent = product.slice((page - 1) * 8, page * 8);
+    console.log(pageContent, "dataa");
     const display = async () => {
         try {
             const result = await axios.get("http://localhost:8080/getproduct").then((result) => {
@@ -121,34 +131,83 @@ function Home(props) {
         }
     }
 
-    const addToFav = async (favProduct) => {
+    // const addToFav = async (favProduct) => {
+    //     if (token) {
+
+    //         var fav = []
+    //         console.log(fav, "fffffffffffff");
+    //         console.log(favProduct, "pppppppppppp");
+    //         fav = JSON.parse(localStorage.getItem('whishlist')) || [];
+    //         if (fav.length > 0) {
+    //             let count = fav.some(item => item._id === favProduct._id)
+    //             console.log(count, "aaaaaaaaaaaaaaa");
+    //             if (!count) {
+    //                 fav.push({ ...favProduct })
+    //                 localStorage.setItem('whishlist', JSON.stringify(fav));
+    //                 window.location.reload()
+    //                 // alert("Product Added to Whishlist...!!")
+    //                 wish_alerts()
+    //             } else {
+    //                 // alert("Product Already Exist in Whishlist")
+    //                 wishs_alerts()
+    //             }
+    //         } else {
+
+    //             fav.push({ ...favProduct })
+    //             localStorage.setItem('whishlist', JSON.stringify(fav));
+    //             window.location.reload()
+    //             // alert("Product Added to Whishlist...!!!")
+    //             wish_alerts()
+
+    //         }
+    //     } else {
+    //         wishs_alerts2()
+    //     }
+    // }
+
+    const removeToFav = async (item) => {
+        try {
+            console.log("removed")
+            var items1 = JSON.parse(localStorage.getItem("whishlist"));
+            const delitem = items1.filter((data) => data._id !== item._id);
+            // setCartitems(delitem);
+            display();
+            localStorage.setItem('whishlist', JSON.stringify(delitem));
+            display();
+        }
+        catch (error) {
+            console.log("remove cart err");
+        }
+
+    }
+
+    const addToFav = async (item) => {
         if (token) {
-
-            var fav = []
-            console.log(fav, "fffffffffffff");
-            console.log(favProduct, "pppppppppppp");
-            fav = JSON.parse(localStorage.getItem('whishlist')) || [];
-            if (fav.length > 0) {
-                let count = fav.some(item => item._id === favProduct._id)
-                console.log(count, "aaaaaaaaaaaaaaa");
+            console.log("added")
+            var wishlist = [];
+            wishlist = JSON.parse(localStorage.getItem("whishlist")) || [];
+            if (wishlist.length > 0) {
+                var count = wishlist.some((object) => object._id == item._id)
+                // product.some((prod)=>(item._id,prod._id));
                 if (!count) {
-                    fav.push({ ...favProduct })
-                    localStorage.setItem('whishlist', JSON.stringify(fav));
-                    window.location.reload()
-                    // alert("Product Added to Whishlist...!!")
-                    wish_alerts()
-                } else {
-                    // alert("Product Already Exist in Whishlist")
-                    wishs_alerts()
+                    item.userqty = 1;
+                    wishlist.push(item);
+                    localStorage.setItem("whishlist", JSON.stringify(wishlist));
+                    // show();
+                    display();
                 }
-            } else {
-
-                fav.push({ ...favProduct })
-                localStorage.setItem('whishlist', JSON.stringify(fav));
-                window.location.reload()
-                // alert("Product Added to Whishlist...!!!")
-                wish_alerts()
-
+                else {
+                    // notadd();
+                    display();
+                }
+                display();
+            }
+            else {
+                item.userqty = 1;
+                wishlist.push(item);
+                localStorage.setItem("whishlist", JSON.stringify(wishlist));
+                // show();
+                display();
             }
         } else {
             wishs_alerts2()
@@ -172,7 +231,7 @@ function Home(props) {
                 <Search />
                 {/* Modal Search End */}
                 {/* Hero Start */}
-                <Slider />
+                <Sliders />
                 {/* Hero End */}
                 {/* Featurs Section Start */}
                 {/* <Features /> */}
@@ -221,15 +280,26 @@ function Home(props) {
                                     <div className="row g-4">
                                         <div className="col-lg-12">
                                             <div className="row g-4">
-                                                {product.map((item) => (
+                                                {pageContent.map((item) => (
                                                     <div className="col-md-6 col-lg-6 col-xl-3" >
 
                                                         <div className="rounded position-relative fruite-item">
                                                             <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                                 <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
                                                             </div>
-                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+                                                            {
+                                                                JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ?
+                                                                    // <button type="button" className='btn' style={{ color: "red", fontSize: "30px" }} onClick={() => removeToFav(item)}>
+                                                                    //     <i className='mdi mdi-heart' />yes
+                                                                    // </button>
+                                                                    <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: "red" }} onClick={() => { removeToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+                                                                    :
+                                                                    // <button type="button" className='btn' style={{ color: "black", fontSize: "30px" }} onClick={() => addToFav(item)}>JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "grey" : "red"   JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}
+                                                                    //     <i className='mdi mdi-heart' />
+                                                                    // </button>
+                                                                    <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
 
+                                                            }
                                                             <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
                                                                 <h5 className='productName'>{item.product_name}</h5>
                                                                 <b><p style={{ marginBottom: "0px" }}>{item.size}</p></b>
@@ -254,6 +324,23 @@ function Home(props) {
 
                                             </div>
                                         </div>
+                                            <Pagination
+                                                color="success"
+                                                align="center"
+                                                count={totalPages}
+                                                page={page}
+                                                onChange={(event, value) => handlePage(value)}
+                                                renderItem={(item) => (
+                                                    <PaginationItem
+                                                        color="primary"
+                                                        components={{
+                                                            previous: prevIcon,
+                                                            next: nextIcon,
+                                                        }}
+                                                        {...item}
+                                                    />
+                                                )}
+                                            />
                                     </div>
                                 </div>
                             </div>

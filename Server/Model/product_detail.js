@@ -34,6 +34,11 @@ const pro_detailsSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "category",
         require: true
+    },
+    s_cid:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"sub_category",
+        require:true
     }
     // uid:{
     //     type: mongoose.Schema.Types.ObjectId,

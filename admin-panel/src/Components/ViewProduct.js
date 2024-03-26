@@ -65,13 +65,15 @@ function ViewProduct(props) {
 
     const [data, setData] = useState([]);
     const [product, setProduct] = useState([]);
-    //pagination ocde
-    const prevIcon = () => <Typography color="black">Prev</Typography>;
-    const nextIcon = () => <Typography color="black">Next</Typography>;
+    //pagination code
+    const prevIcon = () => <Typography color="white">Prev</Typography>;
+    const nextIcon = () => <Typography color="white">Next</Typography>;
     const handlePage = (page) => setPage(page);
     const [page, setPage] = useState(1);
     const totalPages = Math.ceil(data.length / 8);
+    console.log(data.length,"total pages");
     const pageContent = data.slice((page - 1) * 8, page * 8);
+    console.log(pageContent,"dataa");
 
     useEffect(() => {
         display();
@@ -185,7 +187,7 @@ function ViewProduct(props) {
                                 </li>
                             </ul> */}
                             <div className="row">
-                                {data.map((item, index) => (
+                                {pageContent.map((item, index) => (
 
 
 
@@ -232,7 +234,10 @@ function ViewProduct(props) {
                                 onChange={(event, value) => handlePage(value)}
                                 renderItem={(item) => (
                                     <PaginationItem
-                                        color="primary"
+                                        sx={{
+                                            color: "white", // Change text color to white
+                                        }}
+                                       
                                         components={{
                                             previous: prevIcon,
                                             next: nextIcon,

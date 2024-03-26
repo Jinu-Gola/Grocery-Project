@@ -1,3 +1,4 @@
+// const cateModel = require("../Model/category.js")
 const subcateModel = require("../Model/subcategory.js")
 
 const subcatAdd = async (req, res) => {
@@ -24,8 +25,9 @@ const subcatAdd = async (req, res) => {
 
 const subcatFind = async (req, res) => {
     try {
-        const data = await subcateModel.find();
+        const data = await subcateModel.find().populate("c_id");
         res.send(data)
+        console.log(data,"dataaa...");
     } catch (error) {
         res.send(error)
     }
@@ -49,6 +51,29 @@ const subcatUpd = async (req, res) => {
     }
 }
 
+
+//Find Subcategory From Particular category
+const findCategorywise = async (req, res) => {
+    try {
+        let query = {};
+
+        if (req.params.cid) {
+            query.cid = req.params.cid;
+        }
+        console.log(req.params.cid, "scid");
+            const data = await subcateModel
+            .find(query)
+            .populate("s_cid")
+
+        // console.log("Query:", { product_name: { $regex: keyword, $options: "i" } });
+        console.log("Data:", data);
+
+        res.status(200).send({ message: "Success", data: data });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+};
 const subcatDelete = async (req, res) => {
     try {
         const data = await subcateModel.findByIdAndDelete(req.params.id);
@@ -60,4 +85,4 @@ const subcatDelete = async (req, res) => {
 
 
 
-module.exports = { subcatAdd, subcatFind, subcatUpd, subcatDelete }
+module.exports = { subcatAdd, subcatFind, subcatUpd, subcatDelete, findCategorywise }

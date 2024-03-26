@@ -56,7 +56,8 @@ function UpdateProduct() {
         size: '',
         description: '',
         brand_name: '',
-        cid: ''
+        cid: '',
+        s_cid: ''
     });
     const navigate = useNavigate();
     const { id } = useParams();
@@ -87,7 +88,8 @@ function UpdateProduct() {
                 size: response.data.size,
                 description: response.data.description,
                 brand_name: response.data.brand_name,
-                cid: response.data.cid
+                cid: response.data.cid,
+                s_cid:response.data.s_cid
             })
             console.log("data set")
         } catch (error) {
@@ -119,7 +121,8 @@ function UpdateProduct() {
                 'size': formdata.size,
                 'description': formdata.description,
                 'brand_name': formdata.brand_name,
-                'cid': formdata.cid
+                'cid': formdata.cid,
+                's_cid':formdata.s_cid
             }, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -141,6 +144,7 @@ function UpdateProduct() {
     const [categ, setCateg] = useState([])
     useEffect(() => {
         display();
+        subCategory();
     }, [])
 
     const display = async () => {
@@ -157,6 +161,22 @@ function UpdateProduct() {
             console.log(error)
         }
     }
+    const [subcat, setSubCat] = useState([])
+    const subCategory = async () => {
+        try {
+            await axios.get("http://localhost:8080/subcat").then((result) => {
+                // console.log("next")
+                // console.log("api data", result)
+                setSubCat(result?.data)
+                // console.log("data", data)
+            })
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 
     return (
         <>
@@ -215,7 +235,7 @@ function UpdateProduct() {
                                                 <input type="text" className="form-control" name="brand_name" placeholder="Product Brand Name" value={formdata.brand_name} onChange={handleChange} />
                                             </div>
                                             <div class="col">
-                                                <label for="cid">Product Category Id</label>
+                                                <label for="cid">Product Category </label>
                                                 <select class="form-control" value={formdata.cid} onChange={handleChange}>
                                                     {categ.map((item, index) => (
                                                         <option class="dropdown-header" value={item._id} > {item.cname}</option>
@@ -223,7 +243,15 @@ function UpdateProduct() {
                                                 </select>
                                                 {/* <input type="text" class="form-control" name="cid" placeholder="Product Category ID" value={formdata.cid} onChange={handleChange} /> */}
                                             </div>
-
+                                            <div class="col">
+                                                <label for="cid">Product Sub-Category </label>
+                                                <select class="form-control" value={formdata.s_cid} onChange={handleChange}>
+                                                    {subcat.map((item, index) => (
+                                                        <option class="dropdown-header" value={item._id} > {item.subcname}</option>
+                                                    ))}
+                                                </select>
+                                                {/* <input type="text" class="form-control" name="cid" placeholder="Product Category ID" value={formdata.cid} onChange={handleChange} /> */}
+                                            </div>
                                         </div>
                                     </div>
 

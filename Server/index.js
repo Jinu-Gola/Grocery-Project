@@ -75,6 +75,7 @@ app.post("/subcat", upload.none(), subcateModel.subcatAdd)
 app.get("/subcat", subcateModel.subcatFind)
 app.put("/subcat/:id", subcateModel.subcatUpd)
 app.delete("/subcat/:id", subcateModel.subcatDelete)
+app.get('/sub-category/:cid',subcateModel.findCategorywise)
 
 // Categories API
 app.post("/categ", upload.none(), cateModel.categPost)
@@ -91,6 +92,9 @@ app.put("/updproduct/:id", upload.array("image"), pro_detailModel.product_detail
 app.delete("/delproduct/:id", pro_detailModel.product_detailsDelete);
 app.get("/oneproduct/:id", pro_detailModel.oneProduct)
 app.get("/category/:cid", pro_detailModel.categoryProduct)
+// app.get("/sub-category/:scid", pro_detailModel.sub_categoryProduct)
+
+app.get('/getproduct1',pro_detailModel.product_detailsGet1)
 // app.get("/getproduct/:id", pro_detailModel.product_detailsGet);
 
 app.get("/search-product", pro_detailModel.searchProduct)

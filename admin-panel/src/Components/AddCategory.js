@@ -55,35 +55,65 @@ function AddCategory() {
     };
 
     const [cname, setCname] = useState("");
+    const [categoryError, setCategoryError] = useState("");
     // const [image, setImages] = useState();
 
-    const data = async (e) => {
+    // const data = async (e) => {
 
+    //     e.preventDefault();
+
+    //     try {
+
+    //         const formData = new FormData()
+    //         formData.append('cname', cname)
+    //         // formData.append('images', image)
+
+    //         console.log(formData)
+
+    //         const res = await axios.post("http://localhost:8080/categ", formData)
+    //         if (res.status == 200) {
+    //             navigate('/categorylist')
+    //             wish_alerts()
+    //         }
+    //         console.log("axios data:", res.data)
+
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+
+
+
+
+    // }
+    const data = async (e) => {
         e.preventDefault();
 
+        // Check if category_name contains only alphabetic characters
+        if (!/^[a-zA-Z]+$/.test(cname.trim())) {
+            setCategoryError("Only alphabetic characters are allowed.");
+            return;
+        }
+
+        if (!cname.trim()) {
+            setCategoryError("Please fill in the category name.");
+            return;
+        }
+
         try {
+            const formData = new FormData();
+            formData.append("cname", cname);
 
-            const formData = new FormData()
-            formData.append('cname', cname)
-            // formData.append('images', image)
+            // console.log(formData)
 
-            console.log(formData)
-
-            const res = await axios.post("http://localhost:8080/categ", formData)
+            const res = await axios.post("http://localhost:8080/categ", formData);
             if (res.status == 200) {
-                navigate('/categorylist')
-                wish_alerts()
+                navigate("/categorylist");
             }
-            console.log("axios data:", res.data)
-
+            console.log("axios data:", res.data);
         } catch (error) {
             console.error(error);
         }
-
-
-
-
-    }
+    };
 
 
 
@@ -109,6 +139,8 @@ function AddCategory() {
                                     <div className="form-group">
                                         <label htmlFor="cname">Category Name</label>
                                         <input type="text" className="form-control" value={cname} name='cname' onChange={(e) => setCname(e.target.value)} id="cname" placeholder="Category Name" />
+                                        <span className="text-danger">{categoryError}</span>
+                                    
                                     </div>
                                     {/* <div className="form-group">
                                         <label>File upload</label>

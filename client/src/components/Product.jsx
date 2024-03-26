@@ -6,6 +6,10 @@ import axios from 'axios'
 import Header from './Header'
 import Footer from './Footer'
 import Search from './Search'
+//pagination code
+import { Pagination, PaginationItem, Typography, getListItemTextUtilityClass, Slider } from "@mui/material";
+import ReactPaginate from "react-paginate";
+
 function Product() {
     const navigate = useNavigate()
     var { id } = useParams();
@@ -15,9 +19,9 @@ function Product() {
 
     const defaultSearch = {
         search: '',
-        cid: 0,
-        start_price: 0,
-        end_price: 0
+        // cid: 0,
+        // start_price: 0,
+        // end_price: 0
     }
     const priceRange = [
         { id: 1, label: "10 - 100" },
@@ -29,29 +33,41 @@ function Product() {
 
     ]
 
-    const [search, setSearch] = useState();//for search with api get-product
+
     const [product, setProduct] = useState([]);//for search product
     const [productData, setProductData] = useState([]) //for all product
-    // const [price, setPrice] = useState(0)
+    const [price, setPrice] = useState(0)
+
+    const [sortProduct, setSortProduct] = useState([])
 
 
-    const [page, setPage] = useState(1);//for page redirect
-    const [pageSize, setPageSize] = useState(6);//perpage product size
     const [totalData, setTotalData] = useState();
 
     const [filterProduct, setFilterProduct] = useState([]);//for filter product data
     const [searchvalue, setSearchValue] = useState(defaultSearch)
+
+    //Pagination code
+    const prevIcon = () => <Typography color="black">Prev</Typography>;
+    const nextIcon = () => <Typography color="black">Next</Typography>;
+    const handlePage = (page) => setPage(page);
+    const [page, setPage] = useState(1);
+    const [row, setRow] = useState(3);
+    const totalPages = Math.ceil(product.length / row);
+    console.log(product.length, "total pages");
+    const pageContent = product.slice((page - 1) * row, page * row);
+    console.log(pageContent, "dataa");
+
 
     const wish_alerts = () => {
         toast.success("Product Added to Wishlist", {
             position: "top-center"
         });
     };
-    const wishs_alerts = () => {
-        toast.error("Product Added to Wishlist", {
-            position: "top-center"
-        });
-    };
+    // const wishs_alerts = () => {
+    //     toast.error("Product Added to Wishlist", {
+    //         position: "top-center"
+    //     });
+    // };
     const cart_alerts = () => {
         toast.success("Product Added to Cartlist", {
             position: "top-center"
@@ -72,11 +88,7 @@ function Product() {
             position: "top-center"
         });
     };
-    // useEffect(() => {
-    //     // display();
-    //     // profile()
-
-    // }, [])
+  
 
     // useEffect(() => {
     //     if(price >=1){
@@ -159,9 +171,9 @@ function Product() {
             cart = JSON.parse(localStorage.getItem('cartlist')) || [];
             if (cart.length > 0) {
                 let count = cart.some(item => item._id === cartProduct._id)
-                console.log(count, "aaaaaaaaaaaaaaa");
+                // console.log(count, "aaaaaaaaaaaaaaa");
                 if (!count) {
-                    console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "***************");
+                    // console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "***************");
 
                     cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                     localStorage.setItem('cartlist', JSON.stringify(cart));
@@ -173,7 +185,7 @@ function Product() {
                     carts_alerts()
                 }
             } else {
-                console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "BBBBBBBB");
+                // console.log({ ...cartProduct, uqty: 1, total_amt: cartProduct.price }, "BBBBBBBB");
                 cart.push({ ...cartProduct, uqty: 1, total_amt: cartProduct.price })
                 localStorage.setItem('cartlist', JSON.stringify(cart));
                 window.location.reload()
@@ -184,42 +196,126 @@ function Product() {
             carts_alerts2();
         }
     }
-
-
-    const addToFav = async (favProduct) => {
-        if (token) {
-            var fav = []
-            console.log(fav, "fffffffffffff");
-            console.log(favProduct, "pppppppppppp");
-            fav = JSON.parse(localStorage.getItem('whishlist')) || [];
-            if (fav.length > 0) {
-                let count = fav.some(item => item._id === favProduct._id)
-                console.log(count, "aaaaaaaaaaaaaaa");
-                if (!count) {
-                    fav.push({ ...favProduct })
-                    localStorage.setItem('whishlist', JSON.stringify(fav));
-                    window.location.reload()
-                    // alert("Product Added to Whishlist...!!")
-                    wish_alerts()
-
-                } else {
-                    // alert("Product Already Exist in Whishlist")
-                    wishs_alerts()
-                }
-            } else {
-
-                fav.push({ ...favProduct })
-                localStorage.setItem('whishlist', JSON.stringify(fav));
-                window.location.reload()
-                wish_alerts()
-                // alert("Product Added to Whishlist...!!!")
-
-            }
-        } else {
-            wishs_alerts2()
+    const removeToFav = async (item) => {
+        try {
+            console.log("removed")
+            var items1 = JSON.parse(localStorage.getItem("whishlist"));
+            const delitem = items1.filter((data) => data._id !== item._id);
+            // setCartitems(delitem);
+            display();
+            localStorage.setItem('whishlist', JSON.stringify(delitem));
+            display();
         }
+        catch (error) {
+            console.log("remove cart err");
+        }
+
     }
 
+    const addToFav = async (item) => {
+       if(token){ 
+        console.log("added")
+        var wishlist = [];
+        wishlist = JSON.parse(localStorage.getItem("whishlist")) || [];
+        if (wishlist.length > 0) {
+            var count = wishlist.some((object) => object._id == item._id)
+            // product.some((prod)=>(item._id,prod._id));
+            if (!count) {
+                item.userqty = 1;
+                wishlist.push(item);
+                localStorage.setItem("whishlist", JSON.stringify(wishlist));
+                // show();
+                display();
+            }
+            else {
+                // notadd();
+                display();
+            }
+            display();
+        }
+        else {
+            item.userqty = 1;
+            wishlist.push(item);
+            localStorage.setItem("whishlist", JSON.stringify(wishlist));
+            // show();
+            display();
+        }
+    }else{
+           wishs_alerts2()
+    }
+    }
+    // const removeToFav = async (favProduct) => {
+
+    //     const fav = JSON.parse(localStorage.removeItem('whishlist'));
+    //     const del = fav.filter(obj => obj._id !== favProduct._id);
+    //     JSON.parse('whishlist', JSON.stringify(del));
+
+    //     // if (fav.length > 0) {
+    //     //     let count = fav.some(item => item._id === favProduct._id)
+    //     //     console.log(count, "count of product fav");
+    //     //     if (!count) {
+    //     //         localStorage.removeItem('whishlist', JSON.stringify(fav));
+
+    //     //     }
+    //     // }
+
+    // }
+
+
+    // const addToFav = async (favProduct) => {
+    //     if (token) {
+    //         var fav = []
+    //         console.log(fav, "fffffffffffff");
+    //         console.log(favProduct, "pppppppppppp");
+    //         fav = JSON.parse(localStorage.getItem('whishlist')) || [];
+    //         if (fav.length > 0) {
+    //             let count = fav.some(item => item._id === favProduct._id)
+    //             console.log(count, "aaaaaaaaaaaaaaa");
+    //             if (!count) {
+    //                 fav.push({ ...favProduct })
+    //                 localStorage.setItem('whishlist', JSON.stringify(fav));
+    //                 window.location.reload()
+    //                 // alert("Product Added to Whishlist...!!")
+    //                 wish_alerts()
+
+    //             }
+    //             //  else {
+    //             //     localStorage.removeItem('whishlist', JSON.stringify(fav));
+    //             //     window.location.reload()
+    //             //     // alert("Product Already Exist in Whishlist")
+    //             //     // wishs_alerts()
+    //             // }
+    //         } else {
+
+    //             fav.push({ ...favProduct })
+    //             localStorage.setItem('whishlist', JSON.stringify(fav));
+    //             window.location.reload()
+    //             wish_alerts()
+    //             // alert("Product Added to Whishlist...!!!")
+
+    //         }
+    //     } else {
+    //         wishs_alerts2()
+    //     }
+    // }
+
+    const sortProductsAscending = () => {
+        const sortedProducts = [...product].sort((a, b) => a.product_name.localeCompare(b.product_name));
+        setProduct(sortedProducts);
+        console.log(sortedProducts);
+        console.log(setProduct);
+
+
+    }
+
+    // Function to sort products alphabetically in descending order
+    const sortProductsDescending = () => {
+        const sortedProducts = [...product].sort((a, b) => b.product_name.localeCompare(a.product_name));
+        setProduct(sortedProducts);
+        console.log(sortedProducts);
+        console.log(setProduct);
+
+    }
 
     const display = async () => {
         if (id) {
@@ -228,6 +324,7 @@ function Product() {
                     console.log(result.data.data);
                     setProduct(result?.data?.data) //fiter product data
                     setProductData(result?.data?.data) //all product data
+                    // setSortProduct(result?.data?.data)
                 })
             } catch (error) {
                 console.log(error)
@@ -237,6 +334,8 @@ function Product() {
                 axios.get("http://localhost:8080/getproduct").then((result) => {
                     setProduct(result?.data) //fiter product data
                     setProductData(result?.data) //all product data
+                    // setSortProduct(result?.data)
+
                 })
             } catch (error) {
                 console.log(error)
@@ -253,16 +352,41 @@ function Product() {
 
     }
 
-    const display1 = async (data) => {
-        const result = await axios.get("http://localhost:8080/getproduct", {
-            ...data ,
-            page: page, perPage: pageSize
-        });
-        console.log(result?.data,"result with filter");
-        setProductData(result?.data)
-        setTotalData(result?.count)
+    // const display1 = async (data) => {
+    //     const result = await axios.get("http://localhost:8080/getproduct1", {
 
+    //         body: JSON.stringify(product),
+    //         "search":searchvalue
+
+    //     });
+    //     // console.log(product, "result with filter");
+    //     setProductData(result)
+    //     setTotalData(result?.count)
+
+    // }
+    // const handelSearch =(e)=>{
+    //     setSearchValue({...searchvalue,[e.target.name]:e.target.value})
+    // }
+    const display1 = async (searchData) => {
+        try {
+            const result = await axios.get("http://localhost:8080/getproduct1", {
+                "search": searchData // Pass searchData as query parameters
+            });
+            setProductData(result.data); // Assuming the response contains product data
+            setTotalData(result.data.count); // Assuming the response contains total count
+        } catch (error) {
+            console.error("Error fetching product data:", error);
+        }
     }
+
+    const handelSearch = (e) => {
+        setSearchValue({ ...searchvalue, [e.target.name]: e.target.value });
+    };
+
+    // Call display1 function with searchvalue when search value changes
+    useEffect(() => {
+        display1(searchvalue);
+    }, [searchvalue]);
 
 
 
@@ -308,8 +432,9 @@ function Product() {
                             <div className="row g-4">
                                 <div className="col-xl-3">
                                     <div className="input-group w-100 mx-auto d-flex">
-                                        <input type="search" className="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" />
-                                        <span id="search-icon-1" className="input-group-text p-3"><i className="fa fa-search" /></span>
+                                        <input type="search" className="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1" name='search' value={searchvalue.search}
+                                            onChange={handelSearch} />
+                                        <span id="search-icon-1" className="input-group-text p-3" onClick={() => { display1(searchvalue) }} ><i className="fa fa-search" /></span>
                                     </div>
                                 </div>
                                 <div className="col-6" />
@@ -317,11 +442,13 @@ function Product() {
                                     <div className="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
                                         <label htmlFor="fruits"><i className="fa fa-sort" /> Sorting:</label>
                                         <select id="fruits" name="fruitlist" className="border-0 form-select-sm bg-light me-3" form="fruitform">
-                                            <option value="">Nothing</option>
-                                            <option value="">A-Z</option>
-                                            <option value="">Z-A</option>
-                                            {/* <option value="">Price High-Low</option>
-                                            <option value="audi">Price Low-High</option> */}
+                                            <option ><button onClick={display}>Nothing</button></option>
+                                            <option ><button onClick={sortProductsAscending}>A-Z</button></option>
+                                            <option ><button onClick={sortProductsDescending}>Z-A</button></option>
+
+                                            {/* <option onClick={()=>{sortProductsAscending()}}>A-Z</option>
+                                            <option onClick={()=>{sortProductsDescending()}}>Z-A</option> */}
+
                                         </select>
                                     </div>
                                 </div>
@@ -380,39 +507,7 @@ function Product() {
                                                     </div>)
                                                 })}
 
-                                                {/* <div className="mb-2">
-                                                    <input type="radio" className="me-2" id={pricerange.label} value={searchvalue.price } checked={searchvalue.price===pricerange.id} name="price_range"  onClick={(e)=>{
-                                                        const[start,end]=pricerange.label.split(' - ');
-                                                        setSearchValue((prevState)=>{
-                                                            ...prevState,
-                                                            start_price:start,
 
-                                                        })
-                                                    }} />
-                                                    <label htmlFor="Categories-3"> 500-1000</label>
-                                                </div>
-                                                <div className="mb-2">
-                                                    <input type="radio" className="me-2" id={pricerange.label} value={searchvalue.price } checked={searchvalue.price===pricerange.id} name="price_range"  onClick={(e)=>{
-                                                        const[start,end]=pricerange.label.split(' - ');
-                                                        setSearchValue((prevState)=>{
-                                                            ...prevState,
-                                                            start_price:start,
-
-                                                        })
-                                                    }} />
-                                                    <label htmlFor="Categories-4"> 1000-2000</label>
-                                                </div>
-                                                <div className="mb-2">
-                                                    <input type="radio" className="me-2" id={pricerange.label} value={searchvalue.price } checked={searchvalue.price===pricerange.id} name="price_range"  onClick={(e)=>{
-                                                        const[start,end]=pricerange.label.split(' - ');
-                                                        setSearchValue((prevState)=>{
-                                                            ...prevState,
-                                                            start_price:start,
-
-                                                        })
-                                                    }} />
-                                                    <label htmlFor="Categories-5"> 2000-5000</label>
-                                                </div> */}
                                             </div>
                                         </div>
                                         {/* <div className="col-lg-12">
@@ -444,7 +539,7 @@ function Product() {
                                 </div>
                                 <div className="col-lg-9">
                                     <div className="row g-4 " >
-                                        {product.map((item) => (
+                                        {pageContent.map((item) => (
 
                                             <div className="col-md-6 col-lg-6 col-xl-4">
 
@@ -452,7 +547,34 @@ function Product() {
                                                     <div className="fruite-img" onClick={() => navigate(`/product-detail/${item._id}`)}>
                                                         <img src={`http://localhost:8080/images/${item.image[0]}`} className="img-fluid w-100 rounded-top" alt />
                                                     </div>
-                                                    <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+                                                    {/* {item?.product_name? 
+                                                    <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { removeToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+                                                    : <div div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "grey" : "red" }} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+                                                    } */}
+                                                    {
+                                                        JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ?
+                                                            // <button type="button" className='btn' style={{ color: "red", fontSize: "30px" }} onClick={() => removeToFav(item)}>
+                                                            //     <i className='mdi mdi-heart' />yes
+                                                            // </button>
+                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: "red"}} onClick={() => { removeToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+                                                            :
+                                                            // <button type="button" className='btn' style={{ color: "black", fontSize: "30px" }} onClick={() => addToFav(item)}>JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "grey" : "red"   JSON.parse(localStorage.getItem('whishlist'))?.find(obj => obj._id === item._id) ? "red" : "grey" }} onClick={() => { addToFav(item) }}
+                                                            //     <i className='mdi mdi-heart' />
+                                                            // </button>
+                                                            <div className="   px-3 py-2 rounded position-absolute whishheart" style={{ top: "10px", right: "10px", color: "grey"}} onClick={() => { addToFav(item) }}><i className="fa fa-heart fa-2x text-black" /></div>
+
+                                                    }
+                                                    {/* {
+                                                        JSON.parse(localStorage.getItem("product"))?.find(obj => obj._id === item._id) ?
+                                                            <button type="button" className='btn' style={{ color: "blue", fontSize: "30px" }} onClick={() => removeToFav(item)}>
+                                                                <i className='mdi mdi-cart-remove' />
+                                                            </button>
+                                                            :
+                                                            <button type="button" className={item.qty > 0 ? 'btn' : 'btn btn-disabled'} style={{ color: "black", fontSize: "30px" }} onClick={() => addToFav(item)}>
+                                                                <i className='mdi mdi-cart-plus' />
+                                                            </button>
+                                                    } */}
+
 
                                                     <div className="p-4 border border-secondary border-top-0 rounded-bottom" >
                                                         <h5 className='productName'>{item.product_name}</h5>
@@ -488,7 +610,7 @@ function Product() {
                                             </div>
                                         ))}
                                         <div className="col-12">
-                                            <div className="pagination d-flex justify-content-center mt-5">
+                                            {/* <div className="pagination d-flex justify-content-center mt-5">
                                                 <a href="#" className="rounded">«</a>
                                                 <a href="#" className="active rounded">1</a>
                                                 <a href="#" className="rounded">2</a>
@@ -497,8 +619,26 @@ function Product() {
                                                 <a href="#" className="rounded">5</a>
                                                 <a href="#" className="rounded">6</a>
 
-                                                <a href="#" className="rounded">»</a>
-                                            </div>
+                                                <a href="#" className="
+                                                rounded">»</a> */}
+                                            {/* </div> */}
+                                            <Pagination
+                                                color="success"
+                                                align="center"
+                                                count={totalPages}
+                                                page={page}
+                                                onChange={(event, value) => handlePage(value)}
+                                                renderItem={(item) => (
+                                                    <PaginationItem
+                                                        color="primary"
+                                                        components={{
+                                                            previous: prevIcon,
+                                                            next: nextIcon,
+                                                        }}
+                                                        {...item}
+                                                    />
+                                                )}
+                                            />
                                         </div>
                                     </div>
                                 </div>

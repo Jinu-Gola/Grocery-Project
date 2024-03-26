@@ -1,37 +1,37 @@
 const { default: mongoose } = require("mongoose");
 const pro_detailModel = require("../Model/product_detail");
 
-const product_detailsPost = async (req, res) => {
-    try {
-        // console.log(req.body,"KKKKKKKKKKKK");
-        const { product_name, price, qty, size, description, brand_name, cid } = req.body;
-        // console.log(cid,"KKKKKKKKKKKKKK");
+// const product_detailsPost = async (req, res) => {
+//     try {
+//         // console.log(req.body,"KKKKKKKKKKKK");
+//         const { product_name, price, qty, size, description, brand_name, cid } = req.body;
+//         // console.log(cid,"KKKKKKKKKKKKKK");
 
-        var arrImage = [];
+//         var arrImage = [];
 
-        for (let i = 0; i < req.files.length; i++) {
-            arrImage[i] = req.files[i].filename;
-        }
+//         for (let i = 0; i < req.files.length; i++) {
+//             arrImage[i] = req.files[i].filename;
+//         }
 
-        const data = await pro_detailModel.create({
-            product_name: product_name,
-            price: price,
-            qty: qty,
-            size: size,
-            image: arrImage,
-            description: description,
-            brand_name: brand_name,
-            cid: cid
-        });
-        // console.log(data)
-        res
-            .status(200)
-            .send({ message: "Product Add successfully..!! ", data: data });
-    } catch (error) {
-        // console.log(error,"DDDDDDDDDDDDDDd");
-        res.status(401).send(error);
-    }
-};
+//         const data = await pro_detailModel.create({
+//             product_name: product_name,
+//             price: price,
+//             qty: qty,
+//             size: size,
+//             image: arrImage,
+//             description: description,
+//             brand_name: brand_name,
+//             cid: cid
+//         });
+//         // console.log(data)
+//         res
+//             .status(200)
+//             .send({ message: "Product Add successfully..!! ", data: data });
+//     } catch (error) {
+//         // console.log(error,"DDDDDDDDDDDDDDd");
+//         res.status(401).send(error);
+//     }
+// };
 
 const product_detailsGet = async (req, res) => {
     try {
@@ -51,51 +51,148 @@ const product_detailsGet = async (req, res) => {
         res.send(error);
     }
 }
+
+const product_detailsPost = async (req, res) => {
+    try {
+        // Check if required fields are present in the request body
+        const requiredFields = ['product_name', 'price', 'qty', 'size', 'description', 'brand_name', 'cid','s_cid'];
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+
+        if (missingFields.length > 0) {
+            return res.status(400).send({ error: `Missing required fields: ${ missingFields.join(', ') }` });
+    }
+
+    // Check if price and qty are valid numbers
+    if (isNaN(parseFloat(req.body.price)) || isNaN(parseInt(req.body.qty))) {
+        return res.status(400).send({ error: 'Price and quantity must be valid numbers.' });
+    }
+
+    // Check if qty is a positive integer
+    if (parseInt(req.body.qty) <= 0 || !Number.isInteger(parseInt(req.body.qty))) {
+        return res.status(400).send({ error: 'Quantity must be a positive integer.' });
+    }
+
+    // Process the request if all validations pass
+    var arrImage = [];
+    for (let i = 0; i < req.files.length; i++) {
+        arrImage[i] = req.files[i].filename;
+    }
+
+    const data = await pro_detailModel.create({
+        product_name: req.body.product_name,
+        price: req.body.price,
+        qty: req.body.qty,
+        size: req.body.size,
+        image: arrImage,
+        description: req.body.description,
+        brand_name: req.body.brand_name,
+        cid: req.body.cid,
+        s_cid:req.body.s_cid
+    });
+
+    res.status(200).send({ message: "Product added successfully.", data: data });
+    console.log(data,"data...");
+} catch (error) {
+    res.status(500).send({ error: "Internal Server Error" });
+}
+};
+
+// const product_detailsGet1 = async (req, res) => {
+//     try {
+//         const pipelineData = [];
+//         // console.log(req.body, "bodyyyy");
+//         if (Object.keys(req.body).length > 0) {
+//             let searchQuery = {
+//                 $match: {}
+//             };
+//             if (req.body.search != undefined &&
+//                 req.body.search != null &&
+//                 req.body.search != "") {
+//                     // console.log("in product search...");
+//                 searchQuery.$match.$or = [
+//                     { product_name: { $regex: new RegExp(req.body.search, 'i') } },
+//                     { description: { $regex: new RegExp(req.body.search, 'i') } },
+//                     { price: isNaN(req.body.search) ? null : parseFloat(req.body.search) },
+
+//                 ];
+
+//             }
+//             if (req.body.cid != undefined &&
+//                 req.body.cid != null &&
+//                 req.body.cid != "") {
+//                 searchQuery.$match.cid = mongoose.Types.ObjectId(req.body.cid);
+
+//             }
+//             if (req.body.start_price != undefined &&
+//                 req.body.end_price != undefined &&
+//                 req.body.start_price != "" &&
+//                 req.body.end_price != "") {
+//                 searchQuery.$match.price = {
+//                     $gte: parseFloat(req.body.start_price),
+//                     $lte: parseFloat(req.body.start_price)
+
+//                 }
+
+//             }
+//             pipelineData.push(searchQuery);
+//         }
+        
+//         // console.log(pipelineData,"pipelineData");
+//         // console.log(searchQuery,"searchQuery");
+//         const pipeline = [
+//             ...pipelineData,
+//             {
+//                 $lookup: {
+//                     from: "categories",
+//                     localField: "cid",
+//                     foreignField: "_id",
+//                     as: "cid"
+//                 },
+//             },
+//             { $skip: skip }, { $limit: req.body.perPage }
+
+//         ];
+//         console.log(pipeline,"pipelinee");
+
+//         // let totProduct = 0
+//         // const data = await pro_detailModel.aggregate([...pipelineData, {
+//         //     $count: "_id"
+//         // }]).then((res) => {
+//         //     console.log(res, "responsesss");
+//         //     totProduct = res[0]._id
+//         // }).catch((error) => {
+//         //     console.log(error, "errrrr");
+//         // })
+
+//         pro_detailModel.aggregate(pipeline).exec((err, result) => {
+//             if (result) {
+//                 res.send({ data: result })
+//                 // console.log(result,"productttt");
+//             } else {
+//                 res.status(401).send("Filter Product Not Found")
+//                 // console.log(err,"error");
+//             }
+//         })
+//         // res.send(data);
+
+//     }
+//     catch (error) {
+//         res.send(error, "errorrr");
+//     }
+// }
+
+
 const product_detailsGet1 = async (req, res) => {
     try {
-        const pipelineData = [];
-        console.log(req.body, "bodyyyy");
-        if (Object.keys(req.body).length > 0) {
-            let searchQuery = {
-                $match: {}
-            };
-            if (req.body.search != undefined &&
-                req.body.search != null &&
-                req.body.search != "") {
-                    console.log("in product search...");
-                searchQuery.$match.$or = [
-                    { product_name: { $regex: new RegExp(req.body.search, 'i') } },
-                    { description: { $regex: new RegExp(req.body.search, 'i') } },
-                    { price: isNaN(req.body.search) ? null : parseFloat(req.body.search) },
 
-                ];
+        // const pipelineData = [];
+        console.log(req.body,"bodyyyy");
+        // console.log(req.body.search,"searchvalue");
+        console.log(req.body, isNaN(req.body.search),req.body.search, "req");
 
-            }
-            // if (req.body.cid != undefined &&
-            //     req.body.cid != null &&
-            //     req.body.cid != "") {
-            //     searchQuery.$match.cid = mongoose.Types.ObjectId(req.body.cid);
 
-            // }
-            // if (req.body.start_price != undefined &&
-            //     req.body.end_price != undefined &&
-            //     req.body.start_price != "" &&
-            //     req.body.end_price != "") {
-            //     searchQuery.$match.price = {
-            //         $gte: parseFloat(req.body.start_price),
-            //         $lte: parseFloat(req.body.start_price)
 
-            //     }
-
-            // }
-            pipelineData.push(searchQuery);
-        }
-        const skip = (req.body.page - 1) * req.body.perPage;
-        console.log(skip, "skippp");
-        console.log(pipelineData,"pipelineData");
-        console.log(searchQuery,"searchQuery");
-        const pipeline = [
-            ...pipelineData,
+        pro_detailModel.aggregate([
             {
                 $lookup: {
                     from: "categories",
@@ -103,165 +200,81 @@ const product_detailsGet1 = async (req, res) => {
                     foreignField: "_id",
                     as: "cid"
                 },
+
             },
-            { $skip: skip }, { $limit: req.body.perPage }
 
-        ];
-        console.log(pipeline,"pipelinee");
+ ]).exec((error, result) => {
+     if (result) {
+         res.send(result)
+     } else {
+         console.log(error);
+     }
+ })
 
-        // let totProduct = 0
-        // const data = await pro_detailModel.aggregate([...pipelineData, {
-        //     $count: "_id"
-        // }]).then((res) => {
-        //     console.log(res, "responsesss");
-        //     totProduct = res[0]._id
-        // }).catch((error) => {
-        //     console.log(error, "errrrr");
-        // })
 
-        pro_detailModel.aggregate(pipeline).exec((err, result) => {
-            if (result) {
-                res.send({ data: result })
-                console.log(result,"productttt");
-            } else {
-                res.status(401).send("Filter Product Not Found")
-                console.log(err,"error");
-            }
-        })
-        // res.send(data);
+        // const pipelineData = [];
+        // console.log(req.body,"bodyyyy");
+        // console.log(req.body.search,"searchvalue");
 
+        // if (Object.keys(req.body).length > 0) {
+        //     console.log(Object.keys(req.body).length,"lemgthhh");
+        //     let searchQuery = {
+        //         $match: {}
+        //     };
+        //     // if (req.body.search != undefined &&
+        //     //     req.body.search != null &&
+        //     //     req.body.search != "") {
+        //     //     searchQuery.$match.$or = [
+        //     //         { product_name: { $regex: new RegExp(req.body.search, 'i') } },
+        //     //         { description: { $regex: new RegExp(req.body.search, 'i') } },
+        //     //         { price: isNaN(req.body.search) ? null : parseFloat(req.body.search) },
+        //     //     ];
+        //     // }
+        //     // if (req.body.cid != undefined &&
+        //     //     req.body.cid != null &&
+        //     //     req.body.cid != "") {
+        //     //     searchQuery.$match.cid = mongoose.Types.ObjectId(req.body.cid);
+        //     // }
+        //     // if (req.body.start_price != undefined &&
+        //     //     req.body.end_price != undefined &&
+        //     //     req.body.start_price != "" &&
+        //     //     req.body.end_price != "") {
+        //     //     searchQuery.$match.price = {
+        //     //         $gte: parseFloat(req.body.start_price),
+        //     //         $lte: parseFloat(req.body.end_price) // Corrected here: using end_price instead of start_price
+        //     //     };
+        //     // }
+        //     pipelineData.push(searchQuery);
+        // }
+// console.log(pipelineData,"pipeline data");
+//         const pipeline = [
+//             ...pipelineData
+//             // {
+//             //     $lookup: {
+//             //         from: "categories",
+//             //         localField: "cid",
+//             //         foreignField: "_id",
+//             //         as: "cid"
+//             //     },
+//             // },
+//             // { $skip: skip }, { $limit: req.body.perPage }
+//         ];
+//         console.log(pipeline,"pipeline data");
+
+//         pro_detailModel.aggregate(pipeline).exec((err, result) => {
+//             if (result) {
+//                 res.send({ data: result });
+//             } else {
+//                 res.status(401).send("Filtered Products Not Found");
+//             }
+//         });
     }
     catch (error) {
-        res.send(error, "errorrr");
+        res.send(error);
     }
 }
 
-// const filterData = (req, res) => {
-//     try {
-//         console.log(req.body, "body::::::::::");
 
-//         // if (req.body.price != "All") {
-//         //     const priceData = req.body.price.split('-')
-//         // }
-
-//         const priceData = req.body.price.split("-");
-//         console.log(priceData, "priceData::::");
-
-//         productModel
-//             .aggregate([
-
-//                 {
-//                     $lookup: {
-//                         from: "categries",
-//                         localField: "cid",
-//                         foreignField: "_id",
-//                         as: "cid",
-//                     },
-//                 },
-//                 // {
-//                 //     $unwind: "$cat_id"
-//                 // },
-
-
-//                 {
-//                     $match: {
-//                         $and: [
-//                             {
-
-//                                 price: { $gte: parseInt(priceData[0]) },
-//                                 price: { $lte: parseInt(priceData[1]) },
-//                             },
-//                         ],
-//                     },
-//                 },
-//             ])
-//             .exec((error, result) => {
-//                 console.log(result, "result::::::");
-//                 console.log(error, "error:::::::::::");
-//                 if (result?.length > 0) {
-//                     res.send({ status: 1, result: result, message: "Product List" });
-//                 } else {
-//                     res.send({ status: 0, result: [], message: "Product Not Found" });
-//                 }
-//             });
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
-// const productGet = (req, res) => {
-//     try {
-//         productModel.aggregate([
-//             {
-//                 $lookup: {
-//                     from: "subcategries",
-//                     localField: "sub_c_id",
-//                     foreignField: "_id",
-//                     as: "sub_cat_id"
-//                 },
-
-//             },
-//             // {
-//             //     $unwind: "$sub_c_id"
-//             // },
-//             {
-//                 $lookup: {
-//                     from: "categries",
-//                     localField: "cat_id",
-//                     foreignField: "_id",
-//                     as: "cat_id"
-//                 },
-
-//             },
-//             {
-//                 $unwind: "$cat_id"
-//             },
-//             {
-//                 $lookup: {
-//                     from: "sizeattributes",
-//                     localField: "_id",
-//                     foreignField: "product_id",
-//                     as: "size_id"
-//                 },
-
-//             },
-//             // {
-//             //     $unwind: "$size_id"
-//             // },
-//             {
-//                 $lookup: {
-//                     from: "colorattributes",
-//                     localField: "_id",
-//                     foreignField: "product_id",
-//                     as: "color_id"
-//                 },
-
-//             },
-//             // {
-//             //     $unwind: "$color_id"
-//             // },
-//             {
-//                 $lookup: {
-//                     from: "productmedias",
-//                     localField: "_id",
-//                     foreignField: "product_id",
-//                     as: "p_image"
-//                 },
-
-//             },
-//             // {
-//             //     $unwind: "$p_image"
-//             // },
-//         ]).exec((error, result) => {
-//             if (result) {
-//                 res.send(result)
-//             } else {
-//                 console.log(error);
-//             }
-//         })
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
 
 
 
@@ -286,6 +299,7 @@ const product_detailsPut = async (req, res) => {
             description: req.body.description,
             brand_name: req.body.brand_name,
             cid: req.body.cid,
+            s_cid:req.body.s_cid
         })
         console.log(data);
         res.send(data)
@@ -341,10 +355,7 @@ const categoryProduct = async (req, res) => {
         const data = await pro_detailModel
             .find(query)
             .populate("cid")
-        // .populate("uid")
-
-        // console.log(data, "!!!!!!!!!1");
-
+    
         // console.log("Query:", { product_name: { $regex: keyword, $options: "i" } });
         // console.log("Data:", data);
 
@@ -354,6 +365,8 @@ const categoryProduct = async (req, res) => {
         res.status(500).send({ message: "Internal Server Error" });
     }
 };
+
+
 
 
 const searchProduct = async (req, res) => {
@@ -375,5 +388,7 @@ module.exports = {
     product_detailsDelete,
     oneProduct,
     searchProduct,
-    categoryProduct
+    categoryProduct,
+ 
+    product_detailsGet1
 };

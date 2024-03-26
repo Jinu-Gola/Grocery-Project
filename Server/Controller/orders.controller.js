@@ -6,11 +6,13 @@ const moment = require("moment");
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
 const nodemailer = require("nodemailer");
+const https = require('https');
+const axios = require('axios')
 
 const generateInvoice = (products, orderId, email, total) => {
     const doc = new PDFDocument();
     const invoiceDir = "./invoices/"; // Changed the path to start from the current directory
-    const invoicePath = `${ invoiceDir }order_${ orderId }.pdf`;
+    const invoicePath = `${invoiceDir}order_${orderId}.pdf`;
 
     // Ensure directory existence
     if (!fs.existsSync(invoiceDir)) {
@@ -25,27 +27,27 @@ const generateInvoice = (products, orderId, email, total) => {
         doc.fontSize(20).text(`Product Order Bill`);
         doc.moveDown(); // Add some vertical space
 
-        doc.fontSize(14).text(`Email: ${ email }`);
-        doc.fontSize(12).text(`Order ID: ${ orderId }`);
+        doc.fontSize(14).text(`Email: ${email}`);
+        doc.fontSize(12).text(`Order ID: ${orderId}`);
         doc.moveDown(); // Add some vertical space
 
         // Loop through products
         for (let product of products) {
-            doc.fontSize(10).text(`Product: ${ product.product_name }`);
-            doc.fontSize(10).text(`Price: ${ product.total_amt }`);
-            doc.fontSize(10).text(`Quantity: ${ product.uqty }`); // Corrected spelling of Quantity
+            doc.fontSize(10).text(`Product: ${product.product_name}`);
+            doc.fontSize(10).text(`Price: ${product.total_amt}`);
+            doc.fontSize(10).text(`Quantity: ${product.uqty}`); // Corrected spelling of Quantity
             doc.moveDown(); // Add some vertical space
         }
 
-        doc.fontSize(10).text(`Total Bill is: ${ total / 100}`); // Assuming total is in cents, converting to dollars
+        doc.fontSize(10).text(`Total Bill is: ${total / 100}`); // Assuming total is in cents, converting to dollars
 
-    doc.end();
+        doc.end();
 
-    return invoicePath;
-} catch (error) {
-    console.error("Error generating invoice:", error);
-    return null; // Handle error gracefully
-}
+        return invoicePath;
+    } catch (error) {
+        console.error("Error generating invoice:", error);
+        return null; // Handle error gracefully
+    }
 };
 const orderPlace = async (req, res) => {
     try {
@@ -129,30 +131,59 @@ const orderPlace = async (req, res) => {
             text: "Your Order placed Successfully...",
             attachments: [
                 {
-                    filename: `order_${ orderData._id }.pdf`,
-                path: pdfPath,
-        },
-      ],
-    };
+                    filename: `order_${orderData._id}.pdf`,
+                    path: pdfPath,
+                },
+            ],
+        };
 
-transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-        console.error("Error sending email:", err);
-    } else {
-        console.log("Email sent:", info);
+        transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+                console.error("Error sending email:", err);
+            } else {
+                console.log("Email sent:", info);
+            }
+        })
+
+        console.log("whatsapp msg --------------==========-----------------")
+
+        // let sendmsg = {
+        //     message: JSON.stringify("Order placed Suceessfully..."),
+        //     media: JSON.stringify([]),
+        //     delay: 0,
+        //     schedule: null,
+        //     numbers: orderInfo.mobile,
+        //     api_key:
+        //         "U2FsdGVkX1937IaG2Frq/5Y96hCbPB5Hwepv3ol+VCupCUWTFEjkZ4Gi9tIyICCE",
+        // };
+        // const axiosConfig = {
+        //     // Insecure HTTPS requests will be allowed since your frontend is running on HTTP
+        //     // You may want to remove this option in production and use HTTPS for your frontend
+        //     httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+        //     headers: {
+        //         Authorization: `U2FsdGVkX1937IaG2Frq/5Y96hCbPB5Hwepv3ol+VCupCUWTFEjkZ4Gi9tIyICCE`,
+        //     },
+        // };
+        // axios
+        //     .post("https://api.wapmonkey.com/send-message", sendmsg, axiosConfig)
+        //     .then((response) => {
+        //         console.log(response, "response");
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
+
+        res.send({
+            status: 1,
+            result: orderData,
+            message: "Order Placed Successfully",
+        });
+    } catch (error) {
+        console.error("Error placing order:", error);
+        res.status(500).send(error.message);
     }
-});
-
-res.send({
-    status: 1,
-    result: orderData,
-    message: "Order Placed Successfully",
-});
-  } catch (error) {
-    console.error("Error placing order:", error);
-    res.status(500).send(error.message);
-}
 };
+
 const orderGet = async (req, res) => {
     try {
         console.log(req.body, isNaN(req.body.search), "req");
@@ -165,27 +196,30 @@ const orderGet = async (req, res) => {
         ];
         // console.log(options, "MMMMMMM");
 
-        // if (req.body.search != undefined && req.body.search != null && req.body.search != "") {
-        //     req.body.search = req.body.search.trim();
-        //     const searchValueInteger = parseInt(req.body.search);
+        if (req.body.search != undefined && req.body.search != null && req.body.search != "") {
+            // req.body.search = req.body.search.trim();
+            const searchValueInteger = parseInt(req.body.search);
+            console.log(searchValueInteger,"search valueee");
 
-        //     searchValueArray.push(
-        //         { "u_name": { $regex: new RegExp(req.body.search, 'i') } },
-        //         { "email": { $regex: new RegExp(req.body.search, 'i') } },
-        //         { "mobile": { $regex: new RegExp(req.body.search, 'i') } },
-        //         // { "order_date": { $regex: new RegExp(startDate) } },
-        //         { "total_amt": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } },
-        //         { "discount": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } },
-        //         { "subtotal": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } }
-        //     )
-        //     options[0].$match.$or = searchValueArray;
-        // }
-        // if (req.body.date != undefined && req.body.date != null && req.body.date != "") {
-        //     searchValueArray.push(
-        //         { "order_date": { $regex: new RegExp(moment(req.body.date, "YYYY-MM-DD").format("DD-MM-YYYY")) } },
-        //     )
-        //     options[0].$match.$or = searchValueArray;
-        // }
+            searchValueArray.push(
+                { "fname": { $regex: new RegExp(req.body.search, 'i') } },
+                { "lname": { $regex: new RegExp(req.body.search, 'i') } },
+
+                { "email": { $regex: new RegExp(req.body.search, 'i') } },
+                // { "mobile": { $regex: new RegExp(req.body.search, 'i') } },
+                // // { "order_date": { $regex: new RegExp(startDate) } },
+                // { "total_amt": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } },
+                // { "discount": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } },
+                // { "subtotal": isNaN(req.body.search) ? undefined : { $eq: parseInt(req.body.search) } }
+            )
+            options[0].$match.$or = searchValueArray;
+        }
+        if (req.body.date != undefined && req.body.date != null && req.body.date != "") {
+            searchValueArray.push(
+                { "order_date": { $regex: new RegExp(moment(req.body.date, "YYYY-MM-DD").format("DD-MM-YYYY")) } },
+            )
+            options[0].$match.$or = searchValueArray;
+        }
 
         console.log(options[0].$match, "options");
         const orderResults = await orderModel.aggregate(options).exec();
